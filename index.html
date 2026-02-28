@@ -266,7 +266,7 @@
             padding: 20px; overflow-y: auto; 
             transition: opacity 0.3s ease;
         }
-        .modal-content { background: #111; border: 1px solid var(--glass-border); padding: 40px; border-radius: var(--radius-card); width: 100%; max-width: 800px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-content { background: #111; border: 1px solid var(--glass-border); padding: 40px; border-radius: var(--radius-card); width: 100%; max-width: 900px; position: relative; max-height: 90vh; overflow-y: auto; }
         .close-modal { position: absolute; top: 20px; right: 20px; background: transparent; border: none; color: #fff; font-size: 2rem; cursor: pointer; line-height: 1; }
 
         #loader { position: fixed; bottom: 24px; right: 24px; background: rgba(20, 20, 20, 0.9); border: 1px solid var(--glass-border); border-radius: 50px; padding: 12px 20px; display: none; align-items: center; gap: 12px; z-index: 10000; backdrop-filter: blur(10px); font-weight: bold; }
@@ -322,7 +322,7 @@
     </div>
 </div>
 
-<!-- REVIEW VENDOR MODAL -->
+<!-- REVIEW VENDOR MODAL (FULL APPLICATION RESPONSE) -->
 <div id="reviewModal" class="modal-overlay" onclick="closeReviewModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <button class="close-modal" onclick="closeReviewModal()">&times;</button>
@@ -353,19 +353,166 @@
         <div class="review-field-label">Vendor / Project Description</div>
         <div class="review-field-value" id="reviewDesc" style="min-height: 80px; white-space: pre-wrap;">-</div>
 
-        <div class="review-field-label" id="reviewInternalNotesLabel" style="display: none;">Internal Notes / Reason</div>
-        <div class="review-field-value" id="reviewInternalNotes" style="display: none; min-height: 40px; white-space: pre-wrap; background: rgba(255,149,0,0.1); border-color: rgba(255,149,0,0.3); color: #FF9500;">-</div>
+        <div class="form-grid" style="margin-bottom: 20px;">
+            <div>
+                <div class="review-field-label">Comm Method</div>
+                <div class="review-field-value" id="reviewCommMethod">-</div>
+            </div>
+            <div>
+                <div class="review-field-label">Year / Major</div>
+                <div class="review-field-value" id="reviewYear">-</div>
+            </div>
+            <div>
+                <div class="review-field-label">Past Vendor?</div>
+                <div class="review-field-value" id="reviewPastVendor">-</div>
+            </div>
+            <div>
+                <div class="review-field-label">Stay Entire Event?</div>
+                <div class="review-field-value" id="reviewAvailability">-</div>
+            </div>
+        </div>
+
+        <div class="form-grid" style="margin-bottom: 20px;">
+            <div>
+                <div class="review-field-label">Food License?</div>
+                <div class="review-field-value" id="reviewFoodLicense" style="font-weight:bold;">-</div>
+            </div>
+            <div>
+                <div class="review-field-label">Food License File</div>
+                <div class="review-field-value" id="reviewFoodLink">-</div>
+            </div>
+        </div>
 
         <div class="review-field-label">Social Media / Website</div>
-        <div class="review-field-value" id="reviewLink">
+        <div class="review-field-value" id="reviewLink" style="margin-bottom: 20px;">
             <a href="#" target="_blank" style="color: #0A84FF; text-decoration: none; font-weight: bold;">-</a>
+        </div>
+
+        <div class="review-field-label">Additional Comments</div>
+        <div class="review-field-value" id="reviewComments" style="min-height: 40px; white-space: pre-wrap;">-</div>
+
+        <div class="review-field-label">Agreements Checked</div>
+        <div class="review-field-value" id="reviewAgreements" style="min-height: 40px; white-space: pre-wrap; font-family: monospace; font-size: 0.85rem; color: #a1a1aa;">-</div>
+
+        <div class="review-field-label">Internal Notes (Admin Only)</div>
+        <div style="margin-bottom: 20px; background: rgba(255,149,0,0.05); border: 1px solid rgba(255,149,0,0.2); padding: 15px; border-radius: 12px;">
+            <textarea id="modalInternalNotes" class="modern-input" style="height: 80px; resize: vertical; margin-bottom: 10px; font-size: 0.95rem;" placeholder="Type private notes about this vendor here..."></textarea>
+            <button type="button" class="btn-action" style="padding: 8px 16px; font-size: 0.85rem; background: #FF9500; color: #000;" onclick="saveInternalNotes()">💾 Save Notes</button>
         </div>
 
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:30px; border-top:1px solid rgba(255,255,255,0.1); padding-top:30px; gap: 15px;">
             <button type="button" class="btn-action" style="background:var(--gradient-danger); flex: 1; padding: 16px; font-size: 1.1rem;" onclick="processReview('Denied')">❌ DENY</button>
-            <button type="button" class="btn-action" style="background:rgba(255,255,255,0.1); flex: 1; padding: 16px; font-size: 1.1rem;" onclick="processReview('Needs Review')">⏳ PEND</button>
+            <button type="button" class="btn-action" style="background:rgba(255,255,255,0.1); flex: 1; padding: 16px; font-size: 1.1rem;" onclick="processReview('Needs Review')">⏳ NEEDS REVIEW</button>
             <button type="button" class="btn-action" style="background:var(--gradient-success); flex: 1; padding: 16px; font-size: 1.1rem;" onclick="processReview('Approved')">✅ APPROVE</button>
         </div>
+    </div>
+</div>
+
+<!-- COMMENT MODAL (INTERNAL LOG) -->
+<div id="commentModal" class="modal-overlay" style="z-index: 10001;">
+    <div class="modal-content" style="max-width: 500px; padding: 30px;" onclick="event.stopPropagation()">
+        <h3 id="commentModalTitle" style="margin-top:0; font-weight: 800; font-size: 1.4rem;">Require Comment</h3>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 20px;">Please enter a reason/note. This will be added to the internal notes.</p>
+        <textarea id="commentModalText" class="modern-input" style="height: 120px; resize: none; font-family: inherit; font-size: 1rem;" placeholder="Type internal note here..."></textarea>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top: 20px;">
+            <button class="btn-action" style="background:rgba(255,255,255,0.1);" onclick="resolveComment(null)">Cancel</button>
+            <button class="btn-action" style="background:var(--gradient-accent);" onclick="resolveComment(document.getElementById('commentModalText').value)">Save & Continue</button>
+        </div>
+    </div>
+</div>
+
+<!-- EDIT VENDOR MODAL -->
+<div id="editModal" class="modal-overlay" onclick="closeEditModal()" style="z-index: 10005;">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <button class="close-modal" onclick="closeEditModal()">&times;</button>
+        <h2 style="margin-top:0; margin-bottom:20px; font-weight: 800;">Edit Application</h2>
+        
+        <div class="form-grid" style="margin-bottom: 20px; gap: 16px;">
+            <div>
+                <label class="review-field-label">First Name</label>
+                <input type="text" id="editFirstName" class="modern-input">
+            </div>
+            <div>
+                <label class="review-field-label">Last Name</label>
+                <input type="text" id="editLastName" class="modern-input">
+            </div>
+            <div>
+                <label class="review-field-label">Student ID</label>
+                <input type="text" id="editStudentId" class="modern-input">
+            </div>
+            <div>
+                <label class="review-field-label">Phone</label>
+                <input type="text" id="editPhone" class="modern-input">
+            </div>
+            <div>
+                <label class="review-field-label">Preferred Email</label>
+                <input type="text" id="editPrefEmail" class="modern-input">
+            </div>
+            <div>
+                <label class="review-field-label">GCU Email</label>
+                <input type="text" id="editGcuEmail" class="modern-input">
+            </div>
+        </div>
+
+        <div class="review-field-label">Vendor / Project Description</div>
+        <textarea id="editDesc" class="modern-input" style="height: 80px; resize: vertical; margin-bottom: 20px;"></textarea>
+
+        <div class="form-grid" style="margin-bottom: 20px; gap: 16px;">
+            <div>
+                <label class="review-field-label">Comm Method</label>
+                <input type="text" id="editCommMethod" class="modern-input">
+            </div>
+            <div>
+                <label class="review-field-label">Year / Major</label>
+                <input type="text" id="editYear" class="modern-input">
+            </div>
+            <div>
+                <label class="review-field-label">Past Vendor?</label>
+                <input type="text" id="editPastVendor" class="modern-input">
+            </div>
+            <div>
+                <label class="review-field-label">Stay Entire Event?</label>
+                <input type="text" id="editAvailability" class="modern-input">
+            </div>
+            <div>
+                <label class="review-field-label">Needs Power?</label>
+                <select id="editNeedsPower" class="modern-input" style="padding-right: 40px;">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div>
+                <label class="review-field-label">Social Media / Website</label>
+                <input type="text" id="editLink" class="modern-input">
+            </div>
+        </div>
+
+        <div class="form-grid" style="margin-bottom: 20px; gap: 16px;">
+            <div>
+                <label class="review-field-label">Food License? (Yes/No)</label>
+                <input type="text" id="editFoodLicense" class="modern-input">
+            </div>
+            <div>
+                <label class="review-field-label">Food License File Link</label>
+                <input type="text" id="editFoodLink" class="modern-input" placeholder="https://...">
+                <div id="editFoodImagePreview" style="margin-top: 10px; display: none;">
+                    <img src="" style="max-width:100%; max-height:120px; border-radius:8px; border:1px solid rgba(255,255,255,0.2);">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-grid" style="margin-bottom: 20px; gap: 16px;">
+            <div>
+                <label class="review-field-label">Additional Comments</label>
+                <textarea id="editComments" class="modern-input" style="height: 100px; resize: vertical;"></textarea>
+            </div>
+            <div>
+                <label class="review-field-label">Agreements Checked</label>
+                <textarea id="editAgreements" class="modern-input" style="height: 100px; resize: vertical; font-family: monospace; font-size: 0.85rem; color:#aaa;"></textarea>
+            </div>
+        </div>
+
+        <button onclick="saveVendorEdit()" class="btn-action" style="width: 100%; padding: 15px; font-size: 1.1rem; margin-top: 10px;">💾 Save Changes</button>
     </div>
 </div>
 
@@ -378,7 +525,7 @@
             </div>
         </div>
         <div class="controls">
-            <button onclick="setFilter('all')" id="nav-all" class="control-item">📋 APPLICATIONS</button>
+            <button onclick="setFilter('inbox')" id="nav-inbox" class="control-item">📋 APPLICATIONS</button>
             <button onclick="setFilter('approved')" id="nav-approved" class="control-item">✅ APPROVED</button>
             <button onclick="setFilter('review')" id="nav-review" class="control-item">⏳ NEEDS REVIEW</button>
             <button onclick="setFilter('power')" id="nav-power" class="control-item">⚡ NEEDS POWER</button>
@@ -393,7 +540,7 @@
     <!-- VIEW: MAIN LIST -->
     <div id="view-list" class="view">
         <div class="stats-container" id="statsBar">
-            <div class="frosted stat-card"><span class="stat-label">Total Applied</span><span class="stat-val" id="countTotal">0</span></div>
+            <div class="frosted stat-card"><span class="stat-label">New Apps</span><span class="stat-val" id="countInbox">0</span></div>
             <div class="frosted stat-card"><span class="stat-label">Needs Review</span><span class="stat-val" style="color:#FF9500" id="countReview">0</span></div>
             <div class="frosted stat-card"><span class="stat-label">Approved</span><span class="stat-val" style="color:#34C759" id="countApproved">0</span></div>
             <div class="frosted stat-card"><span class="stat-label">Denied</span><span class="stat-val" style="color:#FF3B30" id="countDenied">0</span></div>
@@ -404,13 +551,13 @@
                 <input type="text" id="search" class="modern-input" placeholder="Search name, email, or student ID..." onkeyup="renderTable()" style="flex:1;">
             </div>
             <div>
-                <button onclick="sendBulkEmail()" id="blastBtn" class="btn-action">📧 Email Unsent in Current View</button>
+                <button onclick="sendBulkEmail()" id="blastBtn" class="btn-action" style="display: none;">📧 Email Unsent in Current View</button>
             </div>
         </div>
         
         <div class="table-container">
             <table>
-                <thead><tr><th>Student ID</th><th>Name</th><th>Pref Email</th><th>Status (Quick Set)</th><th>Email Sent?</th><th>Actions</th></tr></thead>
+                <thead><tr><th>App # / Student ID</th><th>Name</th><th>Pref Email</th><th>Status (Quick Set)</th><th>Email Sent?</th><th>Actions</th></tr></thead>
                 <tbody id="vendorTableBody"></tbody>
             </table>
         </div>
@@ -556,8 +703,9 @@
     let currentData = { vendors: [], allEvents: [], activeId: "" };
     let realtimeSubscription = null;
     let currentTemplateType = 'approved';
-    let activeFilter = 'all'; // all, review, approved, denied, power, profiles
+    let activeFilter = 'inbox'; // inbox, review, approved, denied, power, profiles
     let currentReviewingId = null;
+    let currentEditingId = null;
     let isInitialLoad = true;
 
     const DEFAULTS = {
@@ -624,7 +772,7 @@
             document.getElementById('vendorTableBody').innerHTML = '<tr><td colspan="6" style="text-align:center;">No events. Create one in Settings.</td></tr>';
             
             // Clear stats
-            document.getElementById('countTotal').innerText = 0;
+            document.getElementById('countInbox').innerText = 0;
             document.getElementById('countReview').innerText = 0;
             document.getElementById('countApproved').innerText = 0;
             document.getElementById('countDenied').innerText = 0;
@@ -644,6 +792,15 @@
         
         if (vendorErr) {
             console.error("Error fetching vendors:", vendorErr);
+        }
+
+        // --- NEW LOGIC: Assign permanent application numbers based on submission order
+        if (vendorsData) {
+            const totalVendors = vendorsData.length;
+            vendorsData.forEach((v, index) => {
+                // Since we fetch newest first (descending), the item at the very end of the array is the oldest (#1)
+                v.appNumber = totalVendors - index;
+            });
         }
 
         currentData = {
@@ -670,7 +827,7 @@
         loadTemplateToEditor();
 
         if (isInitialLoad && eventsData.length > 0) {
-            setFilter('all');
+            setFilter('inbox');
             isInitialLoad = false;
         } else {
             if(activeFilter === 'profiles') {
@@ -684,12 +841,13 @@
     }
 
     function updateStats() {
-        const total = currentData.vendors.length;
+        // Count unprocessed applications (i.e. not sorted into one of the main 3 buckets)
+        const inbox = currentData.vendors.filter(v => v.status !== 'Approved' && v.status !== 'Needs Review' && v.status !== 'Denied').length;
         const review = currentData.vendors.filter(v => v.status === 'Needs Review').length;
         const approved = currentData.vendors.filter(v => v.status === 'Approved').length;
         const denied = currentData.vendors.filter(v => v.status === 'Denied').length;
 
-        document.getElementById('countTotal').innerText = total;
+        document.getElementById('countInbox').innerText = inbox;
         document.getElementById('countReview').innerText = review;
         document.getElementById('countApproved').innerText = approved;
         document.getElementById('countDenied').innerText = denied;
@@ -701,7 +859,7 @@
         
         const btn = document.getElementById(`nav-${filter}`);
         if(btn) {
-            if (filter === 'all') btn.classList.add('active');
+            if (filter === 'inbox') btn.classList.add('active');
             else if (filter === 'review') btn.classList.add('active-review');
             else if (filter === 'approved') btn.classList.add('active-approved');
             else if (filter === 'denied') btn.classList.add('active-denied');
@@ -796,29 +954,66 @@
         document.getElementById('loader').style.display = 'none';
     }
 
+    let commentResolver = null;
+    function promptForComment(statusName) {
+        return new Promise((resolve) => {
+            document.getElementById('commentModalTitle').innerText = `Notes for: ${statusName}`;
+            document.getElementById('commentModalText').value = '';
+            document.getElementById('commentModal').style.display = 'flex';
+            document.getElementById('commentModalText').focus();
+            commentResolver = resolve;
+        });
+    }
+
+    function resolveComment(val) {
+        document.getElementById('commentModal').style.display = 'none';
+        if (commentResolver) {
+            commentResolver(val);
+            commentResolver = null;
+        }
+    }
+
     // Handles the inline quick status change
     async function quickStatus(id, newStatus) {
         const vendor = currentData.vendors.find(v => v.id === id);
-        if (!vendor || vendor.status === newStatus) return false;
+        if (!vendor) return false;
         
-        let updates = { status: newStatus };
+        let targetStatus = newStatus;
         
+        // UNSELECT: If they click the same status that is already active, revert to Inbox/Pending
+        if (vendor.status === newStatus) {
+            targetStatus = 'Pending';
+        }
+        
+        let updates = { status: targetStatus };
+
         // Enforce required internal comment for specific statuses
-        if (newStatus === 'Needs Review' || newStatus === 'Denied') {
-            const reason = prompt(`INTERNAL USE ONLY:\nPlease enter a reason for marking this application as ${newStatus}. This is required.`);
+        if (targetStatus === 'Needs Review' || targetStatus === 'Denied') {
+            const reason = await promptForComment(targetStatus);
             if (reason === null || reason.trim() === '') {
                 showToast("Action cancelled: Comment is required.");
                 return false;
             }
-            updates.internal_notes = reason.trim();
+            
+            // Format log entry
+            const timestamp = new Date().toLocaleString();
+            const formattedNote = `[${timestamp}] (${targetStatus}): ${reason.trim()}`;
+            updates.internal_notes = vendor.internal_notes ? `${formattedNote}\n\n${vendor.internal_notes}` : formattedNote;
         }
 
         // Optimistic UI Update
         const oldStatus = vendor.status;
         const oldNotes = vendor.internal_notes;
-        
-        vendor.status = newStatus;
-        if(updates.internal_notes) vendor.internal_notes = updates.internal_notes;
+
+        vendor.status = targetStatus;
+        if (updates.internal_notes) {
+            vendor.internal_notes = updates.internal_notes;
+            // Update modal text area live if it's currently open
+            const modalNotesEl = document.getElementById('modalInternalNotes');
+            if (modalNotesEl && currentReviewingId === id) {
+                modalNotesEl.value = vendor.internal_notes;
+            }
+        }
         
         updateStats();
         renderTable(); 
@@ -827,29 +1022,76 @@
         const { error } = await _supabase.from('vendors').update(updates).eq('id', id);
         if (error) {
             console.error(error);
-            if(error.message.includes("internal_notes")) {
-                alert("Database Error: You need to add an 'internal_notes' (text) column to your 'vendors' table in Supabase.");
-            } else {
-                showToast("⚠️ Error updating status in database");
-            }
+            showToast("⚠️ Error updating status in database");
             // Revert on failure
             vendor.status = oldStatus;
             vendor.internal_notes = oldNotes;
+            if (currentReviewingId === id) {
+                const modalNotesEl = document.getElementById('modalInternalNotes');
+                if (modalNotesEl) modalNotesEl.value = oldNotes || '';
+            }
             refreshData(null, true);
             return false;
         }
         return true;
     }
 
+    // Shared data cleaner to extract junk out of the Comments field
+    function extractCleanData(vendor) {
+        let rawComments = vendor.additional_comments || '';
+        let cleanedComments = [];
+        let parsedAgreements = [];
+
+        rawComments.split('\n').forEach(line => {
+            const trimmed = line.trim();
+            if (!trimmed) return;
+
+            if (trimmed.includes('Acknowledgment:')) {
+                parsedAgreements.push(trimmed);
+            } else if (trimmed.startsWith('First and Last Name:')) {
+                // Ignore completely
+            } else {
+                cleanedComments.push(trimmed);
+            }
+        });
+
+        let finalComments = cleanedComments.join('\n');
+        
+        let dbAgreements = vendor.agreements_checked || '';
+        if (!dbAgreements && parsedAgreements.length > 0) {
+            dbAgreements = parsedAgreements.join('\n');
+        }
+
+        return { finalComments, dbAgreements };
+    }
+
     function renderTable() {
         const search = document.getElementById('search').value.toLowerCase();
         
+        // Dynamically update the bulk email button based on the active tab
+        const blastBtn = document.getElementById('blastBtn');
+        if (activeFilter === 'approved') {
+            blastBtn.style.display = 'block';
+            blastBtn.innerText = '📧 Send Approved Emails (Unsent)';
+        } else if (activeFilter === 'denied') {
+            blastBtn.style.display = 'block';
+            blastBtn.innerText = '📧 Send Denied Emails (Unsent)';
+        } else if (activeFilter === 'power') {
+            blastBtn.style.display = 'block';
+            blastBtn.innerText = '📧 Send Power Emails (Unsent)';
+        } else {
+            blastBtn.style.display = 'none';
+        }
+        
         let filtered = currentData.vendors.filter(v => {
             // Apply Tab Filter
+            if (activeFilter === 'inbox' && (v.status === 'Approved' || v.status === 'Needs Review' || v.status === 'Denied')) return false;
             if (activeFilter === 'review' && v.status !== 'Needs Review') return false;
             if (activeFilter === 'approved' && v.status !== 'Approved') return false;
             if (activeFilter === 'denied' && v.status !== 'Denied') return false;
-            if (activeFilter === 'power' && v.needs_power !== 'Yes') return false;
+            
+            // NEW POWER LOGIC: Only show Approved vendors who need power
+            if (activeFilter === 'power' && (v.status !== 'Approved' || v.needs_power !== 'Yes')) return false;
 
             // Apply Search Filter
             if (search) {
@@ -866,45 +1108,51 @@
             return;
         }
 
-        tbody.innerHTML = filtered.map(v => {
-            
+        const generateRowHtml = (v) => {
             // Interactive status toggle UI
             const statusToggle = `
                 <div class="status-toggle-group" onclick="event.stopPropagation()">
-                    <button onclick="quickStatus('${v.id}', 'Approved')" class="btn-quick-status ${v.status === 'Approved' ? 'active-approve' : ''}" title="Mark as Approved">✅</button>
-                    <button onclick="quickStatus('${v.id}', 'Needs Review')" class="btn-quick-status ${v.status === 'Needs Review' ? 'active-review' : ''}" title="Mark as Needs Review">⏳</button>
-                    <button onclick="quickStatus('${v.id}', 'Denied')" class="btn-quick-status ${v.status === 'Denied' ? 'active-deny' : ''}" title="Mark as Denied">❌</button>
+                    <button onclick="quickStatus('${v.id}', 'Approved')" class="btn-quick-status ${v.status === 'Approved' ? 'active-approve' : ''}" title="${v.status === 'Approved' ? 'Unselect Approved' : 'Mark as Approved'}">✅</button>
+                    <button onclick="quickStatus('${v.id}', 'Needs Review')" class="btn-quick-status ${v.status === 'Needs Review' ? 'active-review' : ''}" title="${v.status === 'Needs Review' ? 'Unselect Needs Review' : 'Mark as Needs Review'}">⏳</button>
+                    <button onclick="quickStatus('${v.id}', 'Denied')" class="btn-quick-status ${v.status === 'Denied' ? 'active-deny' : ''}" title="${v.status === 'Denied' ? 'Unselect Denied' : 'Mark as Denied'}">❌</button>
                 </div>
             `;
 
             const powerTag = v.needs_power === 'Yes' ? `<br><span class="power-tag">⚡ Needs Power</span>` : '';
             const emailSentBadge = v.email_sent === 'Yes' ? `<span class="status-badge sent">✉️ SENT</span>` : `<span class="status-badge draft">⚠️ UNSENT</span>`;
+            
+            // Only show the individual email icon on valid tabs
+            const canEmail = (activeFilter === 'approved' || activeFilter === 'denied' || activeFilter === 'power');
 
             return `
             <tr class="clickable-row" onclick="openReviewModal('${v.id}')">
-                <td style="font-family: monospace; letter-spacing: 1px;">${v.student_id || 'N/A'}</td>
+                <td><span style="color: #BF5AF2; font-weight: 800; margin-right: 8px; font-size: 1.1rem;">#${v.appNumber}</span><br><span style="font-family: monospace; letter-spacing: 1px; font-size: 0.85rem; color: var(--text-muted);">${v.student_id || 'N/A'}</span></td>
                 <td><strong>${v.first_name} ${v.last_name}</strong>${powerTag}</td>
                 <td><a href="mailto:${v.preferred_email}" onclick="event.stopPropagation()" style="color:var(--text-muted);">${v.preferred_email}</a><br><small style="color:var(--text-muted); opacity: 0.5;">${v.gcu_email || ''}</small></td>
                 <td>${statusToggle}</td>
                 <td>${emailSentBadge}</td>
                 <td>
                     <div class="action-wrapper" onclick="event.stopPropagation()">
-                        <button onclick="resendEmail('${v.id}')" class="btn-icon" title="Send Status Email" style="${v.status === 'Needs Review' ? 'opacity:0.3; pointer-events:none;' : ''}">📩</button>
+                        <button onclick="openEditModal('${v.id}')" class="btn-icon" title="Edit Application">✏️</button>
+                        <button onclick="resendEmail('${v.id}')" class="btn-icon" title="Send Status Email" style="${canEmail ? '' : 'display:none;'}">📩</button>
                         <button onclick="deleteVendor('${v.id}')" class="btn-icon" style="color:#FF3B30;" title="Delete">🗑️</button>
                     </div>
                 </td>
             </tr>
             `;
-        }).join('');
+        };
+
+        // Render naturally (no more nested groups since Power is only Approved now)
+        tbody.innerHTML = filtered.map(v => generateRowHtml(v)).join('');
     }
 
-    // REVIEW MODAL LOGIC
+    // REVIEW MODAL LOGIC (FULL RESPONSE)
     function openReviewModal(id) {
         const vendor = currentData.vendors.find(v => v.id === id);
         if (!vendor) return;
         
         currentReviewingId = id;
-        document.getElementById('reviewName').innerText = `${vendor.first_name} ${vendor.last_name}`;
+        document.getElementById('reviewName').innerText = `#${vendor.appNumber} - ${vendor.first_name} ${vendor.last_name}`;
         
         let tagsHtml = '';
         if (vendor.status === 'Needs Review') tagsHtml += `<span class="status-pill review" style="font-size: 0.85rem;">⏳ Needs Review</span>`;
@@ -915,6 +1163,7 @@
         
         document.getElementById('reviewTags').innerHTML = tagsHtml;
 
+        // Core fields
         document.getElementById('reviewStudentId').innerText = vendor.student_id || 'N/A';
         document.getElementById('reviewPhone').innerText = vendor.phone || 'N/A';
         document.getElementById('reviewPrefEmail').innerText = vendor.preferred_email || 'N/A';
@@ -922,17 +1171,44 @@
         
         document.getElementById('reviewDesc').innerText = vendor.description || 'No description provided.';
         
-        // Show internal notes if they exist
-        const notesEl = document.getElementById('reviewInternalNotes');
-        const notesLabel = document.getElementById('reviewInternalNotesLabel');
-        if (vendor.internal_notes) {
-            notesEl.innerText = vendor.internal_notes;
-            notesEl.style.display = 'block';
-            notesLabel.style.display = 'block';
+        // Full Application Additional Fields
+        document.getElementById('reviewCommMethod').innerText = vendor.communication_method || 'N/A';
+        document.getElementById('reviewYear').innerText = vendor.year || 'N/A';
+        document.getElementById('reviewPastVendor').innerText = vendor.past_vendor || 'N/A';
+        document.getElementById('reviewAvailability').innerText = vendor.availability || 'N/A';
+        
+        // --- DATA CLEANER ---
+        const cleanData = extractCleanData(vendor);
+        document.getElementById('reviewComments').innerText = cleanData.finalComments || 'None';
+        document.getElementById('reviewAgreements').innerText = cleanData.dbAgreements || 'None recorded';
+        // --------------------
+
+        // Food License Handling (Highlight Red if "No")
+        const foodLicEl = document.getElementById('reviewFoodLicense');
+        const foodVal = vendor.food_license || 'N/A';
+        foodLicEl.innerText = foodVal;
+        
+        if (foodVal.toLowerCase().includes('no')) {
+            foodLicEl.style.color = '#FF3B30';
+            foodLicEl.style.textShadow = '0 0 10px rgba(255,59,48,0.3)';
         } else {
-            notesEl.style.display = 'none';
-            notesLabel.style.display = 'none';
+            foodLicEl.style.color = '#fff';
+            foodLicEl.style.textShadow = 'none';
         }
+
+        // Render File Link / Image Preview
+        const fLinkEl = document.getElementById('reviewFoodLink');
+        if (vendor.food_license_link) {
+            fLinkEl.innerHTML = `
+                <a href="${vendor.food_license_link}" target="_blank" style="color:#0A84FF; font-weight:bold; display:block; margin-bottom:8px;">Open File ↗</a>
+                <img src="${vendor.food_license_link}" style="max-width:100%; max-height:200px; border-radius:8px; border:1px solid rgba(255,255,255,0.2);" onerror="this.style.display='none'">
+            `;
+        } else {
+            fLinkEl.innerHTML = `<span style="color:var(--text-muted);">N/A</span>`;
+        }
+        
+        // Load Internal Notes into textarea
+        document.getElementById('modalInternalNotes').value = vendor.internal_notes || '';
 
         const linkEl = document.getElementById('reviewLink');
         if (vendor.link) {
@@ -945,21 +1221,139 @@
         document.getElementById('reviewModal').style.display = 'flex';
     }
 
+    async function saveInternalNotes() {
+        if (!currentReviewingId) return;
+        const id = currentReviewingId;
+        const notes = document.getElementById('modalInternalNotes').value;
+        const vendor = currentData.vendors.find(v => v.id === id);
+        
+        if (vendor) vendor.internal_notes = notes;
+        
+        showToast("Saving note...");
+        const { error } = await _supabase.from('vendors').update({ internal_notes: notes }).eq('id', id);
+        if (error) {
+            console.error(error);
+            showToast("⚠️ Error saving note");
+        } else {
+            showToast("✅ Note saved!");
+        }
+    }
+
     function closeReviewModal() {
         document.getElementById('reviewModal').style.display = 'none';
         currentReviewingId = null;
     }
 
+    // EDIT MODAL LOGIC
+    function openEditModal(id) {
+        const vendor = currentData.vendors.find(v => v.id === id);
+        if (!vendor) return;
+        
+        currentEditingId = id;
+        
+        document.getElementById('editFirstName').value = vendor.first_name || '';
+        document.getElementById('editLastName').value = vendor.last_name || '';
+        document.getElementById('editStudentId').value = vendor.student_id || '';
+        document.getElementById('editPhone').value = vendor.phone || '';
+        document.getElementById('editPrefEmail').value = vendor.preferred_email || '';
+        document.getElementById('editGcuEmail').value = vendor.gcu_email || '';
+        document.getElementById('editDesc').value = vendor.description || '';
+        document.getElementById('editCommMethod').value = vendor.communication_method || '';
+        document.getElementById('editYear').value = vendor.year || '';
+        document.getElementById('editPastVendor').value = vendor.past_vendor || '';
+        document.getElementById('editAvailability').value = vendor.availability || '';
+        document.getElementById('editNeedsPower').value = vendor.needs_power === 'Yes' ? 'Yes' : 'No';
+        document.getElementById('editLink').value = vendor.link || '';
+        
+        // Load Cleaned Comments & Food License
+        const cleanData = extractCleanData(vendor);
+        document.getElementById('editComments').value = cleanData.finalComments;
+        document.getElementById('editAgreements').value = cleanData.dbAgreements;
+        document.getElementById('editFoodLicense').value = vendor.food_license || '';
+        
+        const foodLinkInput = document.getElementById('editFoodLink');
+        const foodImagePreview = document.getElementById('editFoodImagePreview');
+        
+        foodLinkInput.value = vendor.food_license_link || '';
+        
+        // Show Image Preview in Edit Modal if it exists
+        if (vendor.food_license_link) {
+            foodImagePreview.style.display = 'block';
+            foodImagePreview.querySelector('img').src = vendor.food_license_link;
+        } else {
+            foodImagePreview.style.display = 'none';
+            foodImagePreview.querySelector('img').src = '';
+        }
+
+        // Live update the image preview if admin pastes a new URL
+        foodLinkInput.oninput = (e) => {
+            const val = e.target.value;
+            if (val.startsWith('http')) {
+                foodImagePreview.style.display = 'block';
+                foodImagePreview.querySelector('img').src = val;
+            } else {
+                foodImagePreview.style.display = 'none';
+            }
+        };
+
+        document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+        currentEditingId = null;
+    }
+
+    async function saveVendorEdit() {
+        if (!currentEditingId) return;
+        
+        const updates = {
+            first_name: document.getElementById('editFirstName').value.trim(),
+            last_name: document.getElementById('editLastName').value.trim(),
+            student_id: document.getElementById('editStudentId').value.trim(),
+            phone: document.getElementById('editPhone').value.trim(),
+            preferred_email: document.getElementById('editPrefEmail').value.trim(),
+            gcu_email: document.getElementById('editGcuEmail').value.trim(),
+            description: document.getElementById('editDesc').value.trim(),
+            communication_method: document.getElementById('editCommMethod').value.trim(),
+            year: document.getElementById('editYear').value.trim(),
+            past_vendor: document.getElementById('editPastVendor').value.trim(),
+            availability: document.getElementById('editAvailability').value.trim(),
+            needs_power: document.getElementById('editNeedsPower').value,
+            link: document.getElementById('editLink').value.trim(),
+            food_license: document.getElementById('editFoodLicense').value.trim(),
+            food_license_link: document.getElementById('editFoodLink').value.trim(),
+            additional_comments: document.getElementById('editComments').value.trim(),
+            agreements_checked: document.getElementById('editAgreements').value.trim()
+        };
+
+        showToast("Saving edits...");
+        const { error } = await _supabase.from('vendors').update(updates).eq('id', currentEditingId);
+        
+        if (error) {
+            console.error(error);
+            showToast("⚠️ Error saving edits");
+        } else {
+            showToast("✅ Edits saved!");
+            closeEditModal();
+            refreshData(null, true);
+        }
+    }
+
     async function processReview(newStatus) {
         if (!currentReviewingId) return;
         const id = currentReviewingId;
+        const vendor = currentData.vendors.find(v => v.id === id);
+        
+        // Check if unselecting
+        const isUnselecting = vendor && vendor.status === newStatus;
         
         // Wait for quickStatus to finish properly before closing
         const success = await quickStatus(id, newStatus);
         
         if (success !== false) {
             closeReviewModal();
-            showToast(`Marked as ${newStatus}`);
+            showToast(isUnselecting ? `Reverted to Inbox` : `Marked as ${newStatus}`);
         }
     }
 
@@ -989,7 +1383,7 @@
     }
 
     async function sendSingleEmail(vendor) {
-        if (!vendor || !vendor.preferred_email || vendor.status === 'Needs Review') return false;
+        if (!vendor || !vendor.preferred_email || vendor.status === 'Needs Review' || vendor.status === 'Pending') return false;
 
         const templates = getTemplateDetails(vendor);
         if (!templates) return false;
@@ -1081,9 +1475,14 @@
     }
 
     async function resendEmail(id) {
+        if (activeFilter === 'inbox' || activeFilter === 'review') {
+            showToast("Cannot send emails from this tab.");
+            return;
+        }
+        
         const vendor = currentData.vendors.find(v => v.id === id);
         if (!vendor) return;
-        if (vendor.status === 'Needs Review') {
+        if (vendor.status === 'Needs Review' || vendor.status === 'Pending') {
             showToast("Cannot email a pending application.");
             return;
         }
@@ -1099,9 +1498,14 @@
     }
 
     async function sendBulkEmail() { 
-        // Get vendors in CURRENT view that are NOT 'Needs Review' and NOT 'email_sent' = 'Yes'
+        if (activeFilter === 'inbox' || activeFilter === 'review') {
+            alert("You cannot send emails from the Applications or Needs Review tabs. Please select Approved, Denied, or Needs Power.");
+            return;
+        }
+        
+        // Get vendors in CURRENT view that are NOT 'Needs Review', 'Pending', and NOT 'email_sent' = 'Yes'
         let targetVendors = currentData.vendors.filter(v => {
-            if (v.status === 'Needs Review' || v.email_sent === 'Yes') return false;
+            if (v.status === 'Needs Review' || v.status === 'Pending' || v.email_sent === 'Yes') return false;
             
             if (activeFilter === 'approved' && v.status !== 'Approved') return false;
             if (activeFilter === 'denied' && v.status !== 'Denied') return false;
