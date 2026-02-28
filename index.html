@@ -138,6 +138,7 @@
         .control-item.active-denied { background: var(--gradient-danger); border: none; box-shadow: 0 8px 20px rgba(255, 59, 48, 0.2); }
         .control-item.active-settings { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); }
         .control-item.active-profiles { background: #BF5AF2; border: none; box-shadow: 0 8px 20px rgba(191, 90, 242, 0.2); }
+        .control-item.active-scan { background: rgba(52, 199, 89, 0.2); border-color: rgba(52, 199, 89, 0.4); color: #34C759; }
 
         .stats-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 20px; }
         .stat-card { padding: 24px; border-radius: var(--radius-card); text-align: center; transition: transform 0.3s ease; }
@@ -281,6 +282,74 @@
         .review-field-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 700; }
         .review-field-value { font-size: 1.1rem; color: #fff; margin-bottom: 20px; word-break: break-word; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
 
+        /* Quick Filters */
+        .filter-chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .filter-chip:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+        .filter-chip.active-filter { background: var(--gradient-accent); color: #fff; border: none; box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3); }
+
+        /* Trello-like Comment Feed Styles */
+        .comment-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .comment-author {
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .comment-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #ddd;
+            white-space: pre-wrap;
+        }
+        .comment-delete {
+            background: transparent;
+            border: none;
+            color: #FF3B30;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: 0.2s;
+            padding: 0 4px;
+        }
+        .comment-delete:hover { opacity: 1; }
+
+        /* Manual Scan Search Result Styles */
+        .manual-result-item { 
+            background: rgba(255, 255, 255, 0.05); 
+            padding: 12px 16px; 
+            border-radius: 20px; 
+            margin-bottom: 8px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border: 1px solid var(--glass-border); 
+        }
+
         @media (max-width: 900px) {
             .app-container { padding: 0 16px; }
             .topbar { flex-direction: column; gap: 16px; text-align: center; padding: 16px; margin-top: 10px; margin-bottom: 20px; }
@@ -299,6 +368,19 @@
             .action-wrapper { width: 100%; justify-content: space-between; }
             .editor-grid { grid-template-columns: 1fr; }
         }
+
+        /* Bulk Email Modal Styles */
+        .vendor-checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: background 0.2s;
+        }
+        .vendor-checkbox-item:hover { background: rgba(255,255,255,0.05); }
+        .vendor-checkbox-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: #0A84FF; cursor: pointer; }
+        .vendor-checkbox-item label { cursor: pointer; flex: 1; font-size: 0.95rem; }
     </style>
 </head>
 <body>
@@ -310,6 +392,7 @@
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
     <div class="login-card">
+        <img src="https://i.imgur.com/p2qZOL5.png" alt="CAB" style="height: 60px; margin-bottom: 20px;">
         <h2 style="margin-bottom: 10px; font-weight: 800;">MARKET ADMIN</h2>
         <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 30px;">Enter the system password to manage student vendors.</p>
         
@@ -319,6 +402,26 @@
         </div>
         
         <button onclick="handleLogin()" class="btn-action" style="width: 100%; padding: 15px; font-size: 1rem;">LOG IN</button>
+    </div>
+</div>
+
+<!-- DYNAMIC CHECK IN ALERT MODAL -->
+<div id="checkInAlert" class="modal-overlay" style="z-index:20002; background:rgba(0,0,0,0.95);" onclick="closeCheckInAlert()">
+    <div id="alertContentBox" class="modal-content" style="text-align:center; border: 2px solid #34C759; max-width:400px;" onclick="event.stopPropagation()">
+        <div id="alertIcon" style="font-size:4rem; margin-bottom:10px;">✅</div>
+        <h2 id="alertTitle" style="color:#34C759; margin:0; font-size:2rem; font-weight:800;">CHECKED IN</h2>
+        <div id="alertMessage" style="color:#FF9500; font-size: 1.1rem; font-weight:bold; margin-top: 15px; display:none;"></div>
+        
+        <h3 id="alertVendorName" style="color:#fff; margin:15px 0 5px 0; font-size:1.4rem;">Vendor Name</h3>
+        <h4 id="alertVendorType" style="color:var(--text-muted); margin:0 0 20px 0; text-transform:uppercase; letter-spacing:1px; font-size:0.9rem;">VIP GROUP</h4>
+        
+        <div id="vendorDetailsSection">
+            <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:15px 0;">
+            <div style="font-size:1.2rem; color:#FFD60A; font-weight:bold; letter-spacing:1px; margin-bottom:10px; display:none;" id="alertPower">⚡ NEEDS POWER</div>
+            <div style="font-size:1.2rem; color:#FF9500; font-weight:bold; letter-spacing:1px; display:none;" id="alertFood">🍔 FOOD VENDOR</div>
+        </div>
+        
+        <div style="margin-top:20px; font-size:0.8rem; color:#666; font-style:italic;">Tap anywhere or press ESC to close</div>
     </div>
 </div>
 
@@ -394,16 +497,30 @@
         <div class="review-field-label">Agreements Checked</div>
         <div class="review-field-value" id="reviewAgreements" style="min-height: 40px; white-space: pre-wrap; font-family: monospace; font-size: 0.85rem; color: #a1a1aa;">-</div>
 
-        <div class="review-field-label">Internal Notes (Admin Only)</div>
-        <div style="margin-bottom: 20px; background: rgba(255,149,0,0.05); border: 1px solid rgba(255,149,0,0.2); padding: 15px; border-radius: 12px;">
-            <textarea id="modalInternalNotes" class="modern-input" style="height: 80px; resize: vertical; margin-bottom: 10px; font-size: 0.95rem;" placeholder="Type private notes about this vendor here..."></textarea>
-            <button type="button" class="btn-action" style="padding: 8px 16px; font-size: 0.85rem; background: #FF9500; color: #000;" onclick="saveInternalNotes()">💾 Save Notes</button>
+        <!-- NEW TRELLO-STYLE COMMENT SYSTEM -->
+        <div class="review-field-label">Activity & Internal Notes</div>
+        <div style="margin-bottom: 20px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 16px; overflow: hidden;">
+            <!-- Input Area -->
+            <div style="padding: 15px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--glass-border);">
+                <textarea id="newCommentText" class="modern-input" style="height: 60px; resize: vertical; margin-bottom: 10px; font-size: 0.95rem; background: rgba(0,0,0,0.4);" placeholder="Write a comment..."></textarea>
+                <div style="display:flex; justify-content: flex-end;">
+                    <button type="button" class="btn-action" style="padding: 8px 16px; font-size: 0.85rem; background: rgba(255, 255, 255, 0.1);" onclick="saveInternalNotes()">💬 Add Comment</button>
+                </div>
+            </div>
+            <!-- Feed Area -->
+            <div id="commentFeed" style="max-height: 250px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px;">
+                <!-- Comments dynamically injected here -->
+            </div>
         </div>
 
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:30px; border-top:1px solid rgba(255,255,255,0.1); padding-top:30px; gap: 15px;">
             <button type="button" class="btn-action" style="background:var(--gradient-danger); flex: 1; padding: 16px; font-size: 1.1rem;" onclick="processReview('Denied')">❌ DENY</button>
             <button type="button" class="btn-action" style="background:rgba(255,255,255,0.1); flex: 1; padding: 16px; font-size: 1.1rem;" onclick="processReview('Needs Review')">⏳ NEEDS REVIEW</button>
             <button type="button" class="btn-action" style="background:var(--gradient-success); flex: 1; padding: 16px; font-size: 1.1rem;" onclick="processReview('Approved')">✅ APPROVE</button>
+        </div>
+        
+        <div id="reviewModalCheckInContainer">
+            <!-- Dynamic check in button injected here -->
         </div>
     </div>
 </div>
@@ -516,9 +633,39 @@
     </div>
 </div>
 
+<!-- BULK EMAIL MODAL -->
+<div id="bulkEmailModal" class="modal-overlay" style="z-index: 10005;">
+    <div class="modal-content" style="max-width: 700px; padding: 30px;">
+        <button class="close-modal" onclick="closeBulkEmailModal()">&times;</button>
+        <h2 style="margin-top:0; font-weight: 800;">Send Batch Emails</h2>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 20px;">Select the exact template to use, then check mark the specific vendors who should receive it. Approved vendors will automatically receive their unique QR Ticket Code in the email.</p>
+        
+        <label class="stat-label">1. Select Template to Send</label>
+        <select id="bulkEmailTemplate" class="modern-input" style="margin-bottom: 20px; font-weight: bold; background: rgba(0,0,0,0.5);">
+            <option value="approved">✅ Approved Template (Standard)</option>
+            <option value="power">⚡ Approved (Power Granted) Template</option>
+            <option value="power_denied">⚠️ Approved (Power Denied) Template</option>
+            <option value="denied">❌ Denied Template</option>
+        </select>
+
+        <label class="stat-label">2. Select Recipients</label>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.85rem;">
+            <button onclick="toggleAllCheckboxes(true)" style="background:transparent; border:none; color:#0A84FF; cursor:pointer; font-weight:bold;">Select All</button>
+            <button onclick="toggleAllCheckboxes(false)" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer;">Deselect All</button>
+        </div>
+        
+        <div id="bulkEmailList" style="max-height: 350px; overflow-y: auto; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 12px; margin-bottom: 20px;">
+            <!-- Vendor Checkboxes Injected Here -->
+        </div>
+
+        <button onclick="executeBulkEmail()" class="btn-action" style="width: 100%; padding: 15px; font-size: 1.1rem;">🚀 Send Selected Emails</button>
+    </div>
+</div>
+
 <div class="app-container" id="main-app">
     <div class="frosted topbar">
         <div class="brand">
+            <img src="https://i.imgur.com/p2qZOL5.png" alt="CAB Student Market" class="brand-logo">
             <div class="brand-text">
                 <h1>CAB Student Market</h1>
                 <div class="event-subtext">Active: <select id="eventDropdown" class="modern-input" style="width:auto; height:36px; padding:0 36px 0 12px; display:inline-block; font-size:0.85rem;" onchange="switchEvent(this.value)"></select></div>
@@ -533,6 +680,7 @@
             <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.2); margin: 0 2px;"></div>
             <button onclick="setFilter('profiles')" id="nav-profiles" class="control-item">👤 PROFILES</button>
             <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.2); margin: 0 2px;"></div>
+            <button onclick="toggleView('scan')" id="nav-scan" class="control-item" style="background: rgba(52, 199, 89, 0.2); border-color: rgba(52, 199, 89, 0.4); color: #34C759;">📸 CHECK IN</button>
             <button onclick="toggleView('settings')" id="nav-settings" class="control-item">⚙️ SETTINGS</button>
         </div>
     </div>
@@ -546,20 +694,40 @@
             <div class="frosted stat-card"><span class="stat-label">Denied</span><span class="stat-val" style="color:#FF3B30" id="countDenied">0</span></div>
         </div>
 
-        <div style="display:flex; gap:12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+        <div style="display:flex; gap:12px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
             <div style="display:flex; gap:12px; flex: 1; min-width: 300px;">
                 <input type="text" id="search" class="modern-input" placeholder="Search name, email, or student ID..." onkeyup="renderTable()" style="flex:1;">
             </div>
             <div>
-                <button onclick="sendBulkEmail()" id="blastBtn" class="btn-action" style="display: none;">📧 Email Unsent in Current View</button>
+                <button onclick="openBulkEmailModal()" id="blastBtn" class="btn-action">📧 Send Emails to Current View...</button>
             </div>
+        </div>
+
+        <div id="quick-filters" style="display:flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+            <button id="filter-chip-food" class="filter-chip" onclick="toggleQuickFilter('food')">🍔 Food Vendors</button>
+            <button id="filter-chip-power" class="filter-chip" onclick="toggleQuickFilter('power')">⚡ Power Requested</button>
         </div>
         
         <div class="table-container">
             <table>
-                <thead><tr><th>App # / Student ID</th><th>Name</th><th>Pref Email</th><th>Status (Quick Set)</th><th>Email Sent?</th><th>Actions</th></tr></thead>
+                <thead><tr><th>App # / Student ID</th><th>Name</th><th>Pref Email</th><th>Status (Quick Set)</th><th>Check In</th><th>Email Sent?</th><th>Actions</th></tr></thead>
                 <tbody id="vendorTableBody"></tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- VIEW: SCAN (CHECK IN) -->
+    <div id="view-scan" class="view" style="display:none;">
+        <div class="frosted form-card">
+            <h2 style="text-align:center; margin-bottom:20px; font-weight: 800;">CHECK IN VENDORS</h2>
+            <div style="margin-bottom: 30px;">
+                <label class="stat-label">Manual Check-In</label>
+                <input type="text" id="manualCheckInSearch" class="modern-input" placeholder="Search by name or student ID..." onkeyup="filterManualCheckIn()">
+                <div id="manualCheckInResults" style="margin-top: 15px; max-height: 350px; overflow-y: auto;"></div>
+            </div>
+            <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 30px 0;">
+            <label class="stat-label">Hardware Scanner Input</label>
+            <input type="text" id="hardwareInput" class="modern-input" placeholder="Ready to scan QR Code..." style="text-align:center; margin-bottom: 20px; background: rgba(10, 132, 255, 0.1); border-color: rgba(10, 132, 255, 0.3);" autocomplete="off">
         </div>
     </div>
 
@@ -581,6 +749,18 @@
     <div id="view-settings" class="view" style="display:none;">
         <div class="frosted form-card">
             <h2 class="mb-4">Market Setup</h2>
+
+            <!-- Form Access Controls -->
+            <div style="margin-bottom:30px; background: rgba(10, 132, 255, 0.05); border: 1px solid rgba(10, 132, 255, 0.2); padding: 25px; border-radius: 20px;">
+                <label class="stat-label" style="color: #0A84FF; font-size: 1rem; margin-bottom: 10px;">Public Form Access Control</label>
+                <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom: 20px;">Override the automatic schedule to manually force the public application form open or closed for late vendors.</p>
+                
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <button id="form-status-auto" onclick="setFormOverride('auto')" class="btn-action" style="background: rgba(255,255,255,0.1); color: #fff; flex: 1;">🗓️ Auto (Use Dates)</button>
+                    <button id="form-status-open" onclick="setFormOverride('open')" class="btn-action" style="background: rgba(255,255,255,0.1); color: #fff; flex: 1;">🟢 Force OPEN</button>
+                    <button id="form-status-closed" onclick="setFormOverride('closed')" class="btn-action" style="background: rgba(255,255,255,0.1); color: #fff; flex: 1;">🔴 Force CLOSED</button>
+                </div>
+            </div>
             
             <div style="margin-bottom:30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 25px; border-radius: 20px;">
                 <label class="stat-label" style="color: #BF5AF2; font-size: 1rem; margin-bottom: 20px;">Create New Market Event</label>
@@ -649,7 +829,8 @@
                     <label class="stat-label" style="margin-bottom:0;">Email Templates</label>
                     <select id="templateTypeSelector" class="modern-input" style="width:auto; height:40px; padding:0 36px 0 12px; margin:0;" onchange="switchTemplateType(this.value)">
                         <option value="approved">Approved Template</option>
-                        <option value="power">Approved (With Power) Template</option>
+                        <option value="power">Approved (Power Granted) Template</option>
+                        <option value="power_denied">Approved (Power Denied) Template</option>
                         <option value="denied">Denied Template</option>
                     </select>
                 </div>
@@ -694,8 +875,9 @@
     const SUPABASE_URL = 'https://xdfbjusrwbxoxbcocxkp.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_ylaFmuuSPD2UcKdF1yKw4g_UPXiRRef';
     
+    // API Key will be loaded securely from Supabase, with this as a fallback
     let BREVO_API_KEY = '';
-    const SENDER_EMAIL = 'noreply@cabgcu.com';
+    const SENDER_EMAIL = 'studentmarkets@cabgcu.com';
     const SENDER_NAME = 'Canyon Activities Board';
 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -704,13 +886,17 @@
     let realtimeSubscription = null;
     let currentTemplateType = 'approved';
     let activeFilter = 'inbox'; // inbox, review, approved, denied, power, profiles
+    let quickFilters = { food: false, power: false };
     let currentReviewingId = null;
     let currentEditingId = null;
     let isInitialLoad = true;
+    let alertTimeout = null;
+    let closeAnimTimeout = null;
 
     const DEFAULTS = {
         approved: { subj: "CAB Student Market: You're Approved!", body: "Hello {{FIRST}}!\n\nCongratulations, your application for {{EVENT}} has been **APPROVED**! 🎉\n\nWe are so excited to have you showcase your items at the market.\n\nMore details regarding setup time, maps, and rules will follow closer to the event date.\n\n– CAB Student Market Team" },
         power: { subj: "CAB Student Market: Approved (Power Access)", body: "Hello {{FIRST}}!\n\nCongratulations, your application for {{EVENT}} has been **APPROVED**! 🎉\n\nWe have noted your request for electricity and have secured a spot for you near a power source. Please ensure you bring your own extension cords.\n\nMore details will follow closer to the event date.\n\n– CAB Student Market Team" },
+        power_denied: { subj: "CAB Student Market: Approved (No Power Available)", body: "Hello {{FIRST}}!\n\nCongratulations, your application for {{EVENT}} has been **APPROVED**! 🎉\n\nWhile we would love to accommodate your request for power, unfortunately, all electricity spaces have been filled. You are still approved to participate, but you will not have access to a power source.\n\nMore details will follow closer to the event date.\n\n– CAB Student Market Team" },
         denied: { subj: "CAB Student Market Application Update", body: "Hello {{FIRST}},\n\nThank you so much for applying to {{EVENT}}.\n\nUnfortunately, due to overwhelming demand and limited space, we are unable to accept your application at this time.\n\nWe highly encourage you to apply for our future markets!\n\n– CAB Student Market Team" }
     };
 
@@ -736,7 +922,7 @@
         document.getElementById('main-app').style.display = 'flex';
         
         // Fetch the API Key securely from Supabase
-        const { data, error } = await _supabase.from('secrets').select('value').eq('name', 'BREVO_API_KEY').single();
+        const { data, error } = await _supabase.from('secrets').select('value').eq('name', 'BREVO_API_KEY').maybeSingle();
         if (data && data.value) {
             BREVO_API_KEY = data.value.trim();
         } else {
@@ -749,6 +935,14 @@
 
     document.getElementById('login-password').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') handleLogin();
+    });
+
+    // GLOBAL KEYDOWN LISTENER FOR CHECK IN MODAL
+    window.addEventListener('keydown', (e) => {
+        const checkInAlert = document.getElementById('checkInAlert');
+        if (checkInAlert && checkInAlert.style.display === 'flex') {
+            if (e.key === 'Escape') closeCheckInAlert();
+        }
     });
 
     async function setupRealtime() {
@@ -769,7 +963,7 @@
             currentData.allEvents = [];
             currentData.activeId = null;
             document.getElementById('eventDropdown').innerHTML = '<option>No Active Markets</option>';
-            document.getElementById('vendorTableBody').innerHTML = '<tr><td colspan="6" style="text-align:center;">No events. Create one in Settings.</td></tr>';
+            document.getElementById('vendorTableBody').innerHTML = '<tr><td colspan="7" style="text-align:center;">No events. Create one in Settings.</td></tr>';
             
             // Clear stats
             document.getElementById('countInbox').innerText = 0;
@@ -816,7 +1010,9 @@
             denSubj: activeEvent.template_denied_subject || DEFAULTS.denied.subj,
             denBody: activeEvent.template_denied_body || DEFAULTS.denied.body,
             powSubj: activeEvent.template_power_subject || DEFAULTS.power.subj,
-            powBody: activeEvent.template_power_body || DEFAULTS.power.body
+            powBody: activeEvent.template_power_body || DEFAULTS.power.body,
+            powDenSubj: activeEvent.template_power_denied_subject || DEFAULTS.power_denied.subj,
+            powDenBody: activeEvent.template_power_denied_body || DEFAULTS.power_denied.body
         };
         
         updateStats();
@@ -828,6 +1024,7 @@
 
         if (isInitialLoad && eventsData.length > 0) {
             setFilter('inbox');
+            loadFormConfig();
             isInitialLoad = false;
         } else {
             if(activeFilter === 'profiles') {
@@ -835,16 +1032,20 @@
             } else if (document.getElementById('view-list').style.display !== 'none') {
                 renderTable();
             }
+            if (document.getElementById('view-scan').style.display !== 'none') {
+                filterManualCheckIn();
+            }
         }
         
         if (!silent) document.getElementById('loader').style.display = 'none';
     }
 
     function updateStats() {
-        // Count unprocessed applications (i.e. not sorted into one of the main 3 buckets)
-        const inbox = currentData.vendors.filter(v => v.status !== 'Approved' && v.status !== 'Needs Review' && v.status !== 'Denied').length;
+        // Count unprocessed applications (i.e. not sorted into one of the main buckets)
+        const inbox = currentData.vendors.filter(v => v.status !== 'Approved' && v.status !== 'Checked In' && v.status !== 'Needs Review' && v.status !== 'Denied').length;
         const review = currentData.vendors.filter(v => v.status === 'Needs Review').length;
-        const approved = currentData.vendors.filter(v => v.status === 'Approved').length;
+        // Checked in vendors count as approved for the stats bar
+        const approved = currentData.vendors.filter(v => v.status === 'Approved' || v.status === 'Checked In').length;
         const denied = currentData.vendors.filter(v => v.status === 'Denied').length;
 
         document.getElementById('countInbox').innerText = inbox;
@@ -855,8 +1056,14 @@
 
     function setFilter(filter) {
         activeFilter = filter;
-        document.querySelectorAll('.control-item').forEach(el => el.classList.remove('active', 'active-review', 'active-approved', 'active-denied', 'active-settings', 'active-profiles'));
+        document.querySelectorAll('.control-item').forEach(el => el.classList.remove('active', 'active-review', 'active-approved', 'active-denied', 'active-settings', 'active-profiles', 'active-scan'));
+        document.querySelectorAll('.view').forEach(e => e.style.display = 'none');
         
+        // Reset quick filters on tab switch to avoid confusion
+        quickFilters = { food: false, power: false };
+        document.getElementById('filter-chip-food').classList.remove('active-filter');
+        document.getElementById('filter-chip-power').classList.remove('active-filter');
+
         const btn = document.getElementById(`nav-${filter}`);
         if(btn) {
             if (filter === 'inbox') btn.classList.add('active');
@@ -866,8 +1073,6 @@
             else if (filter === 'power') btn.classList.add('active-power', 'active');
             else if (filter === 'profiles') btn.classList.add('active-profiles');
         }
-
-        document.querySelectorAll('.view').forEach(e => e.style.display = 'none');
         
         if (filter === 'profiles') {
             document.getElementById('view-profiles').style.display = 'block';
@@ -879,12 +1084,71 @@
     }
 
     function toggleView(v) {
+        // Unset all active classes and hide views
+        document.querySelectorAll('.control-item').forEach(e => e.classList.remove('active', 'active-review', 'active-approved', 'active-denied', 'active-settings', 'active-profiles', 'active-scan'));
+        document.querySelectorAll('.view').forEach(e => e.style.display = 'none');
+        
         if (v === 'settings') {
-            document.querySelectorAll('.control-item').forEach(e => e.classList.remove('active', 'active-review', 'active-approved', 'active-denied', 'active-settings', 'active-profiles'));
             document.getElementById('nav-settings').classList.add('active-settings');
-            document.querySelectorAll('.view').forEach(e => e.style.display = 'none');
             document.getElementById('view-settings').style.display = 'block';
+        } else if (v === 'scan') {
+            document.getElementById('nav-scan').classList.add('active-scan');
+            document.getElementById('view-scan').style.display = 'block';
+            filterManualCheckIn();
+            setTimeout(() => document.getElementById('hardwareInput').focus(), 100);
         }
+    }
+
+    function toggleQuickFilter(type) {
+        quickFilters[type] = !quickFilters[type];
+        document.getElementById(`filter-chip-${type}`).classList.toggle('active-filter', quickFilters[type]);
+        renderTable();
+    }
+
+    // FORM STATUS OVERRIDE LOGIC
+    async function loadFormConfig() {
+        const { data } = await _supabase.from('secrets').select('value').eq('name', 'MARKET_FORM_CONFIG_V3').maybeSingle();
+        let status = 'auto';
+        if (data && data.value) {
+            const config = JSON.parse(data.value);
+            if (config.forceStatus) status = config.forceStatus;
+        }
+        updateFormStatusUI(status);
+    }
+
+    function updateFormStatusUI(status) {
+        document.querySelectorAll('#form-status-auto, #form-status-open, #form-status-closed').forEach(btn => {
+            btn.style.background = 'rgba(255,255,255,0.1)';
+            btn.style.boxShadow = 'none';
+        });
+        
+        const activeBtn = document.getElementById(`form-status-${status}`);
+        if (activeBtn) {
+            if (status === 'auto') activeBtn.style.background = 'var(--gradient-accent)';
+            if (status === 'open') activeBtn.style.background = 'var(--gradient-success)';
+            if (status === 'closed') activeBtn.style.background = 'var(--gradient-danger)';
+            activeBtn.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
+        }
+    }
+
+    async function setFormOverride(status) {
+        updateFormStatusUI(status);
+        showToast("Updating form status...");
+        
+        const { data: secData } = await _supabase.from('secrets').select('value').eq('name', 'MARKET_FORM_CONFIG_V3').maybeSingle();
+        let configToSave = {};
+        if (secData && secData.value) configToSave = JSON.parse(secData.value);
+        
+        configToSave.forceStatus = status;
+        const valStr = JSON.stringify(configToSave);
+
+        // Avoid upsert unique constraint requirement by doing a two-step update/insert
+        let { data, error } = await _supabase.from('secrets').update({ value: valStr }).eq('name', 'MARKET_FORM_CONFIG_V3').select();
+        if (!error && (!data || data.length === 0)) {
+            await _supabase.from('secrets').insert([{ name: 'MARKET_FORM_CONFIG_V3', value: valStr }]);
+        }
+        
+        showToast(`✅ Form status set to: ${status.toUpperCase()}`);
     }
 
     // VENDOR PROFILES LOGIC (Last 5 Months)
@@ -973,6 +1237,78 @@
         }
     }
 
+    // --- JSON PARSING FOR TRELLO-STYLE COMMENTS ---
+    function getParsedNotes(noteStr) {
+        if (!noteStr || noteStr.trim() === '') return [];
+        try {
+            const parsed = JSON.parse(noteStr);
+            if (Array.isArray(parsed)) return parsed;
+        } catch (e) {
+            // Support legacy plain-text notes seamlessly without breaking previous data
+        }
+        
+        // Wrap the old string inside an array so it can render natively
+        return [{
+            id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substr(2, 9),
+            date: new Date().toISOString(), // Fallback
+            text: noteStr,
+            author: 'Legacy Data',
+            type: 'legacy'
+        }];
+    }
+
+    function formatCommentDate(isoStr) {
+        if (!isoStr) return '';
+        const d = new Date(isoStr);
+        if (isNaN(d)) return isoStr; // Return as-is if parsing fails
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    }
+
+    function renderCommentsFeed(vendor) {
+        const feedEl = document.getElementById('commentFeed');
+        const comments = getParsedNotes(vendor.internal_notes);
+
+        if (comments.length === 0) {
+            feedEl.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 20px 0;">No comments yet.</div>';
+            return;
+        }
+
+        feedEl.innerHTML = comments.map(c => {
+            let icon = '👤';
+            let authorName = c.author || 'Admin';
+            let badgeHtml = '';
+
+            // Handle System Status Changes dynamically
+            if (c.type === 'status_change') {
+                icon = '⚙️';
+                if (c.status === 'Denied') {
+                    badgeHtml = '<span style="background: rgba(255,59,48,0.2); color: #FF3B30; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 6px;">❌ Denied</span>';
+                }
+                if (c.status === 'Needs Review') {
+                    badgeHtml = '<span style="background: rgba(255,149,0,0.2); color: #FF9500; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 6px;">⏳ Needs Review</span>';
+                }
+            } else if (c.type === 'legacy') {
+                icon = '🗄️';
+            }
+
+            return `
+            <div class="comment-card">
+                <div class="comment-header">
+                    <div class="comment-author">
+                        <span>${icon}</span> ${authorName} ${badgeHtml}
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span>${formatCommentDate(c.date)}</span>
+                        <button class="comment-delete" onclick="deleteComment('${vendor.id}', '${c.id}')" title="Delete Comment">🗑️</button>
+                    </div>
+                </div>
+                <div class="comment-text">${c.text}</div>
+            </div>
+            `;
+        }).join('');
+    }
+    // ----------------------------------------------
+
     // Handles the inline quick status change
     async function quickStatus(id, newStatus) {
         const vendor = currentData.vendors.find(v => v.id === id);
@@ -981,11 +1317,14 @@
         let targetStatus = newStatus;
         
         // UNSELECT: If they click the same status that is already active, revert to Inbox/Pending
-        if (vendor.status === newStatus) {
+        // (Even if they are currently Checked In, clicking Approved will unselect and send back to Pending)
+        if (vendor.status === newStatus || (newStatus === 'Approved' && vendor.status === 'Checked In')) {
             targetStatus = 'Pending';
         }
         
         let updates = { status: targetStatus };
+        const oldStatus = vendor.status;
+        const oldNotes = vendor.internal_notes;
 
         // Enforce required internal comment for specific statuses
         if (targetStatus === 'Needs Review' || targetStatus === 'Denied') {
@@ -995,28 +1334,33 @@
                 return false;
             }
             
-            // Format log entry
-            const timestamp = new Date().toLocaleString();
-            const formattedNote = `[${timestamp}] (${targetStatus}): ${reason.trim()}`;
-            updates.internal_notes = vendor.internal_notes ? `${formattedNote}\n\n${vendor.internal_notes}` : formattedNote;
+            // Format log entry as structured JSON instead of flat string
+            let comments = getParsedNotes(vendor.internal_notes);
+            const statusComment = {
+                id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substr(2, 9),
+                date: new Date().toISOString(),
+                text: reason.trim(),
+                author: 'System',
+                type: 'status_change',
+                status: targetStatus
+            };
+            
+            comments.unshift(statusComment);
+            updates.internal_notes = JSON.stringify(comments);
         }
 
         // Optimistic UI Update
-        const oldStatus = vendor.status;
-        const oldNotes = vendor.internal_notes;
-
         vendor.status = targetStatus;
         if (updates.internal_notes) {
             vendor.internal_notes = updates.internal_notes;
-            // Update modal text area live if it's currently open
-            const modalNotesEl = document.getElementById('modalInternalNotes');
-            if (modalNotesEl && currentReviewingId === id) {
-                modalNotesEl.value = vendor.internal_notes;
+            if (currentReviewingId === id) {
+                renderCommentsFeed(vendor);
             }
         }
         
         updateStats();
         renderTable(); 
+        if (document.getElementById('view-scan').style.display !== 'none') filterManualCheckIn();
         
         // Background DB sync
         const { error } = await _supabase.from('vendors').update(updates).eq('id', id);
@@ -1027,14 +1371,178 @@
             vendor.status = oldStatus;
             vendor.internal_notes = oldNotes;
             if (currentReviewingId === id) {
-                const modalNotesEl = document.getElementById('modalInternalNotes');
-                if (modalNotesEl) modalNotesEl.value = oldNotes || '';
+                renderCommentsFeed(vendor);
             }
             refreshData(null, true);
             return false;
         }
         return true;
     }
+
+    // --- CHECK IN LOGIC ---
+    function closeCheckInAlert() { 
+        const alertEl = document.getElementById('checkInAlert');
+        if (alertEl && alertEl.style.display === 'flex') {
+            alertEl.style.opacity = '0';
+            if (closeAnimTimeout) clearTimeout(closeAnimTimeout);
+            closeAnimTimeout = setTimeout(() => {
+                alertEl.style.display = 'none';
+            }, 300); 
+        }
+        if (alertTimeout) {
+            clearTimeout(alertTimeout);
+            alertTimeout = null;
+        }
+    }
+
+    function showScanModal(type, title, message, vendor) {
+        if (closeAnimTimeout) clearTimeout(closeAnimTimeout);
+
+        const box = document.getElementById('alertContentBox');
+        const icon = document.getElementById('alertIcon');
+        const titleEl = document.getElementById('alertTitle');
+        const nameEl = document.getElementById('alertVendorName');
+        const typeEl = document.getElementById('alertVendorType');
+        const msgEl = document.getElementById('alertMessage');
+        const detailsSec = document.getElementById('vendorDetailsSection');
+        const powerEl = document.getElementById('alertPower');
+        const foodEl = document.getElementById('alertFood');
+
+        nameEl.style.display = vendor ? 'block' : 'none';
+        typeEl.style.display = vendor ? 'block' : 'none';
+        msgEl.style.display = message ? 'block' : 'none';
+        
+        titleEl.innerText = title;
+        if (message) msgEl.innerText = message;
+        
+        if (vendor) {
+            nameEl.innerText = `${vendor.first_name} ${vendor.last_name}`;
+            typeEl.innerText = "Student Vendor";
+            
+            let showDetails = false;
+            if (vendor.needs_power === 'Yes') { powerEl.style.display = 'block'; showDetails = true; } else { powerEl.style.display = 'none'; }
+            if (vendor.food_license && vendor.food_license.toLowerCase() === 'yes') { foodEl.style.display = 'block'; showDetails = true; } else { foodEl.style.display = 'none'; }
+            detailsSec.style.display = showDetails ? 'block' : 'none';
+        } else {
+            detailsSec.style.display = 'none';
+        }
+
+        // Apply styles based on status
+        if (type === 'success') {
+            box.style.borderColor = '#34C759';
+            titleEl.style.color = '#34C759';
+            icon.innerText = '✅';
+            msgEl.style.color = '#34C759';
+        } else if (type === 'warning') {
+            box.style.borderColor = '#FF9500';
+            titleEl.style.color = '#FF9500';
+            icon.innerText = '⚠️';
+            msgEl.style.color = '#FF9500';
+        } else if (type === 'error') {
+            box.style.borderColor = '#FF3B30';
+            titleEl.style.color = '#FF3B30';
+            icon.innerText = '❌';
+            msgEl.style.color = '#FF3B30';
+        }
+
+        const alertModal = document.getElementById('checkInAlert');
+        alertModal.style.display = 'flex';
+        setTimeout(() => { alertModal.style.opacity = '1'; }, 10);
+
+        if (alertTimeout) clearTimeout(alertTimeout);
+        const duration = type === 'success' ? 4000 : 5500;
+        alertTimeout = setTimeout(() => { closeCheckInAlert(); }, duration);
+    }
+
+    async function checkIn(id, isScan = false, el = null) {
+        const vendor = currentData.vendors.find(v => v.id === id);
+        
+        // 1. NOT FOUND / INVALID
+        if (!vendor) {
+            if (isScan) showScanModal('error', 'INVALID TICKET', 'Vendor not found in system.', null);
+            return;
+        }
+
+        // 2. ALREADY CHECKED IN
+        if (isScan && vendor.status === 'Checked In') {
+            showScanModal('warning', 'ALREADY SCANNED', 'This vendor has already been checked in.', vendor);
+            return; 
+        }
+
+        // Prevent check ins for denied/pending apps via scanner
+        if (isScan && vendor.status !== 'Approved') {
+            showScanModal('error', 'NOT APPROVED', 'This application is not marked as Approved.', vendor);
+            return;
+        }
+
+        // 3. TOGGLE OR CHECK IN
+        const newStatus = (vendor.status === 'Checked In' && !isScan) ? 'Approved' : 'Checked In';
+        
+        // Update UI Button optimistically if it exists (manual check in)
+        if (el) { 
+            el.style.background = newStatus === 'Checked In' ? 'var(--gradient-success)' : ''; 
+            el.innerText = newStatus === 'Checked In' ? '✓ IN' : 'MARK'; 
+        }
+        
+        await _supabase.from('vendors').update({ status: newStatus }).eq('id', id);
+        
+        vendor.status = newStatus;
+        refreshData(null, true);
+        
+        if (newStatus === 'Checked In') {
+            showScanModal('success', 'CHECKED IN', null, vendor);
+        }
+    }
+
+    function filterManualCheckIn() {
+        const val = document.getElementById("manualCheckInSearch").value.toUpperCase();
+        const res = document.getElementById("manualCheckInResults");
+        if (!res) return;
+        res.innerHTML = "";
+        
+        if (!val) {
+            res.innerHTML = '<div style="color:var(--text-muted); text-align:center; padding: 20px;">Type a name or student ID to search all vendors...</div>';
+            return;
+        }
+        
+        // Search through all vendors instead of just approved ones so it's not confusing
+        const matched = currentData.vendors.filter(v => {
+            const searchStr = `${v.first_name || ''} ${v.last_name || ''} ${v.student_id || ''}`.toUpperCase();
+            return searchStr.includes(val);
+        });
+        
+        if (matched.length === 0) {
+            res.innerHTML = '<div style="color:var(--text-muted); text-align:center; padding: 20px;">No vendors found matching that search.</div>';
+            return;
+        }
+
+        matched.forEach(v => {
+            const d = document.createElement('div');
+            d.className = "manual-result-item";
+            const foodBadge = (v.food_license && v.food_license.toLowerCase() === 'yes') ? '🍔 ' : '';
+            const powerBadge = v.needs_power === 'Yes' ? '⚡ ' : '';
+
+            let btnHtml = '';
+            if (v.status === 'Approved' || v.status === 'Checked In') {
+                btnHtml = `<button class="btn-action" style="padding: 6px 16px; font-size: 0.8rem; ${v.status === 'Checked In' ? 'background:var(--gradient-success)' : ''}" onclick="checkIn('${v.id}', false, this)">${v.status === 'Checked In' ? '✓ IN' : 'MARK IN'}</button>`;
+            } else {
+                // If they show up but aren't approved, show their status clearly instead of a button
+                btnHtml = `<span style="color: #FF3B30; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; padding-right: 10px;">${v.status}</span>`;
+            }
+
+            d.innerHTML = `<div><strong>${v.first_name} ${v.last_name}</strong><br><small style="color:var(--text-muted);">${foodBadge}${powerBadge} ID: ${v.student_id || 'N/A'}</small></div>${btnHtml}`;
+            res.appendChild(d);
+        });
+    }
+
+    document.getElementById('hardwareInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { 
+            e.preventDefault();
+            e.stopPropagation();
+            checkIn(this.value.trim().split('id=')[1]?.split('&')[0] || this.value.trim(), true); 
+            this.value = ''; 
+        }
+    });
 
     // Shared data cleaner to extract junk out of the Comments field
     function extractCleanData(vendor) {
@@ -1065,33 +1573,21 @@
         return { finalComments, dbAgreements };
     }
 
-    function renderTable() {
+    function getFilteredVendorsForCurrentView() {
         const search = document.getElementById('search').value.toLowerCase();
         
-        // Dynamically update the bulk email button based on the active tab
-        const blastBtn = document.getElementById('blastBtn');
-        if (activeFilter === 'approved') {
-            blastBtn.style.display = 'block';
-            blastBtn.innerText = '📧 Send Approved Emails (Unsent)';
-        } else if (activeFilter === 'denied') {
-            blastBtn.style.display = 'block';
-            blastBtn.innerText = '📧 Send Denied Emails (Unsent)';
-        } else if (activeFilter === 'power') {
-            blastBtn.style.display = 'block';
-            blastBtn.innerText = '📧 Send Power Emails (Unsent)';
-        } else {
-            blastBtn.style.display = 'none';
-        }
-        
-        let filtered = currentData.vendors.filter(v => {
+        return currentData.vendors.filter(v => {
             // Apply Tab Filter
-            if (activeFilter === 'inbox' && (v.status === 'Approved' || v.status === 'Needs Review' || v.status === 'Denied')) return false;
+            if (activeFilter === 'inbox' && (v.status === 'Approved' || v.status === 'Checked In' || v.status === 'Needs Review' || v.status === 'Denied')) return false;
             if (activeFilter === 'review' && v.status !== 'Needs Review') return false;
-            if (activeFilter === 'approved' && v.status !== 'Approved') return false;
+            // Treat Checked In as part of the Approved views
+            if (activeFilter === 'approved' && v.status !== 'Approved' && v.status !== 'Checked In') return false;
             if (activeFilter === 'denied' && v.status !== 'Denied') return false;
-            
-            // NEW POWER LOGIC: Only show Approved vendors who need power
-            if (activeFilter === 'power' && (v.status !== 'Approved' || v.needs_power !== 'Yes')) return false;
+            if (activeFilter === 'power' && ((v.status !== 'Approved' && v.status !== 'Checked In') || v.needs_power !== 'Yes')) return false;
+
+            // Apply Quick Filters
+            if (quickFilters.food && (!v.food_license || v.food_license.toLowerCase() !== 'yes')) return false;
+            if (quickFilters.power && v.needs_power !== 'Yes') return false;
 
             // Apply Search Filter
             if (search) {
@@ -1100,19 +1596,39 @@
             }
             return true;
         });
+    }
+
+    function renderTable() {
+        const filtered = getFilteredVendorsForCurrentView();
+        
+        // Dynamically update the bulk email button visibility and text
+        const blastBtn = document.getElementById('blastBtn');
+        if (activeFilter === 'approved') {
+            blastBtn.style.display = 'inline-block';
+            blastBtn.innerText = '📧 Send Approved Emails...';
+        } else if (activeFilter === 'denied') {
+            blastBtn.style.display = 'inline-block';
+            blastBtn.innerText = '📧 Send Denied Emails...';
+        } else if (activeFilter === 'power') {
+            blastBtn.style.display = 'inline-block';
+            blastBtn.innerText = '📧 Send Power Emails...';
+        } else {
+            blastBtn.style.display = 'none';
+        }
 
         const tbody = document.getElementById('vendorTableBody');
         
         if (filtered.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px;">No applications found in this view.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px;">No applications found in this view.</td></tr>';
             return;
         }
 
         const generateRowHtml = (v) => {
             // Interactive status toggle UI
+            const isAppr = v.status === 'Approved' || v.status === 'Checked In';
             const statusToggle = `
                 <div class="status-toggle-group" onclick="event.stopPropagation()">
-                    <button onclick="quickStatus('${v.id}', 'Approved')" class="btn-quick-status ${v.status === 'Approved' ? 'active-approve' : ''}" title="${v.status === 'Approved' ? 'Unselect Approved' : 'Mark as Approved'}">✅</button>
+                    <button onclick="quickStatus('${v.id}', 'Approved')" class="btn-quick-status ${isAppr ? 'active-approve' : ''}" title="${isAppr ? 'Unselect Approved' : 'Mark as Approved'}">✅</button>
                     <button onclick="quickStatus('${v.id}', 'Needs Review')" class="btn-quick-status ${v.status === 'Needs Review' ? 'active-review' : ''}" title="${v.status === 'Needs Review' ? 'Unselect Needs Review' : 'Mark as Needs Review'}">⏳</button>
                     <button onclick="quickStatus('${v.id}', 'Denied')" class="btn-quick-status ${v.status === 'Denied' ? 'active-deny' : ''}" title="${v.status === 'Denied' ? 'Unselect Denied' : 'Mark as Denied'}">❌</button>
                 </div>
@@ -1121,15 +1637,24 @@
             const powerTag = v.needs_power === 'Yes' ? `<br><span class="power-tag">⚡ Needs Power</span>` : '';
             const emailSentBadge = v.email_sent === 'Yes' ? `<span class="status-badge sent">✉️ SENT</span>` : `<span class="status-badge draft">⚠️ UNSENT</span>`;
             
+            // Adaptive Food Label
+            const foodBadge = (v.food_license && v.food_license.toLowerCase() === 'yes') ? `<span style="font-size: 0.75rem; background: rgba(255, 149, 0, 0.2); color: #FF9500; padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: 700;">🍔 Food</span>` : '';
+
+            // Check In UI for table
+            const checkInCell = isAppr
+                ? `<button onclick="checkIn('${v.id}', false, this); event.stopPropagation();" class="btn-action" style="padding: 6px 12px; font-size: 0.8rem; ${v.status === 'Checked In' ? 'background:var(--gradient-success)' : ''}">${v.status === 'Checked In' ? '✓ IN' : 'MARK'}</button>`
+                : `<span style="color:var(--text-muted); font-size:0.75rem; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">${v.status}</span>`;
+
             // Only show the individual email icon on valid tabs
             const canEmail = (activeFilter === 'approved' || activeFilter === 'denied' || activeFilter === 'power');
 
             return `
             <tr class="clickable-row" onclick="openReviewModal('${v.id}')">
                 <td><span style="color: #BF5AF2; font-weight: 800; margin-right: 8px; font-size: 1.1rem;">#${v.appNumber}</span><br><span style="font-family: monospace; letter-spacing: 1px; font-size: 0.85rem; color: var(--text-muted);">${v.student_id || 'N/A'}</span></td>
-                <td><strong>${v.first_name} ${v.last_name}</strong>${powerTag}</td>
+                <td><strong>${v.first_name} ${v.last_name}</strong>${foodBadge}${powerTag}</td>
                 <td><a href="mailto:${v.preferred_email}" onclick="event.stopPropagation()" style="color:var(--text-muted);">${v.preferred_email}</a><br><small style="color:var(--text-muted); opacity: 0.5;">${v.gcu_email || ''}</small></td>
                 <td>${statusToggle}</td>
+                <td>${checkInCell}</td>
                 <td>${emailSentBadge}</td>
                 <td>
                     <div class="action-wrapper" onclick="event.stopPropagation()">
@@ -1142,7 +1667,6 @@
             `;
         };
 
-        // Render naturally (no more nested groups since Power is only Approved now)
         tbody.innerHTML = filtered.map(v => generateRowHtml(v)).join('');
     }
 
@@ -1156,11 +1680,12 @@
         
         let tagsHtml = '';
         if (vendor.status === 'Needs Review') tagsHtml += `<span class="status-pill review" style="font-size: 0.85rem;">⏳ Needs Review</span>`;
-        else if (vendor.status === 'Approved') tagsHtml += `<span class="status-pill approved" style="font-size: 0.85rem;">✅ Approved</span>`;
+        else if (vendor.status === 'Approved' || vendor.status === 'Checked In') tagsHtml += `<span class="status-pill approved" style="font-size: 0.85rem;">✅ Approved</span>`;
         else if (vendor.status === 'Denied') tagsHtml += `<span class="status-pill denied" style="font-size: 0.85rem;">❌ Denied</span>`;
         
         if (vendor.needs_power === 'Yes') tagsHtml += `<span class="power-tag" style="margin-top:0; font-size: 0.85rem;">⚡ Power Requested</span>`;
-        
+        if (vendor.status === 'Checked In') tagsHtml += `<span class="status-pill approved" style="font-size: 0.85rem; margin-left: 8px;">📍 Checked In</span>`;
+
         document.getElementById('reviewTags').innerHTML = tagsHtml;
 
         // Core fields
@@ -1207,8 +1732,9 @@
             fLinkEl.innerHTML = `<span style="color:var(--text-muted);">N/A</span>`;
         }
         
-        // Load Internal Notes into textarea
-        document.getElementById('modalInternalNotes').value = vendor.internal_notes || '';
+        // Setup Trello Style Comments View
+        document.getElementById('newCommentText').value = '';
+        renderCommentsFeed(vendor);
 
         const linkEl = document.getElementById('reviewLink');
         if (vendor.link) {
@@ -1218,24 +1744,83 @@
             linkEl.innerHTML = `<span style="color:var(--text-muted);">No link provided</span>`;
         }
 
+        // Add Giant Check In Button to Review Modal if Approved
+        const checkInContainer = document.getElementById('reviewModalCheckInContainer');
+        if (vendor.status === 'Approved' || vendor.status === 'Checked In') {
+            const isCheckedIn = vendor.status === 'Checked In';
+            checkInContainer.innerHTML = `
+                <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px;">
+                    <button type="button" class="btn-action" style="width: 100%; padding: 20px; font-size: 1.2rem; font-weight: 800; ${isCheckedIn ? 'background: var(--gradient-success); color: white;' : 'background: rgba(52, 199, 89, 0.1); border: 2px solid #34C759; color: #34C759;'}" onclick="checkIn('${vendor.id}'); closeReviewModal();">
+                        ${isCheckedIn ? '✅ VENDOR CHECKED IN (Click to Undo)' : '📸 CHECK IN VENDOR NOW'}
+                    </button>
+                </div>
+            `;
+        } else {
+            checkInContainer.innerHTML = '';
+        }
+
         document.getElementById('reviewModal').style.display = 'flex';
     }
 
     async function saveInternalNotes() {
         if (!currentReviewingId) return;
         const id = currentReviewingId;
-        const notes = document.getElementById('modalInternalNotes').value;
+        const inputEl = document.getElementById('newCommentText');
+        const text = inputEl.value.trim();
+        
+        if (!text) return; // Prevent empty comments
+
         const vendor = currentData.vendors.find(v => v.id === id);
+        let comments = getParsedNotes(vendor.internal_notes);
         
-        if (vendor) vendor.internal_notes = notes;
+        const newComment = {
+            id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substr(2, 9),
+            date: new Date().toISOString(),
+            text: text,
+            author: 'Admin',
+            type: 'manual'
+        };
+
+        comments.unshift(newComment);
+        const newNotesStr = JSON.stringify(comments);
         
-        showToast("Saving note...");
-        const { error } = await _supabase.from('vendors').update({ internal_notes: notes }).eq('id', id);
+        // Optimistic UX 
+        vendor.internal_notes = newNotesStr;
+        inputEl.value = '';
+        renderCommentsFeed(vendor);
+        showToast("Saving comment...");
+
+        const { error } = await _supabase.from('vendors').update({ internal_notes: newNotesStr }).eq('id', id);
         if (error) {
             console.error(error);
-            showToast("⚠️ Error saving note");
+            showToast("⚠️ Error saving comment");
+            refreshData(null, true); // Revert UI gracefully on error
         } else {
-            showToast("✅ Note saved!");
+            showToast("✅ Comment added!");
+        }
+    }
+
+    async function deleteComment(vendorId, commentId) {
+        if (!confirm("Are you sure you want to permanently delete this comment?")) return;
+        
+        const vendor = currentData.vendors.find(v => v.id === vendorId);
+        if (!vendor) return;
+
+        let comments = getParsedNotes(vendor.internal_notes);
+        comments = comments.filter(c => c.id !== commentId);
+
+        const newNotesStr = JSON.stringify(comments);
+        
+        // Optimistic delete
+        vendor.internal_notes = newNotesStr;
+        renderCommentsFeed(vendor);
+        
+        const { error } = await _supabase.from('vendors').update({ internal_notes: newNotesStr }).eq('id', vendorId);
+        if (error) {
+            showToast("⚠️ Error deleting comment");
+            refreshData(null, true);
+        } else {
+            showToast("🗑️ Comment deleted");
         }
     }
 
@@ -1366,26 +1951,38 @@
     }
 
     // EMAIL ENGINE
-    function getTemplateDetails(vendor) {
+    function getTemplateDetails(vendor, forceTemplateId = null) {
         let subj = '', body = '';
-        if (vendor.status === 'Approved') {
-            if (vendor.needs_power === 'Yes') {
-                subj = currentData.powSubj; body = currentData.powBody;
+        let targetTemplate = forceTemplateId;
+
+        // Auto-infer template if not forced by the bulk modal
+        if (!targetTemplate) {
+            if (vendor.status === 'Approved' || vendor.status === 'Checked In') {
+                targetTemplate = (vendor.needs_power === 'Yes') ? 'power' : 'approved';
+            } else if (vendor.status === 'Denied') {
+                targetTemplate = 'denied';
             } else {
-                subj = currentData.apprSubj; body = currentData.apprBody;
+                return null;
             }
-        } else if (vendor.status === 'Denied') {
-            subj = currentData.denSubj; body = currentData.denBody;
-        } else {
-            return null; // Don't send emails to Needs Review
         }
+
+        if (targetTemplate === 'approved') {
+            subj = currentData.apprSubj; body = currentData.apprBody;
+        } else if (targetTemplate === 'power') {
+            subj = currentData.powSubj; body = currentData.powBody;
+        } else if (targetTemplate === 'power_denied') {
+            subj = currentData.powDenSubj; body = currentData.powDenBody;
+        } else if (targetTemplate === 'denied') {
+            subj = currentData.denSubj; body = currentData.denBody;
+        }
+
         return { subj, body };
     }
 
-    async function sendSingleEmail(vendor) {
+    async function sendSingleEmail(vendor, forceTemplateId = null) {
         if (!vendor || !vendor.preferred_email || vendor.status === 'Needs Review' || vendor.status === 'Pending') return false;
 
-        const templates = getTemplateDetails(vendor);
+        const templates = getTemplateDetails(vendor, forceTemplateId);
         if (!templates) return false;
 
         // Parse placeholders
@@ -1403,8 +2000,34 @@
         // HTML Builder
         const bannerHtml = finalBannerUrl ? `<tr><td align="center" style="padding: 0;"><img src="${finalBannerUrl}" alt="Banner" width="600" style="display: block; width: 100%; max-width: 100%; height: auto; border: 0;"></td></tr>` : "";
         
-        let statusColor = vendor.status === 'Approved' ? '#34C759' : '#FF3B30';
-        let statusBadge = vendor.status === 'Approved' ? 'APPROVED' : 'STATUS UPDATE';
+        let statusColor = (vendor.status === 'Approved' || vendor.status === 'Checked In') ? '#34C759' : '#FF3B30';
+        let statusBadge = (vendor.status === 'Approved' || vendor.status === 'Checked In') ? 'APPROVED' : 'STATUS UPDATE';
+
+        // Only include QR code if the vendor is approved
+        const isApproved = vendor.status === 'Approved' || vendor.status === 'Checked In';
+        const barcodeData = vendor.id; // Consistent QR Ticket Code
+        const barcodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + barcodeData + "&format=png&bgcolor=FFFFFF&color=000000&margin=10";
+        
+        const qrHtml = isApproved ? `
+            <tr>
+                <td style="padding: 0 15px; background-color: #ffffff;">
+                    <div style="border-top: 2px dashed #e5e7eb; width: 100%; height: 1px;"></div>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" style="padding: 40px 30px; background-color: #ffffff;">
+                    <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                        <tr>
+                            <td align="center" style="background: #ffffff; padding: 25px; border-radius: 16px; border: 2px solid #eeeeee;">
+                                <img src="${barcodeUrl}" alt="Ticket QR Code" width="250" height="250" style="display: block; margin: 0 auto; box-sizing: border-box; border: 0; max-width: 100%; height: auto; background-color: #ffffff !important; padding: 10px; border-radius: 8px;">
+                            </td>
+                        </tr>
+                    </table>
+                    <p style="margin: 25px 0 0 0; font-size: 14px; color: #1a1a1a; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-family: sans-serif;">SCAN AT CHECK-IN</p>
+                    <p style="margin: 8px 0 0 0; font-size: 12px; color: #888888; font-family: monospace;">ID: #${String(barcodeData).substring(0,8).toUpperCase()}</p>
+                </td>
+            </tr>
+        ` : '';
 
         const htmlContent = `
         <!DOCTYPE html>
@@ -1427,6 +2050,7 @@
                                     ${htmlBodyStr}
                                 </td>
                             </tr>
+                            ${qrHtml}
                             <tr>
                                 <td align="center" style="background-color: #f9fafb; padding: 20px; border-top: 1px solid #eaeaea;">
                                     <p style="margin: 0; font-size: 12px; font-weight: 600; color: #aaa; text-transform: uppercase;">&copy; Canyon Activities Board</p>
@@ -1497,29 +2121,73 @@
         refreshData(null, true);
     }
 
-    async function sendBulkEmail() { 
+    // --- BULK EMAIL MODAL LOGIC ---
+    function openBulkEmailModal() {
         if (activeFilter === 'inbox' || activeFilter === 'review') {
-            alert("You cannot send emails from the Applications or Needs Review tabs. Please select Approved, Denied, or Needs Power.");
+            showToast("Cannot send emails from this tab.");
             return;
         }
-        
-        // Get vendors in CURRENT view that are NOT 'Needs Review', 'Pending', and NOT 'email_sent' = 'Yes'
-        let targetVendors = currentData.vendors.filter(v => {
-            if (v.status === 'Needs Review' || v.status === 'Pending' || v.email_sent === 'Yes') return false;
-            
-            if (activeFilter === 'approved' && v.status !== 'Approved') return false;
-            if (activeFilter === 'denied' && v.status !== 'Denied') return false;
-            if (activeFilter === 'power' && v.needs_power !== 'Yes') return false;
-            return true;
-        });
 
-        if (targetVendors.length === 0) {
-            alert("No eligible unsent vendors in this view. \n\nNote: You cannot send emails to 'Needs Review' status.");
+        if (activeFilter === 'approved') {
+            const needsReviewCount = currentData.vendors.filter(v => v.status === 'Needs Review').length;
+            if (needsReviewCount > 0) {
+                const bypass = confirm(`⚠️ WARNING: There are still ${needsReviewCount} vendor(s) in "Needs Review".\n\nAre you sure you want to proceed with sending Approved emails before reviewing everyone?`);
+                if (!bypass) return;
+            }
+        }
+
+        const filteredVendors = getFilteredVendorsForCurrentView();
+        const eligibleVendors = filteredVendors.filter(v => v.status !== 'Needs Review' && v.status !== 'Pending');
+
+        if (eligibleVendors.length === 0) {
+            showToast("No eligible vendors found in this view.");
+            return;
+        }
+
+        const listEl = document.getElementById('bulkEmailList');
+        listEl.innerHTML = eligibleVendors.map(v => {
+            const isSent = v.email_sent === 'Yes';
+            const sentBadge = isSent ? `<span style="color:#34C759; font-size:0.8rem; margin-left:8px;">[Already Sent]</span>` : `<span style="color:#FF9F0A; font-size:0.8rem; margin-left:8px;">[Unsent]</span>`;
+            const powerBadge = v.needs_power === 'Yes' ? ' ⚡' : '';
+            const foodBadge = (v.food_license && v.food_license.toLowerCase() === 'yes') ? ' 🍔' : '';
+            
+            return `
+            <div class="vendor-checkbox-item">
+                <input type="checkbox" id="chk-${v.id}" class="bulk-vendor-checkbox" value="${v.id}" ${!isSent ? 'checked' : ''}>
+                <label for="chk-${v.id}"><strong>${v.first_name} ${v.last_name}</strong>${powerBadge}${foodBadge} ${sentBadge}</label>
+            </div>
+            `;
+        }).join('');
+
+        // Auto-select template based on active tab
+        if (activeFilter === 'power') document.getElementById('bulkEmailTemplate').value = 'power';
+        else if (activeFilter === 'denied') document.getElementById('bulkEmailTemplate').value = 'denied';
+        else document.getElementById('bulkEmailTemplate').value = 'approved';
+
+        document.getElementById('bulkEmailModal').style.display = 'flex';
+    }
+
+    function closeBulkEmailModal() {
+        document.getElementById('bulkEmailModal').style.display = 'none';
+    }
+
+    function toggleAllCheckboxes(state) {
+        document.querySelectorAll('.bulk-vendor-checkbox').forEach(cb => cb.checked = state);
+    }
+
+    async function executeBulkEmail() { 
+        const templateId = document.getElementById('bulkEmailTemplate').value;
+        const checkboxes = document.querySelectorAll('.bulk-vendor-checkbox:checked');
+        const vendorIds = Array.from(checkboxes).map(cb => cb.value);
+
+        if (vendorIds.length === 0) {
+            showToast("No vendors selected.");
             return;
         }
         
-        if(!confirm(`You are about to send ${targetVendors.length} emails to the vendors in this list.\n\nThe system will automatically select the Approved, Denied, or Power template based on their status.\n\nClick OK to send!`)) return;
+        if(!confirm(`You are about to send ${vendorIds.length} emails using the selected template.\n\nClick OK to confirm and send.`)) return;
         
+        closeBulkEmailModal();
         let successCount = 0;
         let failCount = 0;
         let isUnauthorized = false;
@@ -1527,12 +2195,14 @@
         document.getElementById('loader').style.display = 'flex';
         const loaderText = document.querySelector('#loader span');
         
+        const targetVendors = vendorIds.map(id => currentData.vendors.find(v => v.id === id)).filter(Boolean);
+
         const BATCH_SIZE = 10;
         for (let i = 0; i < targetVendors.length; i += BATCH_SIZE) {
             if (isUnauthorized) break;
             
             const batch = targetVendors.slice(i, i + BATCH_SIZE);
-            const results = await Promise.all(batch.map(v => sendSingleEmail(v)));
+            const results = await Promise.all(batch.map(v => sendSingleEmail(v, templateId)));
             
             for (const success of results) {
                 if (success === 'unauthorized') isUnauthorized = true;
@@ -1569,6 +2239,7 @@
         if (currentTemplateType === 'approved') { subjInput.value = currentData.apprSubj; bodyInput.value = currentData.apprBody; }
         else if (currentTemplateType === 'denied') { subjInput.value = currentData.denSubj; bodyInput.value = currentData.denBody; }
         else if (currentTemplateType === 'power') { subjInput.value = currentData.powSubj; bodyInput.value = currentData.powBody; }
+        else if (currentTemplateType === 'power_denied') { subjInput.value = currentData.powDenSubj; bodyInput.value = currentData.powDenBody; }
         
         updatePreview();
     }
@@ -1608,10 +2279,32 @@
         const bannerUrl = document.getElementById('bannerUrlInput')?.value || "";
         const headingText = document.getElementById('headingTextInput')?.value || "Market Status Update";
         
-        let statusColor = currentTemplateType === 'approved' || currentTemplateType === 'power' ? '#34C759' : '#FF3B30';
-        let statusBadge = currentTemplateType === 'approved' || currentTemplateType === 'power' ? 'APPROVED' : 'STATUS UPDATE';
+        let statusColor = currentTemplateType === 'approved' || currentTemplateType === 'power' || currentTemplateType === 'power_denied' ? '#34C759' : '#FF3B30';
+        let statusBadge = currentTemplateType === 'approved' || currentTemplateType === 'power' || currentTemplateType === 'power_denied' ? 'APPROVED' : 'STATUS UPDATE';
 
         const bannerHtml = bannerUrl ? `<tr><td align="center" style="padding: 0;"><img src="${bannerUrl}" alt="Banner" width="600" style="display: block; width: 100%; max-width: 100%; height: auto; border: 0;"></td></tr>` : "";
+        
+        const barcodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=PREVIEW1&format=png&bgcolor=FFFFFF&color=000000&margin=10";
+        const qrHtml = currentTemplateType !== 'denied' ? `
+            <tr>
+                <td style="padding: 0 15px; background-color: #ffffff;">
+                    <div style="border-top: 2px dashed #e5e7eb; width: 100%; height: 1px;"></div>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" style="padding: 40px 30px; background-color: #ffffff;">
+                    <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                        <tr>
+                            <td align="center" style="background: #ffffff; padding: 25px; border-radius: 16px; border: 2px solid #eeeeee;">
+                                <img src="${barcodeUrl}" alt="Ticket QR Code" width="250" height="250" style="display: block; margin: 0 auto; box-sizing: border-box; border: 0; max-width: 100%; height: auto; background-color: #ffffff !important; padding: 10px; border-radius: 8px;">
+                            </td>
+                        </tr>
+                    </table>
+                    <p style="margin: 25px 0 0 0; font-size: 14px; color: #1a1a1a; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-family: sans-serif;">SCAN AT CHECK-IN</p>
+                    <p style="margin: 8px 0 0 0; font-size: 12px; color: #888888; font-family: monospace;">ID: #PREVIEW1</p>
+                </td>
+            </tr>
+        ` : '';
 
         previewIframe.srcdoc = `
         <body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif;">
@@ -1624,6 +2317,7 @@
                     </td>
                 </tr>
                 <tr><td style="padding: 0 30px 30px 30px; font-size: 14px; color: #333; line-height: 1.6;">${text}</td></tr>
+                ${qrHtml}
             </table>
         </body>`;
     }
@@ -1639,10 +2333,21 @@
         if (currentTemplateType === 'approved') { updates.template_approved_body = body; updates.template_approved_subject = subj; }
         else if (currentTemplateType === 'denied') { updates.template_denied_body = body; updates.template_denied_subject = subj; }
         else if (currentTemplateType === 'power') { updates.template_power_body = body; updates.template_power_subject = subj; }
+        else if (currentTemplateType === 'power_denied') { updates.template_power_denied_body = body; updates.template_power_denied_subject = subj; }
         
-        await _supabase.from('events').update(updates).eq('id', currentData.activeId);
-        showToast(`✅ Template Saved!`);
-        refreshData(null, true);
+        const { error } = await _supabase.from('events').update(updates).eq('id', currentData.activeId);
+        
+        if (error) {
+            console.error(error);
+            if (error.message.includes("column")) {
+                alert("Database Note: You need to run a quick SQL command to save the 'Power Denied' template.\n\nRun this in the Supabase SQL Editor:\nALTER TABLE events ADD COLUMN template_power_denied_subject TEXT, ADD COLUMN template_power_denied_body TEXT;");
+            } else {
+                showToast("⚠️ Error saving template");
+            }
+        } else {
+            showToast(`✅ Template Saved!`);
+            refreshData(null, true);
+        }
     }
 
     async function createNewEvent() { 
@@ -1680,6 +2385,8 @@
         
         const powBody = `Hello {{FIRST}}!\n\nCongratulations, your application for {{EVENT}} on ${fDate} has been **APPROVED**! 🎉\n\nWe have noted your request for electricity and have secured a spot for you near a power source. Please ensure you bring your own extension cords.\n\n**Please reply to this email to confirm your spot by ${fConfirm}.**\n\nMore details will follow closer to the event date.\n\n– CAB Student Market Team`;
 
+        const powDenBody = `Hello {{FIRST}}!\n\nCongratulations, your application for {{EVENT}} on ${fDate} has been **APPROVED**! 🎉\n\nWhile we would love to accommodate your request for power, unfortunately, all electricity spaces have been filled. You are still approved to participate, but you will not have access to a power source.\n\n**Please reply to this email to confirm your spot by ${fConfirm}.**\n\nMore details will follow closer to the event date.\n\n– CAB Student Market Team`;
+
         const { data, error } = await _supabase.from('events').insert([{ 
             name: name, 
             market_date: date,
@@ -1695,6 +2402,8 @@
             template_denied_subject: DEFAULTS.denied.subj,
             template_power_body: powBody, 
             template_power_subject: DEFAULTS.power.subj,
+            template_power_denied_body: powDenBody,
+            template_power_denied_subject: DEFAULTS.power_denied.subj,
             banner_url: "", heading_text: "Market Status Update"
         }]).select(); 
 
@@ -1721,10 +2430,13 @@
             
             configToSave.title = newTitle;
             configToSave.description = newDesc;
+            const valStr = JSON.stringify(configToSave);
 
-            await _supabase.from('secrets').upsert([
-                { name: 'MARKET_FORM_CONFIG_V3', value: JSON.stringify(configToSave) }
-            ], { onConflict: 'name' });
+            // Avoid upsert unique constraint requirement
+            let { data: updData, error: updErr } = await _supabase.from('secrets').update({ value: valStr }).eq('name', 'MARKET_FORM_CONFIG_V3').select();
+            if (!updErr && (!updData || updData.length === 0)) {
+                await _supabase.from('secrets').insert([{ name: 'MARKET_FORM_CONFIG_V3', value: valStr }]);
+            }
 
             // Reset UI Form
             document.querySelectorAll('#evName, #evDate, #evTime, #evLocation, #evOpen, #evClose, #evContact, #evConfirm').forEach(el => el.value = '');
