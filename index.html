@@ -411,12 +411,55 @@
     <div id="view-settings" class="view" style="display:none;">
         <div class="frosted form-card">
             <h2 class="mb-4">Market Setup</h2>
-            <div style="margin-bottom:30px;">
-                <label class="stat-label">Create New Market Event</label>
-                <div style="display:flex; gap:12px;">
-                    <input type="text" id="newEventName" class="modern-input" placeholder="e.g. Spring 2026 Market">
-                    <button onclick="createNewEvent()" class="btn-action">Create</button>
+            
+            <div style="margin-bottom:30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 25px; border-radius: 20px;">
+                <label class="stat-label" style="color: #BF5AF2; font-size: 1rem; margin-bottom: 20px;">Create New Market Event</label>
+                
+                <div class="form-grid" style="gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <label class="stat-label">Student Market Name *</label>
+                        <input type="text" id="evName" class="modern-input" placeholder="e.g. Spring 2026 Market">
+                    </div>
+                    <div>
+                        <label class="stat-label">Location *</label>
+                        <input type="text" id="evLocation" class="modern-input" placeholder="e.g. Prescott Field">
+                    </div>
                 </div>
+
+                <div class="form-grid" style="gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <label class="stat-label">Date of Market *</label>
+                        <input type="date" id="evDate" class="modern-input">
+                    </div>
+                    <div>
+                        <label class="stat-label">Time *</label>
+                        <input type="text" id="evTime" class="modern-input" placeholder="e.g. 6:30-9:00pm">
+                    </div>
+                </div>
+
+                <div class="form-grid" style="gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <label class="stat-label">App Opens (Date/Time) *</label>
+                        <input type="datetime-local" id="evOpen" class="modern-input">
+                    </div>
+                    <div>
+                        <label class="stat-label">App Closes Deadline (Date/Time) *</label>
+                        <input type="datetime-local" id="evClose" class="modern-input">
+                    </div>
+                </div>
+
+                <div class="form-grid" style="gap: 20px; margin-bottom: 25px;">
+                    <div>
+                        <label class="stat-label">Vendor Contact Date *</label>
+                        <input type="date" id="evContact" class="modern-input">
+                    </div>
+                    <div>
+                        <label class="stat-label">Vendor Confirm Deadline *</label>
+                        <input type="date" id="evConfirm" class="modern-input">
+                    </div>
+                </div>
+
+                <button onclick="createNewEvent()" class="btn-action" style="width: 100%; padding: 15px; font-size: 1.1rem;">Create Event & Update Public Application Form</button>
             </div>
             
             <div style="margin-bottom:30px; padding: 20px; border: 1px solid rgba(255, 59, 48, 0.3); border-radius: 16px; background: rgba(255, 59, 48, 0.05);">
@@ -478,7 +521,6 @@
 
 <script>
     // SUPABASE SETUP
-    // IMPORTANT: Make sure your Supabase matches the new table schema ('vendors' table)
     const SUPABASE_URL = 'https://xdfbjusrwbxoxbcocxkp.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_ylaFmuuSPD2UcKdF1yKw4g_UPXiRRef';
     
@@ -573,7 +615,7 @@
             activeId: activeId,
             activeEventName: activeEvent.name || "Student Market",
             bannerUrl: activeEvent.banner_url || "",
-            headingText: activeEvent.heading_text || "Market Update",
+            headingText: activeEvent.heading_text || "Market Status Update",
             
             // Map the event templates. Fallback to DEFAULTS
             apprSubj: activeEvent.template_approved_subject || DEFAULTS.approved.subj,
@@ -1035,21 +1077,92 @@
     }
 
     async function createNewEvent() { 
-        const name = document.getElementById('newEventName').value;
-        if(name) { 
-            const { data } = await _supabase.from('events').insert([{ 
-                name: name, 
-                template_approved_body: DEFAULTS.approved.body, template_approved_subject: DEFAULTS.approved.subj,
-                template_denied_body: DEFAULTS.denied.body, template_denied_subject: DEFAULTS.denied.subj,
-                template_power_body: DEFAULTS.power.body, template_power_subject: DEFAULTS.power.subj,
-                banner_url: "", heading_text: "Market Status Update"
-            }]).select(); 
-            if(data && data[0]) {
-                document.getElementById('newEventName').value = "";
-                refreshData(data[0].id); 
-                showToast("Market Created!"); 
+        const name = document.getElementById('evName').value.trim();
+        const date = document.getElementById('evDate').value;
+        const time = document.getElementById('evTime').value.trim();
+        const location = document.getElementById('evLocation').value.trim();
+        const open = document.getElementById('evOpen').value;
+        const close = document.getElementById('evClose').value;
+        const contact = document.getElementById('evContact').value;
+        const confirm = document.getElementById('evConfirm').value;
+
+        if(!name || !date || !time || !location || !open || !close || !contact || !confirm) {
+            return alert("Please fill in all event details to create a new market.");
+        }
+
+        // Format dates nicely for text parsing
+        const formatDate = (dStr) => {
+            if(!dStr) return '';
+            const d = new Date(dStr + 'T12:00:00'); // Force midday to avoid timezone shift
+            return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        };
+        const formatDateTime = (dtStr) => {
+            if(!dtStr) return '';
+            const d = new Date(dtStr);
+            return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }) + ' at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        };
+
+        const fDate = formatDate(date);
+        const fContact = formatDate(contact);
+        const fConfirm = formatDate(confirm);
+        const fClose = formatDateTime(close);
+
+        const apprBody = `Hello {{FIRST}}!\n\nCongratulations, your application for {{EVENT}} on ${fDate} has been **APPROVED**! 🎉\n\nWe are so excited to have you showcase your items at the market.\n\n**Please reply to this email to confirm your spot by ${fConfirm}.**\n\nMore details regarding setup time, maps, and rules will follow closer to the event date.\n\n– CAB Student Market Team`;
+        
+        const powBody = `Hello {{FIRST}}!\n\nCongratulations, your application for {{EVENT}} on ${fDate} has been **APPROVED**! 🎉\n\nWe have noted your request for electricity and have secured a spot for you near a power source. Please ensure you bring your own extension cords.\n\n**Please reply to this email to confirm your spot by ${fConfirm}.**\n\nMore details will follow closer to the event date.\n\n– CAB Student Market Team`;
+
+        const { data, error } = await _supabase.from('events').insert([{ 
+            name: name, 
+            market_date: date,
+            market_time: time,
+            location: location,
+            app_open: open,
+            app_close: close,
+            contact_date: contact,
+            confirm_date: confirm,
+            template_approved_body: apprBody, 
+            template_approved_subject: DEFAULTS.approved.subj,
+            template_denied_body: DEFAULTS.denied.body, 
+            template_denied_subject: DEFAULTS.denied.subj,
+            template_power_body: powBody, 
+            template_power_subject: DEFAULTS.power.subj,
+            banner_url: "", heading_text: "Market Status Update"
+        }]).select(); 
+
+        if(error) {
+            if(error.message.includes("column")) {
+                alert("Database Error: You need to run the provided SQL command in Supabase to add the new date/time columns to your 'events' table.");
+            } else {
+                alert("Error creating event.");
             }
-        } 
+            console.error(error);
+            return;
+        }
+
+        if(data && data[0]) {
+            // AUTOMATICALLY GENERATE PUBLIC APPLICATION FORM DESCRIPTION
+            const newTitle = `${name} Vendor Application`;
+            const newDesc = `Hello! Thank you for your interest in applying to a CAB student Market for the 2025-2026 school year! CAB Applications for the ${name}.<br><br><strong>Date of Market:</strong> ${fDate}<br><strong>Time:</strong> ${time}<br><strong>Location:</strong> ${location}<br><br>This application will close on ${fClose}.<br>Select vendors will be contacted via email on ${fContact}.<br>Respond to confirm your spot by ${fConfirm}.`;
+
+            const { data: secData } = await _supabase.from('secrets').select('value').eq('name', 'MARKET_FORM_CONFIG_V3').maybeSingle();
+            let configToSave = {};
+            if (secData && secData.value) {
+                configToSave = JSON.parse(secData.value);
+            }
+            
+            configToSave.title = newTitle;
+            configToSave.description = newDesc;
+
+            await _supabase.from('secrets').upsert([
+                { name: 'MARKET_FORM_CONFIG_V3', value: JSON.stringify(configToSave) }
+            ], { onConflict: 'name' });
+
+            // Reset UI Form
+            document.querySelectorAll('#evName, #evDate, #evTime, #evLocation, #evOpen, #evClose, #evContact, #evConfirm').forEach(el => el.value = '');
+            
+            refreshData(data[0].id); 
+            showToast("Market Created & App Updated!"); 
+        }
     }
 
     async function deleteCurrentEvent() {
