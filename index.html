@@ -115,19 +115,19 @@
         .brand { display: flex; align-items: center; gap: 16px; }
         .brand-logo { height: 50px; width: auto; display: block; }
         .brand-text h1 {
-            font-size: 1.4rem; font-weight: 800; margin: 0;
+            font-size: 1.25rem; font-weight: 800; margin: 0;
             background: var(--gradient-accent);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             line-height: 1.2;
         }
 
         .event-subtext { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-        .controls { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .controls { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
 
         .control-item {
             background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: #fff;
-            padding: 0 16px; border-radius: var(--radius-button); font-weight: 600; height: 40px;
-            display: flex; align-items: center; cursor: pointer; transition: 0.2s; font-size: 0.85rem;
+            padding: 0 12px; border-radius: var(--radius-button); font-weight: 600; height: 38px;
+            display: flex; align-items: center; cursor: pointer; transition: 0.2s; font-size: 0.75rem;
         }
         .control-item:hover { background: rgba(255,255,255,0.1); }
         .control-item.active { background: var(--gradient-accent); border: none; box-shadow: 0 8px 20px rgba(10, 132, 255, 0.2); }
@@ -137,6 +137,7 @@
         .control-item.active-approved { background: var(--gradient-success); border: none; box-shadow: 0 8px 20px rgba(52, 199, 89, 0.2); }
         .control-item.active-denied { background: var(--gradient-danger); border: none; box-shadow: 0 8px 20px rgba(255, 59, 48, 0.2); }
         .control-item.active-settings { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); }
+        .control-item.active-profiles { background: #BF5AF2; border: none; box-shadow: 0 8px 20px rgba(191, 90, 242, 0.2); }
 
         .stats-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 20px; }
         .stat-card { padding: 24px; border-radius: var(--radius-card); text-align: center; transition: transform 0.3s ease; }
@@ -161,6 +162,9 @@
         td { padding: 20px 16px; background: rgba(255, 255, 255, 0.03); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); vertical-align: middle; }
         td:first-child { border-left: 1px solid var(--glass-border); border-top-left-radius: 16px; border-bottom-left-radius: 16px; }
         td:last-child { border-right: 1px solid var(--glass-border); border-top-right-radius: 16px; border-bottom-right-radius: 16px; }
+
+        .clickable-row { cursor: pointer; transition: all 0.2s ease; }
+        .clickable-row:hover td { background: rgba(255, 255, 255, 0.08); }
 
         .group-tag { font-size: 0.75rem; font-weight: 700; color: #BF5AF2; display: inline-block; text-transform: uppercase; background: rgba(191, 90, 242, 0.1); padding: 4px 8px; border-radius: 6px; }
         .power-tag { font-size: 0.75rem; font-weight: 700; color: #FFD60A; display: inline-block; text-transform: uppercase; background: rgba(255, 214, 10, 0.15); padding: 4px 8px; border-radius: 6px; margin-top: 4px; }
@@ -282,8 +286,8 @@
             .topbar { flex-direction: column; gap: 16px; text-align: center; padding: 16px; margin-top: 10px; margin-bottom: 20px; }
             .brand { flex-direction: column; gap: 8px; }
             .brand-logo { height: 40px; } .brand-text h1 { font-size: 1.2rem; }
-            .controls { flex-wrap: wrap; justify-content: center; width: 100%; gap: 8px; }
-            .control-item { font-size: 0.8rem; padding: 0 12px; height: 36px; flex: 1 1 auto; justify-content: center; }
+            .controls { flex-wrap: wrap; justify-content: center; width: 100%; gap: 6px; }
+            .control-item { font-size: 0.75rem; padding: 0 10px; height: 36px; flex: 1 1 auto; justify-content: center; }
             .stats-container { grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
             .stat-card { padding: 16px; } .stat-val { font-size: 1.8rem; }
             table, thead, tbody, th, td, tr { display: block; }
@@ -319,8 +323,8 @@
 </div>
 
 <!-- REVIEW VENDOR MODAL -->
-<div id="reviewModal" class="modal-overlay">
-    <div class="modal-content">
+<div id="reviewModal" class="modal-overlay" onclick="closeReviewModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
         <button class="close-modal" onclick="closeReviewModal()">&times;</button>
         <h2 style="margin-top:0; margin-bottom:5px; font-weight: 800; font-size: 1.8rem;" id="reviewName">Vendor Name</h2>
         <div style="display:flex; gap:10px; margin-bottom: 20px;" id="reviewTags">
@@ -349,6 +353,9 @@
         <div class="review-field-label">Vendor / Project Description</div>
         <div class="review-field-value" id="reviewDesc" style="min-height: 80px; white-space: pre-wrap;">-</div>
 
+        <div class="review-field-label" id="reviewInternalNotesLabel" style="display: none;">Internal Notes / Reason</div>
+        <div class="review-field-value" id="reviewInternalNotes" style="display: none; min-height: 40px; white-space: pre-wrap; background: rgba(255,149,0,0.1); border-color: rgba(255,149,0,0.3); color: #FF9500;">-</div>
+
         <div class="review-field-label">Social Media / Website</div>
         <div class="review-field-value" id="reviewLink">
             <a href="#" target="_blank" style="color: #0A84FF; text-decoration: none; font-weight: bold;">-</a>
@@ -371,12 +378,14 @@
             </div>
         </div>
         <div class="controls">
-            <button onclick="setFilter('all')" id="nav-all" class="control-item active">📋 ALL APPLIED</button>
-            <button onclick="setFilter('review')" id="nav-review" class="control-item">⏳ NEEDS REVIEW</button>
+            <button onclick="setFilter('all')" id="nav-all" class="control-item">📋 APPLICATIONS</button>
             <button onclick="setFilter('approved')" id="nav-approved" class="control-item">✅ APPROVED</button>
-            <button onclick="setFilter('denied')" id="nav-denied" class="control-item">❌ DENIED</button>
+            <button onclick="setFilter('review')" id="nav-review" class="control-item">⏳ NEEDS REVIEW</button>
             <button onclick="setFilter('power')" id="nav-power" class="control-item">⚡ NEEDS POWER</button>
-            <div style="width: 1px; height: 30px; background: rgba(255,255,255,0.2); margin: 0 8px;"></div>
+            <button onclick="setFilter('denied')" id="nav-denied" class="control-item">❌ DENIED</button>
+            <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.2); margin: 0 2px;"></div>
+            <button onclick="setFilter('profiles')" id="nav-profiles" class="control-item">👤 PROFILES</button>
+            <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.2); margin: 0 2px;"></div>
             <button onclick="toggleView('settings')" id="nav-settings" class="control-item">⚙️ SETTINGS</button>
         </div>
     </div>
@@ -403,6 +412,20 @@
             <table>
                 <thead><tr><th>Student ID</th><th>Name</th><th>Pref Email</th><th>Status (Quick Set)</th><th>Email Sent?</th><th>Actions</th></tr></thead>
                 <tbody id="vendorTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- VIEW: VENDOR PROFILES ARCHIVE -->
+    <div id="view-profiles" class="view" style="display:none;">
+        <div style="margin-bottom: 20px;">
+            <h2 style="margin:0; font-weight: 800;">Vendor Profiles</h2>
+            <p style="color:var(--text-muted); font-size: 0.95rem; margin-top: 5px;">Showing unique vendors from the last 5 months across all events.</p>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead><tr><th>Student ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Most Recent Application</th><th>Total Apps</th></tr></thead>
+                <tbody id="profilesTableBody"></tbody>
             </table>
         </div>
     </div>
@@ -533,8 +556,9 @@
     let currentData = { vendors: [], allEvents: [], activeId: "" };
     let realtimeSubscription = null;
     let currentTemplateType = 'approved';
-    let activeFilter = 'all'; // all, review, approved, denied, power
+    let activeFilter = 'all'; // all, review, approved, denied, power, profiles
     let currentReviewingId = null;
+    let isInitialLoad = true;
 
     const DEFAULTS = {
         approved: { subj: "CAB Student Market: You're Approved!", body: "Hello {{FIRST}}!\n\nCongratulations, your application for {{EVENT}} has been **APPROVED**! 🎉\n\nWe are so excited to have you showcase your items at the market.\n\nMore details regarding setup time, maps, and rules will follow closer to the event date.\n\n– CAB Student Market Team" },
@@ -592,8 +616,21 @@
         
         // Load Events
         const { data: eventsData, error: eventErr } = await _supabase.from('events').select('*');
+        
         if (eventErr || !eventsData || eventsData.length === 0) {
-            console.warn("No events found. You need to create an event.");
+            currentData.allEvents = [];
+            currentData.activeId = null;
+            document.getElementById('eventDropdown').innerHTML = '<option>No Active Markets</option>';
+            document.getElementById('vendorTableBody').innerHTML = '<tr><td colspan="6" style="text-align:center;">No events. Create one in Settings.</td></tr>';
+            
+            // Clear stats
+            document.getElementById('countTotal').innerText = 0;
+            document.getElementById('countReview').innerText = 0;
+            document.getElementById('countApproved').innerText = 0;
+            document.getElementById('countDenied').innerText = 0;
+
+            toggleView('settings');
+            showToast("No active markets. Please create one.");
             if (!silent) document.getElementById('loader').style.display = 'none';
             return;
         }
@@ -617,7 +654,6 @@
             bannerUrl: activeEvent.banner_url || "",
             headingText: activeEvent.heading_text || "Market Status Update",
             
-            // Map the event templates. Fallback to DEFAULTS
             apprSubj: activeEvent.template_approved_subject || DEFAULTS.approved.subj,
             apprBody: activeEvent.template_approved_body || DEFAULTS.approved.body,
             denSubj: activeEvent.template_denied_subject || DEFAULTS.denied.subj,
@@ -627,11 +663,22 @@
         };
         
         updateStats();
-        renderTable();
-        loadTemplateToEditor();
         
         const dropdown = document.getElementById('eventDropdown');
         if (dropdown) dropdown.innerHTML = currentData.allEvents.map(e => `<option value="${e.id}" ${e.id == currentData.activeId ? 'selected' : ''}>${e.name}</option>`).join('');
+        
+        loadTemplateToEditor();
+
+        if (isInitialLoad && eventsData.length > 0) {
+            setFilter('all');
+            isInitialLoad = false;
+        } else {
+            if(activeFilter === 'profiles') {
+                fetchAndRenderProfiles();
+            } else if (document.getElementById('view-list').style.display !== 'none') {
+                renderTable();
+            }
+        }
         
         if (!silent) document.getElementById('loader').style.display = 'none';
     }
@@ -650,9 +697,7 @@
 
     function setFilter(filter) {
         activeFilter = filter;
-        document.querySelectorAll('.control-item').forEach(el => {
-            el.className = 'control-item'; // reset
-        });
+        document.querySelectorAll('.control-item').forEach(el => el.classList.remove('active', 'active-review', 'active-approved', 'active-denied', 'active-settings', 'active-profiles'));
         
         const btn = document.getElementById(`nav-${filter}`);
         if(btn) {
@@ -661,40 +706,139 @@
             else if (filter === 'approved') btn.classList.add('active-approved');
             else if (filter === 'denied') btn.classList.add('active-denied');
             else if (filter === 'power') btn.classList.add('active-power', 'active');
+            else if (filter === 'profiles') btn.classList.add('active-profiles');
         }
 
         document.querySelectorAll('.view').forEach(e => e.style.display = 'none');
-        document.getElementById('view-list').style.display = 'block';
-
-        renderTable();
+        
+        if (filter === 'profiles') {
+            document.getElementById('view-profiles').style.display = 'block';
+            fetchAndRenderProfiles();
+        } else {
+            document.getElementById('view-list').style.display = 'block';
+            renderTable();
+        }
     }
 
     function toggleView(v) {
         if (v === 'settings') {
-            document.querySelectorAll('.control-item').forEach(e => e.className = 'control-item');
+            document.querySelectorAll('.control-item').forEach(e => e.classList.remove('active', 'active-review', 'active-approved', 'active-denied', 'active-settings', 'active-profiles'));
             document.getElementById('nav-settings').classList.add('active-settings');
             document.querySelectorAll('.view').forEach(e => e.style.display = 'none');
             document.getElementById('view-settings').style.display = 'block';
         }
     }
 
+    // VENDOR PROFILES LOGIC (Last 5 Months)
+    async function fetchAndRenderProfiles() {
+        document.getElementById('loader').style.display = 'flex';
+        
+        // Calculate date 5 months ago
+        const fiveMonthsAgo = new Date();
+        fiveMonthsAgo.setMonth(fiveMonthsAgo.getMonth() - 5);
+        const isoDate = fiveMonthsAgo.toISOString();
+
+        // Fetch all events to map their names
+        let eventMap = {};
+        if (currentData.allEvents && currentData.allEvents.length > 0) {
+            currentData.allEvents.forEach(e => eventMap[e.id] = e.name);
+        } else {
+            const { data: allEvs } = await _supabase.from('events').select('id, name');
+            if(allEvs) allEvs.forEach(e => eventMap[e.id] = e.name);
+        }
+
+        // Fetch vendors from the last 5 months
+        const { data, error } = await _supabase.from('vendors')
+            .select('*')
+            .gte('created_at', isoDate)
+            .order('created_at', { ascending: false });
+
+        if (error) { 
+            console.error(error); 
+            document.getElementById('loader').style.display = 'none';
+            return; 
+        }
+
+        // Group by email (case-insensitive) to create unique profiles
+        const profilesMap = {};
+        data.forEach(v => {
+            const email = (v.preferred_email || '').toLowerCase().trim();
+            if (!email) return;
+
+            if (!profilesMap[email]) {
+                profilesMap[email] = {
+                    ...v,
+                    appCount: 1,
+                    lastEvent: eventMap[v.event_id] || 'Unknown Event'
+                };
+            } else {
+                profilesMap[email].appCount++;
+            }
+        });
+
+        const profiles = Object.values(profilesMap);
+        
+        const tbody = document.getElementById('profilesTableBody');
+        if (profiles.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No vendor profiles found in the last 5 months.</td></tr>';
+        } else {
+            tbody.innerHTML = profiles.map(p => `
+                <tr>
+                    <td style="font-family: monospace; letter-spacing: 1px;">${p.student_id || 'N/A'}</td>
+                    <td><strong>${p.first_name} ${p.last_name}</strong></td>
+                    <td><a href="mailto:${p.preferred_email}" style="color:var(--text-muted);">${p.preferred_email}</a></td>
+                    <td>${p.phone || 'N/A'}</td>
+                    <td>${p.lastEvent}</td>
+                    <td><span class="status-badge sent" style="background: rgba(191, 90, 242, 0.1); border-color: rgba(191, 90, 242, 0.3); color: #BF5AF2;">${p.appCount} Apps</span></td>
+                </tr>
+            `).join('');
+        }
+        document.getElementById('loader').style.display = 'none';
+    }
+
     // Handles the inline quick status change
     async function quickStatus(id, newStatus) {
         const vendor = currentData.vendors.find(v => v.id === id);
-        if (!vendor || vendor.status === newStatus) return;
+        if (!vendor || vendor.status === newStatus) return false;
         
+        let updates = { status: newStatus };
+        
+        // Enforce required internal comment for specific statuses
+        if (newStatus === 'Needs Review' || newStatus === 'Denied') {
+            const reason = prompt(`INTERNAL USE ONLY:\nPlease enter a reason for marking this application as ${newStatus}. This is required.`);
+            if (reason === null || reason.trim() === '') {
+                showToast("Action cancelled: Comment is required.");
+                return false;
+            }
+            updates.internal_notes = reason.trim();
+        }
+
         // Optimistic UI Update
+        const oldStatus = vendor.status;
+        const oldNotes = vendor.internal_notes;
+        
         vendor.status = newStatus;
+        if(updates.internal_notes) vendor.internal_notes = updates.internal_notes;
+        
         updateStats();
         renderTable(); 
         
         // Background DB sync
-        const { error } = await _supabase.from('vendors').update({ status: newStatus }).eq('id', id);
+        const { error } = await _supabase.from('vendors').update(updates).eq('id', id);
         if (error) {
             console.error(error);
-            showToast("⚠️ Error updating status in database");
-            refreshData(null, true); // Revert UI if it fails
+            if(error.message.includes("internal_notes")) {
+                alert("Database Error: You need to add an 'internal_notes' (text) column to your 'vendors' table in Supabase.");
+            } else {
+                showToast("⚠️ Error updating status in database");
+            }
+            // Revert on failure
+            vendor.status = oldStatus;
+            vendor.internal_notes = oldNotes;
+            refreshData(null, true);
+            return false;
         }
+        return true;
     }
 
     function renderTable() {
@@ -716,11 +860,17 @@
         });
 
         const tbody = document.getElementById('vendorTableBody');
+        
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px;">No applications found in this view.</td></tr>';
+            return;
+        }
+
         tbody.innerHTML = filtered.map(v => {
             
             // Interactive status toggle UI
             const statusToggle = `
-                <div class="status-toggle-group">
+                <div class="status-toggle-group" onclick="event.stopPropagation()">
                     <button onclick="quickStatus('${v.id}', 'Approved')" class="btn-quick-status ${v.status === 'Approved' ? 'active-approve' : ''}" title="Mark as Approved">✅</button>
                     <button onclick="quickStatus('${v.id}', 'Needs Review')" class="btn-quick-status ${v.status === 'Needs Review' ? 'active-review' : ''}" title="Mark as Needs Review">⏳</button>
                     <button onclick="quickStatus('${v.id}', 'Denied')" class="btn-quick-status ${v.status === 'Denied' ? 'active-deny' : ''}" title="Mark as Denied">❌</button>
@@ -731,15 +881,14 @@
             const emailSentBadge = v.email_sent === 'Yes' ? `<span class="status-badge sent">✉️ SENT</span>` : `<span class="status-badge draft">⚠️ UNSENT</span>`;
 
             return `
-            <tr>
+            <tr class="clickable-row" onclick="openReviewModal('${v.id}')">
                 <td style="font-family: monospace; letter-spacing: 1px;">${v.student_id || 'N/A'}</td>
                 <td><strong>${v.first_name} ${v.last_name}</strong>${powerTag}</td>
-                <td><a href="mailto:${v.preferred_email}" style="color:var(--text-muted);">${v.preferred_email}</a><br><small style="color:var(--text-muted); opacity: 0.5;">${v.gcu_email || ''}</small></td>
+                <td><a href="mailto:${v.preferred_email}" onclick="event.stopPropagation()" style="color:var(--text-muted);">${v.preferred_email}</a><br><small style="color:var(--text-muted); opacity: 0.5;">${v.gcu_email || ''}</small></td>
                 <td>${statusToggle}</td>
                 <td>${emailSentBadge}</td>
                 <td>
-                    <div class="action-wrapper">
-                        <button onclick="openReviewModal('${v.id}')" class="btn-icon" title="Review Full Application">👁️</button>
+                    <div class="action-wrapper" onclick="event.stopPropagation()">
                         <button onclick="resendEmail('${v.id}')" class="btn-icon" title="Send Status Email" style="${v.status === 'Needs Review' ? 'opacity:0.3; pointer-events:none;' : ''}">📩</button>
                         <button onclick="deleteVendor('${v.id}')" class="btn-icon" style="color:#FF3B30;" title="Delete">🗑️</button>
                     </div>
@@ -773,6 +922,18 @@
         
         document.getElementById('reviewDesc').innerText = vendor.description || 'No description provided.';
         
+        // Show internal notes if they exist
+        const notesEl = document.getElementById('reviewInternalNotes');
+        const notesLabel = document.getElementById('reviewInternalNotesLabel');
+        if (vendor.internal_notes) {
+            notesEl.innerText = vendor.internal_notes;
+            notesEl.style.display = 'block';
+            notesLabel.style.display = 'block';
+        } else {
+            notesEl.style.display = 'none';
+            notesLabel.style.display = 'none';
+        }
+
         const linkEl = document.getElementById('reviewLink');
         if (vendor.link) {
             let validUrl = vendor.link.startsWith('http') ? vendor.link : `https://${vendor.link}`;
@@ -792,10 +953,14 @@
     async function processReview(newStatus) {
         if (!currentReviewingId) return;
         const id = currentReviewingId;
-        closeReviewModal();
         
-        await quickStatus(id, newStatus);
-        showToast(`Marked as ${newStatus}`);
+        // Wait for quickStatus to finish properly before closing
+        const success = await quickStatus(id, newStatus);
+        
+        if (success !== false) {
+            closeReviewModal();
+            showToast(`Marked as ${newStatus}`);
+        }
     }
 
     async function deleteVendor(id) {
@@ -1160,18 +1325,15 @@
             // Reset UI Form
             document.querySelectorAll('#evName, #evDate, #evTime, #evLocation, #evOpen, #evClose, #evContact, #evConfirm').forEach(el => el.value = '');
             
+            isInitialLoad = true; // force tab reset
             refreshData(data[0].id); 
             showToast("Market Created & App Updated!"); 
         }
     }
 
     async function deleteCurrentEvent() {
-        if (currentData.allEvents.length <= 1) {
-            alert("You cannot delete the only remaining market. Create a new one first.");
-            return;
-        }
-        const eventName = currentData.activeEventName;
-        if (confirm(`⚠️ WARNING ⚠️\n\nAre you sure you want to completely delete "${eventName}"?\n\nThis will erase all vendor applications. THIS CANNOT BE UNDONE.`)) {
+        const eventName = currentData.activeEventName || "Current Market";
+        if (confirm(`⚠️ WARNING ⚠️\n\nAre you sure you want to completely delete "${eventName}"?\n\nThis will permanently erase all vendor applications associated with this event. THIS CANNOT BE UNDONE.`)) {
             showToast("Deleting market...");
             await _supabase.from('events').delete().eq('id', currentData.activeId);
             localStorage.removeItem('marketEventId');
@@ -1181,6 +1343,13 @@
     }
 
     async function switchEvent(id) { await refreshData(id); }
+
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.innerText = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
 
     window.onload = () => { 
         if (sessionStorage.getItem('cab_market_auth') === 'true') {
