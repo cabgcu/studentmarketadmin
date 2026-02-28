@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>CAB Student Market Admin</title>
+    
+    <!-- Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --glass-surface: rgba(15, 15, 15, 0.85); 
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --gradient-accent: linear-gradient(135deg, #0A84FF, #BF5AF2);
+            --gradient-success: linear-gradient(135deg, #34C759, #30B0C7);
+            --gradient-danger: linear-gradient(135deg, #FF3B30, #FF9500);
+            --gradient-warning: linear-gradient(135deg, #FF9500, #FFCC00);
+            
+            --radius-card: 28px;
+            --radius-input: 20px;
+            --radius-button: 100px;
+            --blur: 40px;
+            --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0;
+            font-family: var(--font-stack);
+            color: var(--text-main);
+            background-color: transparent;
+            min-height: 100vh;
+            padding-bottom: 40px;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        #bg-container { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; 
+            background-color: #050505;
+            background-image: 
+                radial-gradient(circle at 5% 5%, rgba(10, 132, 255, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 95% 95%, rgba(191, 90, 242, 0.12) 0%, transparent 45%);
+        }
+
+        /* LOGIN SCREEN STYLES */
+        #login-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 50000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #050505;
+            background-image: 
+                radial-gradient(circle at 5% 5%, rgba(10, 132, 255, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 95% 95%, rgba(191, 90, 242, 0.12) 0%, transparent 45%);
+        }
+
+        .login-card {
+            width: 90%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: var(--radius-card);
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            animation: fadeIn 0.5s ease-out;
+            background: var(--glass-surface);
+            backdrop-filter: blur(var(--blur));
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .mb-3 { margin-bottom: 1rem; }
+        .mb-4 { margin-bottom: 1.5rem; }
+        .mt-2 { margin-top: 0.5rem; }
+
+        .frosted {
+            background: var(--glass-surface);
+            backdrop-filter: blur(var(--blur)) saturate(150%);
+            -webkit-backdrop-filter: blur(var(--blur)) saturate(150%);
+            border: 1px solid var(--glass-border);
+        }
+
+        .app-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: none;
+            flex-direction: column;
+        }
+
+        .topbar {
+            position: relative;
+            z-index: 50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 32px;
+            border-radius: var(--radius-card);
+            margin-bottom: 40px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            background: var(--glass-surface);
+        }
+
+        .brand { display: flex; align-items: center; gap: 16px; }
+        .brand-logo { height: 50px; width: auto; display: block; }
+        .brand-text h1 {
+            font-size: 1.4rem; font-weight: 800; margin: 0;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .event-subtext { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+        .controls { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+
+        .control-item {
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: #fff;
+            padding: 0 16px; border-radius: var(--radius-button); font-weight: 600; height: 40px;
+            display: flex; align-items: center; cursor: pointer; transition: 0.2s; font-size: 0.85rem;
+        }
+        .control-item:hover { background: rgba(255,255,255,0.1); }
+        .control-item.active { background: var(--gradient-accent); border: none; box-shadow: 0 8px 20px rgba(10, 132, 255, 0.2); }
+        
+        /* Filter specific colors */
+        .control-item.active-review { background: var(--gradient-warning); border: none; color: #000; box-shadow: 0 8px 20px rgba(255, 149, 0, 0.2); }
+        .control-item.active-approved { background: var(--gradient-success); border: none; box-shadow: 0 8px 20px rgba(52, 199, 89, 0.2); }
+        .control-item.active-denied { background: var(--gradient-danger); border: none; box-shadow: 0 8px 20px rgba(255, 59, 48, 0.2); }
+        .control-item.active-settings { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); }
+
+        .stats-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 20px; }
+        .stat-card { padding: 24px; border-radius: var(--radius-card); text-align: center; transition: transform 0.3s ease; }
+        .stat-val { font-size: 2.8rem; font-weight: 800; display: block; letter-spacing: -0.02em; }
+        
+        .stat-label { 
+            font-size: 0.8rem; 
+            text-transform: uppercase; 
+            color: var(--text-muted); 
+            letter-spacing: 0.1em; 
+            font-weight: 700; 
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 32px; }
+        .table-container { margin-top: 20px; border-radius: var(--radius-card); overflow: hidden; overflow-x: auto; }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; min-width: 1000px; }
+        th { padding: 16px; text-align: left; color: var(--text-muted); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+        th:last-child { text-align: right; }
+        td { padding: 20px 16px; background: rgba(255, 255, 255, 0.03); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); vertical-align: middle; }
+        td:first-child { border-left: 1px solid var(--glass-border); border-top-left-radius: 16px; border-bottom-left-radius: 16px; }
+        td:last-child { border-right: 1px solid var(--glass-border); border-top-right-radius: 16px; border-bottom-right-radius: 16px; }
+
+        .group-tag { font-size: 0.75rem; font-weight: 700; color: #BF5AF2; display: inline-block; text-transform: uppercase; background: rgba(191, 90, 242, 0.1); padding: 4px 8px; border-radius: 6px; }
+        .power-tag { font-size: 0.75rem; font-weight: 700; color: #FFD60A; display: inline-block; text-transform: uppercase; background: rgba(255, 214, 10, 0.15); padding: 4px 8px; border-radius: 6px; margin-top: 4px; }
+        
+        .action-wrapper { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+        
+        .status-badge { font-size: 0.75rem; font-weight: 800; padding: 6px 10px; border-radius: 6px; letter-spacing: 0.5px; text-transform: uppercase; display: inline-block; text-align: center; min-width: 80px;}
+        .status-badge.sent { color: #34C759; background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.2); }
+        .status-badge.draft { color: #FF9F0A; background: rgba(255, 159, 10, 0.1); border: 1px solid rgba(255, 159, 10, 0.2); }
+        
+        /* Interactive Status Toggle Styles */
+        .status-toggle-group {
+            display: inline-flex; 
+            background: rgba(0,0,0,0.4); 
+            border-radius: 8px; 
+            border: 1px solid var(--glass-border); 
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .btn-quick-status {
+            background: transparent;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+            opacity: 0.3;
+            filter: grayscale(100%);
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+        .btn-quick-status:last-child { border-right: none; }
+        .btn-quick-status:hover { opacity: 0.8; filter: grayscale(0%); background: rgba(255,255,255,0.05); transform: scale(1.05); }
+
+        .btn-quick-status.active-approve { opacity: 1; filter: grayscale(0%); background: rgba(52, 199, 89, 0.2); box-shadow: inset 0 0 10px rgba(52, 199, 89, 0.1); }
+        .btn-quick-status.active-review { opacity: 1; filter: grayscale(0%); background: rgba(255, 149, 0, 0.2); box-shadow: inset 0 0 10px rgba(255, 149, 0, 0.1); }
+        .btn-quick-status.active-deny { opacity: 1; filter: grayscale(0%); background: rgba(255, 59, 48, 0.2); box-shadow: inset 0 0 10px rgba(255, 59, 48, 0.1); }
+
+        .status-pill { font-size: 0.75rem; font-weight: 800; padding: 6px 12px; border-radius: 20px; text-transform: uppercase; display: inline-block; }
+        .status-pill.review { background: var(--gradient-warning); color: #000; }
+        .status-pill.approved { background: var(--gradient-success); color: #fff; }
+        .status-pill.denied { background: var(--gradient-danger); color: #fff; }
+
+        .btn-icon { background: transparent; border: none; cursor: pointer; font-size: 1.1rem; padding: 6px; opacity: 0.7; transition: 0.2s; color: white; border-radius: 8px; }
+        .btn-icon:hover { opacity: 1; background: rgba(255,255,255,0.1); transform: scale(1.1); }
+        
+        .btn-action { 
+            background: var(--gradient-accent); 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: var(--radius-button); 
+            color: #fff; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+        }
+        .btn-action:active { transform: scale(0.96); }
+        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .modern-input { 
+            width: 100%; 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid var(--glass-border); 
+            padding: 12px 18px; 
+            border-radius: var(--radius-input); 
+            color: white; 
+            outline: none; 
+            font-size: 1rem; 
+            transition: all 0.2s; 
+            font-family: inherit;
+        }
+        
+        select.modern-input {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 16px;
+            padding-right: 40px;
+            cursor: pointer;
+            height: 50px;
+        }
+        
+        select.modern-input option { background-color: #1a1a1a; color: white; }
+        .modern-input:focus { border-color: #0A84FF; background: rgba(255, 255, 255, 0.08); }
+        
+        .form-card { padding: 40px; border-radius: var(--radius-card); max-width: 1000px; margin: 0 auto; }
+        .editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .tag-chip { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; margin-bottom: 5px; }
+        .tag-chip.bold-btn { border-color: #0A84FF; font-weight: 800; color: #0A84FF; }
+        
+        #emailPreview { background: #f4f4f4; border-radius: 12px; height: 500px; width: 100%; border: 1px solid #ccc; display: block; }
+
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); 
+            z-index: 10000; display: none; align-items: center; justify-content: center; 
+            padding: 20px; overflow-y: auto; 
+            transition: opacity 0.3s ease;
+        }
+        .modal-content { background: #111; border: 1px solid var(--glass-border); padding: 40px; border-radius: var(--radius-card); width: 100%; max-width: 800px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .close-modal { position: absolute; top: 20px; right: 20px; background: transparent; border: none; color: #fff; font-size: 2rem; cursor: pointer; line-height: 1; }
+
+        #loader { position: fixed; bottom: 24px; right: 24px; background: rgba(20, 20, 20, 0.9); border: 1px solid var(--glass-border); border-radius: 50px; padding: 12px 20px; display: none; align-items: center; gap: 12px; z-index: 10000; backdrop-filter: blur(10px); font-weight: bold; }
+        .spinner { width: 18px; height: 18px; border: 3px solid rgba(255,255,255,0.2); border-top-color: #0A84FF; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        #toast { visibility: hidden; min-width: 300px; max-width: 90vw; background-color: rgba(15, 15, 15, 0.98); color: #fff; text-align: center; border-radius: 20px; padding: 25px; position: fixed; z-index: 20001; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(0.9); font-size: 1.2rem; font-weight: 800; border: 2px solid #34C759; box-shadow: 0 0 100px rgba(0,0,0,0.9); backdrop-filter: blur(12px); opacity: 0; transition: all 0.2s; pointer-events: none; }
+        #toast.show { visibility: visible; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        
+        .section-header { font-size: 0.9rem; font-weight: 800; color: #BF5AF2; text-transform: uppercase; margin-bottom: 15px; margin-top: 30px; letter-spacing: 0.05em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        
+        .review-field-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 700; }
+        .review-field-value { font-size: 1.1rem; color: #fff; margin-bottom: 20px; word-break: break-word; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+
+        @media (max-width: 900px) {
+            .app-container { padding: 0 16px; }
+            .topbar { flex-direction: column; gap: 16px; text-align: center; padding: 16px; margin-top: 10px; margin-bottom: 20px; }
+            .brand { flex-direction: column; gap: 8px; }
+            .brand-logo { height: 40px; } .brand-text h1 { font-size: 1.2rem; }
+            .controls { flex-wrap: wrap; justify-content: center; width: 100%; gap: 8px; }
+            .control-item { font-size: 0.8rem; padding: 0 12px; height: 36px; flex: 1 1 auto; justify-content: center; }
+            .stats-container { grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+            .stat-card { padding: 16px; } .stat-val { font-size: 1.8rem; }
+            table, thead, tbody, th, td, tr { display: block; }
+            thead tr { position: absolute; top: -9999px; left: -9999px; }
+            tr { margin-bottom: 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 16px; padding: 16px; position: relative; }
+            td { border: none; padding: 6px 0; background: transparent; }
+            td:first-child { border-radius: 0; padding-bottom: 8px; font-size: 1.2rem; font-weight: bold; border-left: none; }
+            td:last-child { border-radius: 0; margin-top: 10px; display: block; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); border-right: none; }
+            .action-wrapper { width: 100%; justify-content: space-between; }
+            .editor-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="bg-container"></div>
+<div id="loader"><div class="spinner"></div><span>LOADING</span></div>
+<div id="toast">Notification</div>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+    <div class="login-card">
+        <h2 style="margin-bottom: 10px; font-weight: 800;">MARKET ADMIN</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 30px;">Enter the system password to manage student vendors.</p>
+        
+        <div class="mb-4">
+            <input type="password" id="login-password" class="modern-input" placeholder="Enter Password" style="text-align: center; font-family: inherit;">
+            <p id="login-error" style="color: #FF3B30; font-size: 0.8rem; margin-top: 10px; font-weight: 600; display: none;">Invalid Password</p>
+        </div>
+        
+        <button onclick="handleLogin()" class="btn-action" style="width: 100%; padding: 15px; font-size: 1rem;">LOG IN</button>
+    </div>
+</div>
+
+<!-- REVIEW VENDOR MODAL -->
+<div id="reviewModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-modal" onclick="closeReviewModal()">&times;</button>
+        <h2 style="margin-top:0; margin-bottom:5px; font-weight: 800; font-size: 1.8rem;" id="reviewName">Vendor Name</h2>
+        <div style="display:flex; gap:10px; margin-bottom: 20px;" id="reviewTags">
+            <!-- Tags injected here -->
+        </div>
+
+        <div class="form-grid" style="margin-bottom: 20px;">
+            <div>
+                <div class="review-field-label">Student ID</div>
+                <div class="review-field-value" id="reviewStudentId">-</div>
+            </div>
+            <div>
+                <div class="review-field-label">Phone</div>
+                <div class="review-field-value" id="reviewPhone">-</div>
+            </div>
+            <div>
+                <div class="review-field-label">Preferred Email</div>
+                <div class="review-field-value" id="reviewPrefEmail">-</div>
+            </div>
+            <div>
+                <div class="review-field-label">GCU Email</div>
+                <div class="review-field-value" id="reviewGcuEmail">-</div>
+            </div>
+        </div>
+
+        <div class="review-field-label">Vendor / Project Description</div>
+        <div class="review-field-value" id="reviewDesc" style="min-height: 80px; white-space: pre-wrap;">-</div>
+
+        <div class="review-field-label">Social Media / Website</div>
+        <div class="review-field-value" id="reviewLink">
+            <a href="#" target="_blank" style="color: #0A84FF; text-decoration: none; font-weight: bold;">-</a>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:30px; border-top:1px solid rgba(255,255,255,0.1); padding-top:30px; gap: 15px;">
+            <button type="button" class="btn-action" style="background:var(--gradient-danger); flex: 1; padding: 16px; font-size: 1.1rem;" onclick="processReview('Denied')">❌ DENY</button>
+            <button type="button" class="btn-action" style="background:rgba(255,255,255,0.1); flex: 1; padding: 16px; font-size: 1.1rem;" onclick="processReview('Needs Review')">⏳ PEND</button>
+            <button type="button" class="btn-action" style="background:var(--gradient-success); flex: 1; padding: 16px; font-size: 1.1rem;" onclick="processReview('Approved')">✅ APPROVE</button>
+        </div>
+    </div>
+</div>
+
+<div class="app-container" id="main-app">
+    <div class="frosted topbar">
+        <div class="brand">
+            <div class="brand-text">
+                <h1>CAB Student Market</h1>
+                <div class="event-subtext">Active: <select id="eventDropdown" class="modern-input" style="width:auto; height:36px; padding:0 36px 0 12px; display:inline-block; font-size:0.85rem;" onchange="switchEvent(this.value)"></select></div>
+            </div>
+        </div>
+        <div class="controls">
+            <button onclick="setFilter('all')" id="nav-all" class="control-item active">📋 ALL APPLIED</button>
+            <button onclick="setFilter('review')" id="nav-review" class="control-item">⏳ NEEDS REVIEW</button>
+            <button onclick="setFilter('approved')" id="nav-approved" class="control-item">✅ APPROVED</button>
+            <button onclick="setFilter('denied')" id="nav-denied" class="control-item">❌ DENIED</button>
+            <button onclick="setFilter('power')" id="nav-power" class="control-item">⚡ NEEDS POWER</button>
+            <div style="width: 1px; height: 30px; background: rgba(255,255,255,0.2); margin: 0 8px;"></div>
+            <button onclick="toggleView('settings')" id="nav-settings" class="control-item">⚙️ SETTINGS</button>
+        </div>
+    </div>
+
+    <!-- VIEW: MAIN LIST -->
+    <div id="view-list" class="view">
+        <div class="stats-container" id="statsBar">
+            <div class="frosted stat-card"><span class="stat-label">Total Applied</span><span class="stat-val" id="countTotal">0</span></div>
+            <div class="frosted stat-card"><span class="stat-label">Needs Review</span><span class="stat-val" style="color:#FF9500" id="countReview">0</span></div>
+            <div class="frosted stat-card"><span class="stat-label">Approved</span><span class="stat-val" style="color:#34C759" id="countApproved">0</span></div>
+            <div class="frosted stat-card"><span class="stat-label">Denied</span><span class="stat-val" style="color:#FF3B30" id="countDenied">0</span></div>
+        </div>
+
+        <div style="display:flex; gap:12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+            <div style="display:flex; gap:12px; flex: 1; min-width: 300px;">
+                <input type="text" id="search" class="modern-input" placeholder="Search name, email, or student ID..." onkeyup="renderTable()" style="flex:1;">
+            </div>
+            <div>
+                <button onclick="sendBulkEmail()" id="blastBtn" class="btn-action">📧 Email Unsent in Current View</button>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead><tr><th>Student ID</th><th>Name</th><th>Pref Email</th><th>Status (Quick Set)</th><th>Email Sent?</th><th>Actions</th></tr></thead>
+                <tbody id="vendorTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- VIEW: SETTINGS -->
+    <div id="view-settings" class="view" style="display:none;">
+        <div class="frosted form-card">
+            <h2 class="mb-4">Market Setup</h2>
+            <div style="margin-bottom:30px;">
+                <label class="stat-label">Create New Market Event</label>
+                <div style="display:flex; gap:12px;">
+                    <input type="text" id="newEventName" class="modern-input" placeholder="e.g. Spring 2026 Market">
+                    <button onclick="createNewEvent()" class="btn-action">Create</button>
+                </div>
+            </div>
+            
+            <div style="margin-bottom:30px; padding: 20px; border: 1px solid rgba(255, 59, 48, 0.3); border-radius: 16px; background: rgba(255, 59, 48, 0.05);">
+                <label class="stat-label" style="color: #FF3B30;">Danger Zone</label>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <strong style="display:block; margin-bottom: 5px;">Delete Current Event</strong>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">This will permanently remove the active market and all its applications.</span>
+                    </div>
+                    <button onclick="deleteCurrentEvent()" class="btn-action" style="background: var(--gradient-danger);">Delete Event</button>
+                </div>
+            </div>
+            
+            <hr style="border:0; border-top:1px solid var(--glass-border); margin:30px 0;">
+            <div style="margin-bottom:30px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <label class="stat-label" style="margin-bottom:0;">Email Templates</label>
+                    <select id="templateTypeSelector" class="modern-input" style="width:auto; height:40px; padding:0 36px 0 12px; margin:0;" onchange="switchTemplateType(this.value)">
+                        <option value="approved">Approved Template</option>
+                        <option value="power">Approved (With Power) Template</option>
+                        <option value="denied">Denied Template</option>
+                    </select>
+                </div>
+                
+                <div class="form-grid" style="margin-bottom: 20px; gap: 16px;">
+                    <div>
+                        <label class="stat-label">Banner Image URL</label>
+                        <input type="text" id="bannerUrlInput" class="modern-input" placeholder="Leave blank for no image..." oninput="updatePreview()">
+                    </div>
+                    <div>
+                        <label class="stat-label">Email Heading</label>
+                        <input type="text" id="headingTextInput" class="modern-input" placeholder="e.g. Market Status Update" oninput="updatePreview()">
+                    </div>
+                </div>
+
+                <input type="text" id="emailSubjectInput" class="modern-input" placeholder="Subject Line" style="margin-bottom:12px; font-weight:bold;">
+                <div class="editor-grid">
+                    <div>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+                            <button type="button" class="tag-chip bold-btn" onclick="insertTag('**Bold Text**')"><b>B</b> Bold</button>
+                            <button type="button" class="tag-chip" onclick="insertTag('{{FIRST}}')">+ First Name</button>
+                            <button type="button" class="tag-chip" onclick="insertTag('{{EVENT}}')">+ Event Name</button>
+                        </div>
+                        <textarea id="emailTemplateInput" class="modern-input" style="height:300px; font-family:sans-serif; font-size:0.95rem; line-height:1.5;" oninput="updatePreview()" placeholder="Type your message here..."></textarea>
+                        <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                            <button onclick="resetTemplate()" style="background:transparent; border:1px solid rgba(255,255,255,0.3); color:#aaa; padding:8px 12px; border-radius:8px; cursor:pointer;">Reset Default</button>
+                            <button onclick="saveEmailTemplate()" class="btn-action">Save Template</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="stat-label" style="color:#aaa;">Full Email Preview</label>
+                        <iframe id="emailPreview"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // SUPABASE SETUP
+    // IMPORTANT: Make sure your Supabase matches the new table schema ('vendors' table)
+    const SUPABASE_URL = 'https://xdfbjusrwbxoxbcocxkp.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_ylaFmuuSPD2UcKdF1yKw4g_UPXiRRef';
+    
+    let BREVO_API_KEY = '';
+    const SENDER_EMAIL = 'noreply@cabgcu.com';
+    const SENDER_NAME = 'Canyon Activities Board';
+
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    let currentData = { vendors: [], allEvents: [], activeId: "" };
+    let realtimeSubscription = null;
+    let currentTemplateType = 'approved';
+    let activeFilter = 'all'; // all, review, approved, denied, power
+    let currentReviewingId = null;
+
+    const DEFAULTS = {
+        approved: { subj: "CAB Student Market: You're Approved!", body: "Hello {{FIRST}}!\n\nCongratulations, your application for {{EVENT}} has been **APPROVED**! 🎉\n\nWe are so excited to have you showcase your items at the market.\n\nMore details regarding setup time, maps, and rules will follow closer to the event date.\n\n– CAB Student Market Team" },
+        power: { subj: "CAB Student Market: Approved (Power Access)", body: "Hello {{FIRST}}!\n\nCongratulations, your application for {{EVENT}} has been **APPROVED**! 🎉\n\nWe have noted your request for electricity and have secured a spot for you near a power source. Please ensure you bring your own extension cords.\n\nMore details will follow closer to the event date.\n\n– CAB Student Market Team" },
+        denied: { subj: "CAB Student Market Application Update", body: "Hello {{FIRST}},\n\nThank you so much for applying to {{EVENT}}.\n\nUnfortunately, due to overwhelming demand and limited space, we are unable to accept your application at this time.\n\nWe highly encourage you to apply for our future markets!\n\n– CAB Student Market Team" }
+    };
+
+    // LOGIN LOGIC
+    const SYSTEM_PASSWORD = "Cabgcu49!";
+
+    function handleLogin() {
+        const input = document.getElementById('login-password');
+        const error = document.getElementById('login-error');
+        
+        if (input.value === SYSTEM_PASSWORD) {
+            sessionStorage.setItem('cab_market_auth', 'true');
+            unlockApp();
+        } else {
+            error.style.display = 'block';
+            input.value = '';
+            input.focus();
+        }
+    }
+
+    async function unlockApp() {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('main-app').style.display = 'flex';
+        
+        // Fetch the API Key securely from Supabase
+        const { data, error } = await _supabase.from('secrets').select('value').eq('name', 'BREVO_API_KEY').single();
+        if (data && data.value) {
+            BREVO_API_KEY = data.value.trim();
+        } else {
+            console.error("⚠️ Could not load API key", error);
+        }
+
+        refreshData();
+        setupRealtime();
+    }
+
+    document.getElementById('login-password').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleLogin();
+    });
+
+    async function setupRealtime() {
+        if (realtimeSubscription) _supabase.removeChannel(realtimeSubscription);
+        realtimeSubscription = _supabase.channel('public:vendors')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'vendors' }, () => { refreshData(null, true); })
+            .subscribe();
+    }
+
+    async function refreshData(eventId = null, silent = false) {
+        if (!silent) document.getElementById('loader').style.display = 'flex';
+        let activeId = eventId || localStorage.getItem('marketEventId');
+        
+        // Load Events
+        const { data: eventsData, error: eventErr } = await _supabase.from('events').select('*');
+        if (eventErr || !eventsData || eventsData.length === 0) {
+            console.warn("No events found. You need to create an event.");
+            if (!silent) document.getElementById('loader').style.display = 'none';
+            return;
+        }
+
+        let activeEvent = eventsData.find(e => e.id === activeId) || eventsData[0];
+        activeId = activeEvent.id;
+        localStorage.setItem('marketEventId', activeId);
+
+        // Load Vendors for this event
+        const { data: vendorsData, error: vendorErr } = await _supabase.from('vendors').select('*').eq('event_id', activeId).order('created_at', { ascending: false });
+        
+        if (vendorErr) {
+            console.error("Error fetching vendors:", vendorErr);
+        }
+
+        currentData = {
+            vendors: vendorsData || [],
+            allEvents: eventsData,
+            activeId: activeId,
+            activeEventName: activeEvent.name || "Student Market",
+            bannerUrl: activeEvent.banner_url || "",
+            headingText: activeEvent.heading_text || "Market Update",
+            
+            // Map the event templates. Fallback to DEFAULTS
+            apprSubj: activeEvent.template_approved_subject || DEFAULTS.approved.subj,
+            apprBody: activeEvent.template_approved_body || DEFAULTS.approved.body,
+            denSubj: activeEvent.template_denied_subject || DEFAULTS.denied.subj,
+            denBody: activeEvent.template_denied_body || DEFAULTS.denied.body,
+            powSubj: activeEvent.template_power_subject || DEFAULTS.power.subj,
+            powBody: activeEvent.template_power_body || DEFAULTS.power.body
+        };
+        
+        updateStats();
+        renderTable();
+        loadTemplateToEditor();
+        
+        const dropdown = document.getElementById('eventDropdown');
+        if (dropdown) dropdown.innerHTML = currentData.allEvents.map(e => `<option value="${e.id}" ${e.id == currentData.activeId ? 'selected' : ''}>${e.name}</option>`).join('');
+        
+        if (!silent) document.getElementById('loader').style.display = 'none';
+    }
+
+    function updateStats() {
+        const total = currentData.vendors.length;
+        const review = currentData.vendors.filter(v => v.status === 'Needs Review').length;
+        const approved = currentData.vendors.filter(v => v.status === 'Approved').length;
+        const denied = currentData.vendors.filter(v => v.status === 'Denied').length;
+
+        document.getElementById('countTotal').innerText = total;
+        document.getElementById('countReview').innerText = review;
+        document.getElementById('countApproved').innerText = approved;
+        document.getElementById('countDenied').innerText = denied;
+    }
+
+    function setFilter(filter) {
+        activeFilter = filter;
+        document.querySelectorAll('.control-item').forEach(el => {
+            el.className = 'control-item'; // reset
+        });
+        
+        const btn = document.getElementById(`nav-${filter}`);
+        if(btn) {
+            if (filter === 'all') btn.classList.add('active');
+            else if (filter === 'review') btn.classList.add('active-review');
+            else if (filter === 'approved') btn.classList.add('active-approved');
+            else if (filter === 'denied') btn.classList.add('active-denied');
+            else if (filter === 'power') btn.classList.add('active-power', 'active');
+        }
+
+        document.querySelectorAll('.view').forEach(e => e.style.display = 'none');
+        document.getElementById('view-list').style.display = 'block';
+
+        renderTable();
+    }
+
+    function toggleView(v) {
+        if (v === 'settings') {
+            document.querySelectorAll('.control-item').forEach(e => e.className = 'control-item');
+            document.getElementById('nav-settings').classList.add('active-settings');
+            document.querySelectorAll('.view').forEach(e => e.style.display = 'none');
+            document.getElementById('view-settings').style.display = 'block';
+        }
+    }
+
+    // Handles the inline quick status change
+    async function quickStatus(id, newStatus) {
+        const vendor = currentData.vendors.find(v => v.id === id);
+        if (!vendor || vendor.status === newStatus) return;
+        
+        // Optimistic UI Update
+        vendor.status = newStatus;
+        updateStats();
+        renderTable(); 
+        
+        // Background DB sync
+        const { error } = await _supabase.from('vendors').update({ status: newStatus }).eq('id', id);
+        if (error) {
+            console.error(error);
+            showToast("⚠️ Error updating status in database");
+            refreshData(null, true); // Revert UI if it fails
+        }
+    }
+
+    function renderTable() {
+        const search = document.getElementById('search').value.toLowerCase();
+        
+        let filtered = currentData.vendors.filter(v => {
+            // Apply Tab Filter
+            if (activeFilter === 'review' && v.status !== 'Needs Review') return false;
+            if (activeFilter === 'approved' && v.status !== 'Approved') return false;
+            if (activeFilter === 'denied' && v.status !== 'Denied') return false;
+            if (activeFilter === 'power' && v.needs_power !== 'Yes') return false;
+
+            // Apply Search Filter
+            if (search) {
+                const searchStr = `${v.student_id} ${v.first_name} ${v.last_name} ${v.preferred_email} ${v.gcu_email}`.toLowerCase();
+                if (!searchStr.includes(search)) return false;
+            }
+            return true;
+        });
+
+        const tbody = document.getElementById('vendorTableBody');
+        tbody.innerHTML = filtered.map(v => {
+            
+            // Interactive status toggle UI
+            const statusToggle = `
+                <div class="status-toggle-group">
+                    <button onclick="quickStatus('${v.id}', 'Approved')" class="btn-quick-status ${v.status === 'Approved' ? 'active-approve' : ''}" title="Mark as Approved">✅</button>
+                    <button onclick="quickStatus('${v.id}', 'Needs Review')" class="btn-quick-status ${v.status === 'Needs Review' ? 'active-review' : ''}" title="Mark as Needs Review">⏳</button>
+                    <button onclick="quickStatus('${v.id}', 'Denied')" class="btn-quick-status ${v.status === 'Denied' ? 'active-deny' : ''}" title="Mark as Denied">❌</button>
+                </div>
+            `;
+
+            const powerTag = v.needs_power === 'Yes' ? `<br><span class="power-tag">⚡ Needs Power</span>` : '';
+            const emailSentBadge = v.email_sent === 'Yes' ? `<span class="status-badge sent">✉️ SENT</span>` : `<span class="status-badge draft">⚠️ UNSENT</span>`;
+
+            return `
+            <tr>
+                <td style="font-family: monospace; letter-spacing: 1px;">${v.student_id || 'N/A'}</td>
+                <td><strong>${v.first_name} ${v.last_name}</strong>${powerTag}</td>
+                <td><a href="mailto:${v.preferred_email}" style="color:var(--text-muted);">${v.preferred_email}</a><br><small style="color:var(--text-muted); opacity: 0.5;">${v.gcu_email || ''}</small></td>
+                <td>${statusToggle}</td>
+                <td>${emailSentBadge}</td>
+                <td>
+                    <div class="action-wrapper">
+                        <button onclick="openReviewModal('${v.id}')" class="btn-icon" title="Review Full Application">👁️</button>
+                        <button onclick="resendEmail('${v.id}')" class="btn-icon" title="Send Status Email" style="${v.status === 'Needs Review' ? 'opacity:0.3; pointer-events:none;' : ''}">📩</button>
+                        <button onclick="deleteVendor('${v.id}')" class="btn-icon" style="color:#FF3B30;" title="Delete">🗑️</button>
+                    </div>
+                </td>
+            </tr>
+            `;
+        }).join('');
+    }
+
+    // REVIEW MODAL LOGIC
+    function openReviewModal(id) {
+        const vendor = currentData.vendors.find(v => v.id === id);
+        if (!vendor) return;
+        
+        currentReviewingId = id;
+        document.getElementById('reviewName').innerText = `${vendor.first_name} ${vendor.last_name}`;
+        
+        let tagsHtml = '';
+        if (vendor.status === 'Needs Review') tagsHtml += `<span class="status-pill review" style="font-size: 0.85rem;">⏳ Needs Review</span>`;
+        else if (vendor.status === 'Approved') tagsHtml += `<span class="status-pill approved" style="font-size: 0.85rem;">✅ Approved</span>`;
+        else if (vendor.status === 'Denied') tagsHtml += `<span class="status-pill denied" style="font-size: 0.85rem;">❌ Denied</span>`;
+        
+        if (vendor.needs_power === 'Yes') tagsHtml += `<span class="power-tag" style="margin-top:0; font-size: 0.85rem;">⚡ Power Requested</span>`;
+        
+        document.getElementById('reviewTags').innerHTML = tagsHtml;
+
+        document.getElementById('reviewStudentId').innerText = vendor.student_id || 'N/A';
+        document.getElementById('reviewPhone').innerText = vendor.phone || 'N/A';
+        document.getElementById('reviewPrefEmail').innerText = vendor.preferred_email || 'N/A';
+        document.getElementById('reviewGcuEmail').innerText = vendor.gcu_email || 'N/A';
+        
+        document.getElementById('reviewDesc').innerText = vendor.description || 'No description provided.';
+        
+        const linkEl = document.getElementById('reviewLink');
+        if (vendor.link) {
+            let validUrl = vendor.link.startsWith('http') ? vendor.link : `https://${vendor.link}`;
+            linkEl.innerHTML = `<a href="${validUrl}" target="_blank" style="color: #0A84FF; text-decoration: none; font-weight: bold;">${vendor.link} ↗</a>`;
+        } else {
+            linkEl.innerHTML = `<span style="color:var(--text-muted);">No link provided</span>`;
+        }
+
+        document.getElementById('reviewModal').style.display = 'flex';
+    }
+
+    function closeReviewModal() {
+        document.getElementById('reviewModal').style.display = 'none';
+        currentReviewingId = null;
+    }
+
+    async function processReview(newStatus) {
+        if (!currentReviewingId) return;
+        const id = currentReviewingId;
+        closeReviewModal();
+        
+        await quickStatus(id, newStatus);
+        showToast(`Marked as ${newStatus}`);
+    }
+
+    async function deleteVendor(id) {
+        if (confirm("Are you sure you want to permanently delete this application?")) {
+            await _supabase.from('vendors').delete().eq('id', id);
+            showToast("Deleted");
+            refreshData(null, true);
+        }
+    }
+
+    // EMAIL ENGINE
+    function getTemplateDetails(vendor) {
+        let subj = '', body = '';
+        if (vendor.status === 'Approved') {
+            if (vendor.needs_power === 'Yes') {
+                subj = currentData.powSubj; body = currentData.powBody;
+            } else {
+                subj = currentData.apprSubj; body = currentData.apprBody;
+            }
+        } else if (vendor.status === 'Denied') {
+            subj = currentData.denSubj; body = currentData.denBody;
+        } else {
+            return null; // Don't send emails to Needs Review
+        }
+        return { subj, body };
+    }
+
+    async function sendSingleEmail(vendor) {
+        if (!vendor || !vendor.preferred_email || vendor.status === 'Needs Review') return false;
+
+        const templates = getTemplateDetails(vendor);
+        if (!templates) return false;
+
+        // Parse placeholders
+        let rawBody = templates.body.replace(/\{\{FIRST\}\}/g, vendor.first_name || '')
+                                  .replace(/\{\{EVENT\}\}/g, currentData.activeEventName || '');
+
+        let htmlBodyStr = rawBody.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+        let plainTextStr = rawBody.replace(/\*\*(.*?)\*\*/g, '$1');
+
+        let parsedSubj = templates.subj.replace(/\{\{FIRST\}\}/g, vendor.first_name || '')
+                                       .replace(/\{\{EVENT\}\}/g, currentData.activeEventName || '');
+
+        const finalBannerUrl = currentData.bannerUrl || "";
+        
+        // HTML Builder
+        const bannerHtml = finalBannerUrl ? `<tr><td align="center" style="padding: 0;"><img src="${finalBannerUrl}" alt="Banner" width="600" style="display: block; width: 100%; max-width: 100%; height: auto; border: 0;"></td></tr>` : "";
+        
+        let statusColor = vendor.status === 'Approved' ? '#34C759' : '#FF3B30';
+        let statusBadge = vendor.status === 'Approved' ? 'APPROVED' : 'STATUS UPDATE';
+
+        const htmlContent = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+        <body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f3f4f6;">
+                <tr>
+                    <td align="center" style="padding: 20px;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                            ${bannerHtml}
+                            <tr>
+                                <td align="center" style="background-color: #ffffff; padding: 40px 30px 20px 30px;">
+                                    <h1 style="margin: 0; font-size: 24px; font-weight: 800; color: #111; text-transform: uppercase;">${currentData.headingText}</h1>
+                                    <p style="margin: 12px 0 0 0; font-size: 12px; font-weight: 700; color: #fff; background-color: ${statusColor}; display: inline-block; padding: 6px 16px; text-transform: uppercase; letter-spacing: 1px; border-radius: 20px;">${statusBadge}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px 40px 40px 40px; background-color: #ffffff; font-size: 16px; color: #333; line-height: 1.6;">
+                                    ${htmlBodyStr}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" style="background-color: #f9fafb; padding: 20px; border-top: 1px solid #eaeaea;">
+                                    <p style="margin: 0; font-size: 12px; font-weight: 600; color: #aaa; text-transform: uppercase;">&copy; Canyon Activities Board</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>`;
+
+        const payload = {
+            sender: { name: SENDER_NAME, email: SENDER_EMAIL },
+            to: [{ email: vendor.preferred_email, name: `${vendor.first_name} ${vendor.last_name}`.trim() }],
+            subject: parsedSubj,
+            htmlContent: htmlContent,
+            textContent: plainTextStr
+        };
+        
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+            
+            const response = await fetch("https://api.brevo.com/v3/smtp/email", { 
+                method: 'POST',
+                headers: { 'accept': 'application/json', 'api-key': BREVO_API_KEY, 'content-type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                const errData = await response.json();
+                console.error("Email API Error:", errData);
+                return errData.code === 'unauthorized' ? 'unauthorized' : false;
+            }
+            
+            // Mark Sent
+            await _supabase.from('vendors').update({ email_sent: 'Yes' }).eq('id', vendor.id);
+            return true;
+        } catch (error) {
+            console.error(`Failed to send to ${vendor.preferred_email}:`, error);
+            return false;
+        }
+    }
+
+    async function resendEmail(id) {
+        const vendor = currentData.vendors.find(v => v.id === id);
+        if (!vendor) return;
+        if (vendor.status === 'Needs Review') {
+            showToast("Cannot email a pending application.");
+            return;
+        }
+        
+        showToast(`Sending to ${vendor.first_name}...`);
+        const success = await sendSingleEmail(vendor);
+        
+        if (success === 'unauthorized') showToast("⚠️ API Error: Invalid Key.");
+        else if (success) showToast("Sent!");
+        else showToast("⚠️ Failed to send.");
+        
+        refreshData(null, true);
+    }
+
+    async function sendBulkEmail() { 
+        // Get vendors in CURRENT view that are NOT 'Needs Review' and NOT 'email_sent' = 'Yes'
+        let targetVendors = currentData.vendors.filter(v => {
+            if (v.status === 'Needs Review' || v.email_sent === 'Yes') return false;
+            
+            if (activeFilter === 'approved' && v.status !== 'Approved') return false;
+            if (activeFilter === 'denied' && v.status !== 'Denied') return false;
+            if (activeFilter === 'power' && v.needs_power !== 'Yes') return false;
+            return true;
+        });
+
+        if (targetVendors.length === 0) {
+            alert("No eligible unsent vendors in this view. \n\nNote: You cannot send emails to 'Needs Review' status.");
+            return;
+        }
+        
+        if(!confirm(`You are about to send ${targetVendors.length} emails to the vendors in this list.\n\nThe system will automatically select the Approved, Denied, or Power template based on their status.\n\nClick OK to send!`)) return;
+        
+        let successCount = 0;
+        let failCount = 0;
+        let isUnauthorized = false;
+        
+        document.getElementById('loader').style.display = 'flex';
+        const loaderText = document.querySelector('#loader span');
+        
+        const BATCH_SIZE = 10;
+        for (let i = 0; i < targetVendors.length; i += BATCH_SIZE) {
+            if (isUnauthorized) break;
+            
+            const batch = targetVendors.slice(i, i + BATCH_SIZE);
+            const results = await Promise.all(batch.map(v => sendSingleEmail(v)));
+            
+            for (const success of results) {
+                if (success === 'unauthorized') isUnauthorized = true;
+                else if (success) successCount++;
+                else failCount++;
+            }
+            loaderText.innerText = `SENDING ${Math.min(i + BATCH_SIZE, targetVendors.length)} / ${targetVendors.length}`;
+        }
+        
+        document.getElementById('loader').style.display = 'none';
+        loaderText.innerText = 'LOADING'; 
+        
+        if (isUnauthorized) alert(`⚠️ STOPPING: Email API Key is invalid.\n\n✅ Sent: ${successCount}\n⚠️ Failed: ${failCount}`);
+        else if (failCount > 0) alert(`Batch complete.\n\n✅ Sent: ${successCount}\n⚠️ Failed: ${failCount}`);
+        else showToast(`🚀 All ${successCount} emails sent successfully!`); 
+        
+        refreshData(null, true); 
+    }
+
+    // SETTINGS / TEMPLATES
+    function switchTemplateType(type) { currentTemplateType = type; loadTemplateToEditor(); }
+    
+    function loadTemplateToEditor() {
+        const bodyInput = document.getElementById('emailTemplateInput');
+        const subjInput = document.getElementById('emailSubjectInput');
+        const bannerInput = document.getElementById('bannerUrlInput');
+        const headingInput = document.getElementById('headingTextInput');
+
+        if (!bodyInput || !subjInput) return;
+
+        bannerInput.value = currentData.bannerUrl || "";
+        headingInput.value = currentData.headingText || "";
+
+        if (currentTemplateType === 'approved') { subjInput.value = currentData.apprSubj; bodyInput.value = currentData.apprBody; }
+        else if (currentTemplateType === 'denied') { subjInput.value = currentData.denSubj; bodyInput.value = currentData.denBody; }
+        else if (currentTemplateType === 'power') { subjInput.value = currentData.powSubj; bodyInput.value = currentData.powBody; }
+        
+        updatePreview();
+    }
+
+    function insertTag(t) { 
+        const input = document.getElementById('emailTemplateInput'); 
+        if (input) { 
+            const start = input.selectionStart;
+            const end = input.selectionEnd;
+            const text = input.value;
+            input.value = text.substring(0, start) + t + text.substring(end);
+            input.focus();
+            input.selectionStart = input.selectionEnd = start + t.length;
+            updatePreview(); 
+        } 
+    }
+
+    function resetTemplate() { 
+        const type = currentTemplateType;
+        if (DEFAULTS[type]) { 
+            document.getElementById('emailTemplateInput').value = DEFAULTS[type].body; 
+            document.getElementById('emailSubjectInput').value = DEFAULTS[type].subj; 
+            updatePreview(); 
+        }
+    }
+
+    function updatePreview() {
+        const input = document.getElementById('emailTemplateInput');
+        const previewIframe = document.getElementById('emailPreview');
+        if (!input || !previewIframe) return;
+        
+        let text = input.value.replace(/\{\{FIRST\}\}/g, 'Alex')
+                              .replace(/\{\{EVENT\}\}/g, currentData.activeEventName || 'Spring Market')
+                              .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                              .replace(/\n/g, '<br>');
+            
+        const bannerUrl = document.getElementById('bannerUrlInput')?.value || "";
+        const headingText = document.getElementById('headingTextInput')?.value || "Market Status Update";
+        
+        let statusColor = currentTemplateType === 'approved' || currentTemplateType === 'power' ? '#34C759' : '#FF3B30';
+        let statusBadge = currentTemplateType === 'approved' || currentTemplateType === 'power' ? 'APPROVED' : 'STATUS UPDATE';
+
+        const bannerHtml = bannerUrl ? `<tr><td align="center" style="padding: 0;"><img src="${bannerUrl}" alt="Banner" width="600" style="display: block; width: 100%; max-width: 100%; height: auto; border: 0;"></td></tr>` : "";
+
+        previewIframe.srcdoc = `
+        <body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 16px; overflow: hidden;">
+                ${bannerHtml}
+                <tr>
+                    <td align="center" style="padding: 30px;">
+                        <h1 style="margin: 0; font-size: 20px; font-weight: 800; text-transform: uppercase;">${headingText}</h1>
+                        <p style="margin: 10px 0 0 0; font-size: 11px; font-weight: 700; color: #fff; background-color: ${statusColor}; display: inline-block; padding: 4px 12px; text-transform: uppercase; border-radius: 12px;">${statusBadge}</p>
+                    </td>
+                </tr>
+                <tr><td style="padding: 0 30px 30px 30px; font-size: 14px; color: #333; line-height: 1.6;">${text}</td></tr>
+            </table>
+        </body>`;
+    }
+
+    async function saveEmailTemplate() {
+        const body = document.getElementById('emailTemplateInput').value;
+        const subj = document.getElementById('emailSubjectInput').value;
+        const banner = document.getElementById('bannerUrlInput').value;
+        const heading = document.getElementById('headingTextInput').value;
+
+        let updates = { banner_url: banner, heading_text: heading };
+        
+        if (currentTemplateType === 'approved') { updates.template_approved_body = body; updates.template_approved_subject = subj; }
+        else if (currentTemplateType === 'denied') { updates.template_denied_body = body; updates.template_denied_subject = subj; }
+        else if (currentTemplateType === 'power') { updates.template_power_body = body; updates.template_power_subject = subj; }
+        
+        await _supabase.from('events').update(updates).eq('id', currentData.activeId);
+        showToast(`✅ Template Saved!`);
+        refreshData(null, true);
+    }
+
+    async function createNewEvent() { 
+        const name = document.getElementById('newEventName').value;
+        if(name) { 
+            const { data } = await _supabase.from('events').insert([{ 
+                name: name, 
+                template_approved_body: DEFAULTS.approved.body, template_approved_subject: DEFAULTS.approved.subj,
+                template_denied_body: DEFAULTS.denied.body, template_denied_subject: DEFAULTS.denied.subj,
+                template_power_body: DEFAULTS.power.body, template_power_subject: DEFAULTS.power.subj,
+                banner_url: "", heading_text: "Market Status Update"
+            }]).select(); 
+            if(data && data[0]) {
+                document.getElementById('newEventName').value = "";
+                refreshData(data[0].id); 
+                showToast("Market Created!"); 
+            }
+        } 
+    }
+
+    async function deleteCurrentEvent() {
+        if (currentData.allEvents.length <= 1) {
+            alert("You cannot delete the only remaining market. Create a new one first.");
+            return;
+        }
+        const eventName = currentData.activeEventName;
+        if (confirm(`⚠️ WARNING ⚠️\n\nAre you sure you want to completely delete "${eventName}"?\n\nThis will erase all vendor applications. THIS CANNOT BE UNDONE.`)) {
+            showToast("Deleting market...");
+            await _supabase.from('events').delete().eq('id', currentData.activeId);
+            localStorage.removeItem('marketEventId');
+            showToast("Market Deleted!");
+            refreshData(null); 
+        }
+    }
+
+    async function switchEvent(id) { await refreshData(id); }
+
+    window.onload = () => { 
+        if (sessionStorage.getItem('cab_market_auth') === 'true') {
+            unlockApp();
+        }
+    };
+</script>
+</body>
+</html>
