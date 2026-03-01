@@ -757,6 +757,13 @@
         <div class="frosted form-card">
             <h2 class="mb-4">Market Setup</h2>
 
+            <!-- Data Export -->
+            <div style="margin-bottom:30px; background: rgba(52, 199, 89, 0.05); border: 1px solid rgba(52, 199, 89, 0.2); padding: 25px; border-radius: 20px;">
+                <label class="stat-label" style="color: #34C759; font-size: 1rem; margin-bottom: 10px;">Data Export</label>
+                <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom: 20px;">Download a CSV spreadsheet of all vendors who have officially checked in to this market event. Contains their names, student IDs, and GCU emails.</p>
+                <button onclick="exportCheckedInVendorsCSV()" class="btn-action" style="background: var(--gradient-success); padding: 12px 24px;">📥 Download Checked-In Vendors (CSV)</button>
+            </div>
+
             <!-- Form Access Controls -->
             <div style="margin-bottom:30px; background: rgba(10, 132, 255, 0.05); border: 1px solid rgba(10, 132, 255, 0.2); padding: 25px; border-radius: 20px;">
                 <label class="stat-label" style="color: #0A84FF; font-size: 1rem; margin-bottom: 10px;">Public Form Access Control (This Market Only)</label>
@@ -1730,7 +1737,17 @@
             `;
 
             const powerTag = v.needs_power === 'Yes' ? `<br><span class="power-tag">POWER REQUESTED</span>` : '';
-            const emailSentBadge = v.email_sent === 'Yes' ? `<span class="status-badge sent">SENT</span>` : `<span class="status-badge draft">UNSENT</span>`;
+            
+            // Dynamic Email Badge Logic
+            let isEmailSentForView = false;
+            if (activeFilter === 'power') {
+                isEmailSentForView = (v.email_sent === 'power' || v.email_sent === 'power_denied');
+            } else if (activeFilter === 'denied') {
+                isEmailSentForView = (v.email_sent === 'denied' || v.email_sent === 'Yes');
+            } else {
+                isEmailSentForView = (v.email_sent && v.email_sent !== 'No');
+            }
+            const emailSentBadge = isEmailSentForView ? `<span class="status-badge sent">SENT</span>` : `<span class="status-badge draft">UNSENT</span>`;
             
             const foodBadge = (v.food_license && v.food_license.toLowerCase() === 'yes') ? `<span style="font-size: 0.75rem; background: rgba(255, 149, 0, 0.2); color: #FF9500; border: 1px solid rgba(255, 149, 0, 0.3); padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: 700;">FOOD</span>` : '';
 
@@ -2060,7 +2077,7 @@
             subj = currentData.denSubj; body = currentData.denBody;
         }
 
-        return { subj, body };
+        return { subj, body, targetTemplate };
     }
 
     function parseEmailVariables(str, vendor) {
@@ -2186,7 +2203,9 @@
                 return errData.code === 'unauthorized' ? 'unauthorized' : false;
             }
             
-            await _supabase.from('vendors').update({ email_sent: 'Yes' }).eq('id', vendor.id);
+            // Log the specific template type so filters can distinguish between power/standard approvals
+            await _supabase.from('vendors').update({ email_sent: templates.targetTemplate }).eq('id', vendor.id);
+            vendor.email_sent = templates.targetTemplate; // Update local state for immediate UI reflection
             return true;
         } catch (error) {
             console.error(`Failed to send to ${vendor.preferred_email}:`, error);
@@ -2241,7 +2260,15 @@
 
         const listEl = document.getElementById('bulkEmailList');
         listEl.innerHTML = eligibleVendors.map(v => {
-            const isSent = v.email_sent === 'Yes';
+            let isSent = false;
+            if (activeFilter === 'power') {
+                isSent = (v.email_sent === 'power' || v.email_sent === 'power_denied');
+            } else if (activeFilter === 'denied') {
+                isSent = (v.email_sent === 'denied' || v.email_sent === 'Yes');
+            } else {
+                isSent = (v.email_sent && v.email_sent !== 'No');
+            }
+            
             const sentBadge = isSent ? `<span style="color:#34C759; font-size:0.8rem; margin-left:8px;">[Already Sent]</span>` : `<span style="color:#FF9F0A; font-size:0.8rem; margin-left:8px;">[Unsent]</span>`;
             const powerBadge = v.needs_power === 'Yes' ? ' [Power Requested]' : '';
             const foodBadge = (v.food_license && v.food_license.toLowerCase() === 'yes') ? ' [FOOD]' : '';
@@ -2558,6 +2585,41 @@
         toast.innerText = message;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function exportCheckedInVendorsCSV() {
+        const checkedIn = currentData.vendors.filter(v => v.status === 'Checked In');
+        
+        if (checkedIn.length === 0) {
+            showToast("No vendors are currently checked in.");
+            return;
+        }
+
+        let csvContent = "First Name,Last Name,Student ID,GCU Email\n";
+        
+        checkedIn.forEach(v => {
+            const fName = `"${(v.first_name || '').replace(/"/g, '""')}"`;
+            const lName = `"${(v.last_name || '').replace(/"/g, '""')}"`;
+            const sId = `"${(v.student_id || '').replace(/"/g, '""')}"`;
+            const email = `"${(v.gcu_email || '').replace(/"/g, '""')}"`;
+            
+            csvContent += `${fName},${lName},${sId},${email}\n`;
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        
+        const dateStr = new Date().toISOString().split('T')[0];
+        const eventNameClean = (currentData.activeEventName || "Market").replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        
+        link.setAttribute("href", url);
+        link.setAttribute("download", `${eventNameClean}_checked_in_${dateStr}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showToast("CSV Downloaded!");
     }
 
     window.onload = () => { 
