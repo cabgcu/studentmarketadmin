@@ -871,6 +871,19 @@
 </div>
 
 <script>
+    // URL Processor for Google Drive links
+    function processImageUrl(url) {
+        if (!url) return "";
+        // Convert Google Drive view links to direct image links
+        if (url.includes('drive.google.com')) {
+            const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+            if (match && match[1]) {
+                return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+            }
+        }
+        return url;
+    }
+
     // SUPABASE SETUP
     const SUPABASE_URL = 'https://xdfbjusrwbxoxbcocxkp.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_ylaFmuuSPD2UcKdF1yKw4g_UPXiRRef';
@@ -1995,7 +2008,9 @@
         let parsedSubj = templates.subj.replace(/\{\{FIRST\}\}/g, vendor.first_name || '')
                                        .replace(/\{\{EVENT\}\}/g, currentData.activeEventName || '');
 
-        const finalBannerUrl = currentData.bannerUrl || "";
+        // Use the processImageUrl helper to ensure Google Drive links render correctly
+        let finalBannerUrl = currentData.bannerUrl || "";
+        finalBannerUrl = processImageUrl(finalBannerUrl);
         
         // HTML Builder
         const bannerHtml = finalBannerUrl ? `<tr><td align="center" style="padding: 0;"><img src="${finalBannerUrl}" alt="Banner" width="600" style="display: block; width: 100%; max-width: 100%; height: auto; border: 0;"></td></tr>` : "";
@@ -2276,7 +2291,10 @@
                               .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
                               .replace(/\n/g, '<br>');
             
-        const bannerUrl = document.getElementById('bannerUrlInput')?.value || "";
+        // Process the URL using the helper so the preview reflects the real image accurately
+        const rawBannerUrl = document.getElementById('bannerUrlInput')?.value || "";
+        const bannerUrl = processImageUrl(rawBannerUrl);
+        
         const headingText = document.getElementById('headingTextInput')?.value || "Market Status Update";
         
         let statusColor = currentTemplateType === 'approved' || currentTemplateType === 'power' || currentTemplateType === 'power_denied' ? '#34C759' : '#FF3B30';
