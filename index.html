@@ -704,8 +704,7 @@
         </div>
 
         <div id="quick-filters" style="display:flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-            <button id="filter-chip-food" class="filter-chip" onclick="toggleQuickFilter('food')">🍔 Food Vendors</button>
-            <button id="filter-chip-power" class="filter-chip" onclick="toggleQuickFilter('power')">⚡ Power Requested</button>
+            <!-- Dynamic filters injected here -->
         </div>
         
         <div class="table-container">
@@ -885,24 +884,24 @@
         return url;
     }
 
+    const VENDOR_CATEGORIES = [
+        { id: 'apparel', icon: '👕', label: 'Apparel', keywords: ['clothes', 'clothing', 'shirt', 'shirts', 'pants', 'hoodie', 'hoodies', 'vintage', 'thrift', 'apparel', 'hats', 'sweatshirts', 't-shirt', 'tshirt', 'shorts', 'jeans', 'denim'] },
+        { id: 'jewelry', icon: '💎', label: 'Jewelry', keywords: ['jewelry', 'necklace', 'rings', 'bracelet', 'earrings', 'silver', 'gold', 'beaded', 'jewlery', 'pendants'] },
+        { id: 'art', icon: '🎨', label: 'Art / Prints', keywords: ['art', 'prints', 'painting', 'canvas', 'drawing', 'portraits', 'illustrations', 'watercolor', 'poster', 'posters'] },
+        { id: 'crochet', icon: '🧶', label: 'Crochet / Knit', keywords: ['crochet', 'knit', 'yarn', 'amigurumi', 'plushies', 'beanie'] },
+        { id: 'stickers', icon: '✨', label: 'Stickers / Pins', keywords: ['stickers', 'decals', 'stationery', 'keychains', 'pins', 'buttons', 'bookmarks'] },
+        { id: 'beauty', icon: '💄', label: 'Beauty / Care', keywords: ['lip gloss', 'lip balm', 'cosmetics', 'makeup', 'skincare', 'lotion', 'soap', 'body butter', 'perfume', 'fragrance'] },
+        { id: 'decor', icon: '🪴', label: 'Home Decor', keywords: ['decor', 'candles', 'ceramics', 'pottery', 'glassware', 'coaster', 'tufting', 'rug', 'rugs'] },
+        { id: 'food', icon: '🍪', label: 'Snacks', keywords: ['cookies', 'baked goods', 'brownies', 'drinks', 'coffee', 'lemonade', 'candy', 'snack', 'food', 'bread', 'cakes', 'pastries'] }
+    ];
+
     // --- AUTO-CATEGORIZER ENGINE ---
     // Scans text to intelligently guess the vendor type
     function inferCategory(text) {
         if (!text) return null;
         const str = text.toLowerCase();
 
-        const categories = [
-            { icon: '👕', label: 'Apparel', keywords: ['clothes', 'clothing', 'shirt', 'shirts', 'pants', 'hoodie', 'hoodies', 'vintage', 'thrift', 'apparel', 'hats', 'sweatshirts', 't-shirt', 'tshirt', 'shorts', 'jeans', 'denim'] },
-            { icon: '💎', label: 'Jewelry', keywords: ['jewelry', 'necklace', 'rings', 'bracelet', 'earrings', 'silver', 'gold', 'beaded', 'jewlery', 'pendants'] },
-            { icon: '🎨', label: 'Art & Prints', keywords: ['art', 'prints', 'painting', 'canvas', 'drawing', 'portraits', 'illustrations', 'watercolor', 'poster', 'posters'] },
-            { icon: '🧶', label: 'Crochet / Knit', keywords: ['crochet', 'knit', 'yarn', 'amigurumi', 'plushies', 'beanie'] },
-            { icon: '✨', label: 'Stickers & Pins', keywords: ['stickers', 'decals', 'stationery', 'keychains', 'pins', 'buttons', 'bookmarks'] },
-            { icon: '💄', label: 'Beauty & Care', keywords: ['lip gloss', 'lip balm', 'cosmetics', 'makeup', 'skincare', 'lotion', 'soap', 'body butter', 'perfume', 'fragrance'] },
-            { icon: '🪴', label: 'Home Decor', keywords: ['decor', 'candles', 'ceramics', 'pottery', 'glassware', 'coaster', 'tufting', 'rug', 'rugs'] },
-            { icon: '🍪', label: 'Snacks / Food', keywords: ['cookies', 'baked goods', 'brownies', 'drinks', 'coffee', 'lemonade', 'candy', 'snack', 'food', 'bread', 'cakes', 'pastries'] }
-        ];
-
-        for (const cat of categories) {
+        for (const cat of VENDOR_CATEGORIES) {
             for (const kw of cat.keywords) {
                 // Use a regex boundary to match whole words (so "part" doesn't trigger "art")
                 const regex = new RegExp(`\\b${kw}\\b`, 'i');
@@ -929,7 +928,7 @@
     let realtimeSubscription = null;
     let currentTemplateType = 'approved';
     let activeFilter = 'inbox'; // inbox, review, approved, denied, power, profiles
-    let quickFilters = { food: false, power: false };
+    let quickFilters = {};
     let currentReviewingId = null;
     let currentEditingId = null;
     let isInitialLoad = true;
@@ -1103,9 +1102,7 @@
         document.querySelectorAll('.view').forEach(e => e.style.display = 'none');
         
         // Reset quick filters on tab switch to avoid confusion
-        quickFilters = { food: false, power: false };
-        document.getElementById('filter-chip-food').classList.remove('active-filter');
-        document.getElementById('filter-chip-power').classList.remove('active-filter');
+        resetFilters();
 
         const btn = document.getElementById(`nav-${filter}`);
         if(btn) {
@@ -1142,9 +1139,32 @@
         }
     }
 
+    function resetFilters() {
+        quickFilters = { license_food: false, power: false };
+        VENDOR_CATEGORIES.forEach(c => quickFilters[c.id] = false);
+        renderFilters();
+    }
+
+    function renderFilters() {
+        const container = document.getElementById('quick-filters');
+        if(!container) return;
+        
+        let html = `
+            <button id="filter-chip-license_food" class="filter-chip ${quickFilters.license_food ? 'active-filter' : ''}" onclick="toggleQuickFilter('license_food')">🍔 Req: Food License</button>
+            <button id="filter-chip-power" class="filter-chip ${quickFilters.power ? 'active-filter' : ''}" onclick="toggleQuickFilter('power')">⚡ Req: Power</button>
+            <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.2); margin: 0 4px; align-self: center;"></div>
+        `;
+        
+        VENDOR_CATEGORIES.forEach(c => {
+            html += `<button id="filter-chip-${c.id}" class="filter-chip ${quickFilters[c.id] ? 'active-filter' : ''}" onclick="toggleQuickFilter('${c.id}')">${c.icon} ${c.label}</button>`;
+        });
+
+        container.innerHTML = html;
+    }
+
     function toggleQuickFilter(type) {
         quickFilters[type] = !quickFilters[type];
-        document.getElementById(`filter-chip-${type}`).classList.toggle('active-filter', quickFilters[type]);
+        renderFilters();
         renderTable();
     }
 
@@ -1628,9 +1648,18 @@
             if (activeFilter === 'denied' && v.status !== 'Denied') return false;
             if (activeFilter === 'power' && ((v.status !== 'Approved' && v.status !== 'Checked In') || v.needs_power !== 'Yes')) return false;
 
-            // Apply Quick Filters
-            if (quickFilters.food && (!v.food_license || v.food_license.toLowerCase() !== 'yes')) return false;
+            // Apply Quick Filters (Hardcoded Requirements)
+            if (quickFilters.license_food && (!v.food_license || v.food_license.toLowerCase() !== 'yes')) return false;
             if (quickFilters.power && v.needs_power !== 'Yes') return false;
+
+            // Apply Dynamic Category Filters (OR logic: if any category filter is on, vendor must match AT LEAST ONE)
+            const activeCategoryFilters = VENDOR_CATEGORIES.filter(c => quickFilters[c.id]).map(c => c.id);
+            if (activeCategoryFilters.length > 0) {
+                const categoryMatch = inferCategory((v.description || '') + ' ' + (v.additional_comments || ''));
+                if (!categoryMatch || !activeCategoryFilters.includes(categoryMatch.id)) {
+                    return false;
+                }
+            }
 
             // Apply Search Filter
             if (search) {
