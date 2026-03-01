@@ -878,10 +878,40 @@
         if (url.includes('drive.google.com')) {
             const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
             if (match && match[1]) {
-                return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+                // Use the reliable Google User Content endpoint for direct embedding
+                return `https://lh3.googleusercontent.com/d/${match[1]}`;
             }
         }
         return url;
+    }
+
+    // --- AUTO-CATEGORIZER ENGINE ---
+    // Scans text to intelligently guess the vendor type
+    function inferCategory(text) {
+        if (!text) return null;
+        const str = text.toLowerCase();
+
+        const categories = [
+            { icon: '👕', label: 'Apparel', keywords: ['clothes', 'clothing', 'shirt', 'shirts', 'pants', 'hoodie', 'hoodies', 'vintage', 'thrift', 'apparel', 'hats', 'sweatshirts', 't-shirt', 'tshirt', 'shorts', 'jeans', 'denim'] },
+            { icon: '💎', label: 'Jewelry', keywords: ['jewelry', 'necklace', 'rings', 'bracelet', 'earrings', 'silver', 'gold', 'beaded', 'jewlery', 'pendants'] },
+            { icon: '🎨', label: 'Art & Prints', keywords: ['art', 'prints', 'painting', 'canvas', 'drawing', 'portraits', 'illustrations', 'watercolor', 'poster', 'posters'] },
+            { icon: '🧶', label: 'Crochet / Knit', keywords: ['crochet', 'knit', 'yarn', 'amigurumi', 'plushies', 'beanie'] },
+            { icon: '✨', label: 'Stickers & Pins', keywords: ['stickers', 'decals', 'stationery', 'keychains', 'pins', 'buttons', 'bookmarks'] },
+            { icon: '💄', label: 'Beauty & Care', keywords: ['lip gloss', 'lip balm', 'cosmetics', 'makeup', 'skincare', 'lotion', 'soap', 'body butter', 'perfume', 'fragrance'] },
+            { icon: '🪴', label: 'Home Decor', keywords: ['decor', 'candles', 'ceramics', 'pottery', 'glassware', 'coaster', 'tufting', 'rug', 'rugs'] },
+            { icon: '🍪', label: 'Snacks / Food', keywords: ['cookies', 'baked goods', 'brownies', 'drinks', 'coffee', 'lemonade', 'candy', 'snack', 'food', 'bread', 'cakes', 'pastries'] }
+        ];
+
+        for (const cat of categories) {
+            for (const kw of cat.keywords) {
+                // Use a regex boundary to match whole words (so "part" doesn't trigger "art")
+                const regex = new RegExp(`\\b${kw}\\b`, 'i');
+                if (regex.test(str)) {
+                    return cat;
+                }
+            }
+        }
+        return null; // Return null if no distinct match is found
     }
 
     // SUPABASE SETUP
@@ -1653,6 +1683,10 @@
             // Adaptive Food Label
             const foodBadge = (v.food_license && v.food_license.toLowerCase() === 'yes') ? `<span style="font-size: 0.75rem; background: rgba(255, 149, 0, 0.2); color: #FF9500; padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: 700;">🍔 Food</span>` : '';
 
+            // Smart Category Inference
+            const categoryMatch = inferCategory((v.description || '') + ' ' + (v.additional_comments || ''));
+            const categoryBadge = categoryMatch ? `<span style="font-size: 0.75rem; background: rgba(10, 132, 255, 0.2); color: #0A84FF; border: 1px solid rgba(10, 132, 255, 0.3); padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: 700;">${categoryMatch.icon} ${categoryMatch.label}</span>` : '';
+
             // Check In UI for table
             const checkInCell = isAppr
                 ? `<button onclick="checkIn('${v.id}', false, this); event.stopPropagation();" class="btn-action" style="padding: 6px 12px; font-size: 0.8rem; ${v.status === 'Checked In' ? 'background:var(--gradient-success)' : ''}">${v.status === 'Checked In' ? '✓ IN' : 'MARK'}</button>`
@@ -1664,7 +1698,7 @@
             return `
             <tr class="clickable-row" onclick="openReviewModal('${v.id}')">
                 <td><span style="color: #BF5AF2; font-weight: 800; margin-right: 8px; font-size: 1.1rem;">#${v.appNumber}</span><br><span style="font-family: monospace; letter-spacing: 1px; font-size: 0.85rem; color: var(--text-muted);">${v.student_id || 'N/A'}</span></td>
-                <td><strong>${v.first_name} ${v.last_name}</strong>${foodBadge}${powerTag}</td>
+                <td><strong>${v.first_name} ${v.last_name}</strong>${categoryBadge}${foodBadge}${powerTag}</td>
                 <td><a href="mailto:${v.preferred_email}" onclick="event.stopPropagation()" style="color:var(--text-muted);">${v.preferred_email}</a><br><small style="color:var(--text-muted); opacity: 0.5;">${v.gcu_email || ''}</small></td>
                 <td>${statusToggle}</td>
                 <td>${checkInCell}</td>
@@ -1698,6 +1732,12 @@
         
         if (vendor.needs_power === 'Yes') tagsHtml += `<span class="power-tag" style="margin-top:0; font-size: 0.85rem;">⚡ Power Requested</span>`;
         if (vendor.status === 'Checked In') tagsHtml += `<span class="status-pill approved" style="font-size: 0.85rem; margin-left: 8px;">📍 Checked In</span>`;
+
+        // Smart Category Inference for Modal
+        const categoryMatch = inferCategory((vendor.description || '') + ' ' + (vendor.additional_comments || ''));
+        if (categoryMatch) {
+            tagsHtml += `<span class="group-tag" style="background: rgba(10, 132, 255, 0.1); color: #0A84FF; border: 1px solid rgba(10, 132, 255, 0.3); margin-left: 8px; margin-top:0; font-size: 0.85rem; text-transform: none; font-weight: 700;">${categoryMatch.icon} ${categoryMatch.label}</span>`;
+        }
 
         document.getElementById('reviewTags').innerHTML = tagsHtml;
 
@@ -1877,7 +1917,7 @@
         // Show Image Preview in Edit Modal if it exists
         if (vendor.food_license_link) {
             foodImagePreview.style.display = 'block';
-            foodImagePreview.querySelector('img').src = vendor.food_license_link;
+            foodImagePreview.querySelector('img').src = processImageUrl(vendor.food_license_link);
         } else {
             foodImagePreview.style.display = 'none';
             foodImagePreview.querySelector('img').src = '';
@@ -1888,7 +1928,7 @@
             const val = e.target.value;
             if (val.startsWith('http')) {
                 foodImagePreview.style.display = 'block';
-                foodImagePreview.querySelector('img').src = val;
+                foodImagePreview.querySelector('img').src = processImageUrl(val);
             } else {
                 foodImagePreview.style.display = 'none';
             }
