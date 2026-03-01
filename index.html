@@ -128,11 +128,11 @@
             background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: #fff;
             padding: 0 12px; border-radius: var(--radius-button); font-weight: 600; height: 38px;
             display: flex; align-items: center; cursor: pointer; transition: 0.2s; font-size: 0.75rem;
+            letter-spacing: 0.5px;
         }
         .control-item:hover { background: rgba(255,255,255,0.1); }
         .control-item.active { background: var(--gradient-accent); border: none; box-shadow: 0 8px 20px rgba(10, 132, 255, 0.2); }
         
-        /* Filter specific colors */
         .control-item.active-review { background: var(--gradient-warning); border: none; color: #000; box-shadow: 0 8px 20px rgba(255, 149, 0, 0.2); }
         .control-item.active-approved { background: var(--gradient-success); border: none; box-shadow: 0 8px 20px rgba(52, 199, 89, 0.2); }
         .control-item.active-denied { background: var(--gradient-danger); border: none; box-shadow: 0 8px 20px rgba(255, 59, 48, 0.2); }
@@ -167,12 +167,12 @@
         .clickable-row { cursor: pointer; transition: all 0.2s ease; }
         .clickable-row:hover td { background: rgba(255, 255, 255, 0.08); }
 
-        .group-tag { font-size: 0.75rem; font-weight: 700; color: #BF5AF2; display: inline-block; text-transform: uppercase; background: rgba(191, 90, 242, 0.1); padding: 4px 8px; border-radius: 6px; }
-        .power-tag { font-size: 0.75rem; font-weight: 700; color: #FFD60A; display: inline-block; text-transform: uppercase; background: rgba(255, 214, 10, 0.15); padding: 4px 8px; border-radius: 6px; margin-top: 4px; }
+        .group-tag { font-size: 0.75rem; font-weight: 700; color: #BF5AF2; display: inline-block; text-transform: uppercase; background: rgba(191, 90, 242, 0.1); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(191, 90, 242, 0.3); }
+        .power-tag { font-size: 0.75rem; font-weight: 700; color: #FFD60A; display: inline-block; text-transform: uppercase; background: rgba(255, 214, 10, 0.15); padding: 4px 8px; border-radius: 6px; margin-top: 4px; border: 1px solid rgba(255, 214, 10, 0.3); }
         
-        .action-wrapper { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+        .action-wrapper { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
         
-        .status-badge { font-size: 0.75rem; font-weight: 800; padding: 6px 10px; border-radius: 6px; letter-spacing: 0.5px; text-transform: uppercase; display: inline-block; text-align: center; min-width: 80px;}
+        .status-badge { font-size: 0.7rem; font-weight: 800; padding: 6px 10px; border-radius: 6px; letter-spacing: 0.5px; text-transform: uppercase; display: inline-block; text-align: center; min-width: 70px;}
         .status-badge.sent { color: #34C759; background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.2); }
         .status-badge.draft { color: #FF9F0A; background: rgba(255, 159, 10, 0.1); border: 1px solid rgba(255, 159, 10, 0.2); }
         
@@ -191,26 +191,28 @@
             border: none;
             padding: 8px 12px;
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #fff;
             transition: all 0.2s ease;
-            opacity: 0.3;
-            filter: grayscale(100%);
+            opacity: 0.4;
             border-right: 1px solid rgba(255,255,255,0.05);
         }
         .btn-quick-status:last-child { border-right: none; }
-        .btn-quick-status:hover { opacity: 0.8; filter: grayscale(0%); background: rgba(255,255,255,0.05); transform: scale(1.05); }
+        .btn-quick-status:hover { opacity: 0.8; background: rgba(255,255,255,0.05); }
 
-        .btn-quick-status.active-approve { opacity: 1; filter: grayscale(0%); background: rgba(52, 199, 89, 0.2); box-shadow: inset 0 0 10px rgba(52, 199, 89, 0.1); }
-        .btn-quick-status.active-review { opacity: 1; filter: grayscale(0%); background: rgba(255, 149, 0, 0.2); box-shadow: inset 0 0 10px rgba(255, 149, 0, 0.1); }
-        .btn-quick-status.active-deny { opacity: 1; filter: grayscale(0%); background: rgba(255, 59, 48, 0.2); box-shadow: inset 0 0 10px rgba(255, 59, 48, 0.1); }
+        .btn-quick-status.active-approve { opacity: 1; background: rgba(52, 199, 89, 0.2); color: #34C759; }
+        .btn-quick-status.active-review { opacity: 1; background: rgba(255, 149, 0, 0.2); color: #FF9500; }
+        .btn-quick-status.active-deny { opacity: 1; background: rgba(255, 59, 48, 0.2); color: #FF3B30; }
 
         .status-pill { font-size: 0.75rem; font-weight: 800; padding: 6px 12px; border-radius: 20px; text-transform: uppercase; display: inline-block; }
         .status-pill.review { background: var(--gradient-warning); color: #000; }
         .status-pill.approved { background: var(--gradient-success); color: #fff; }
         .status-pill.denied { background: var(--gradient-danger); color: #fff; }
 
-        .btn-icon { background: transparent; border: none; cursor: pointer; font-size: 1.1rem; padding: 6px; opacity: 0.7; transition: 0.2s; color: white; border-radius: 8px; }
-        .btn-icon:hover { opacity: 1; background: rgba(255,255,255,0.1); transform: scale(1.1); }
+        .btn-icon-text { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; font-size: 0.75rem; font-weight: 700; padding: 6px 12px; color: white; border-radius: 8px; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-icon-text:hover { background: rgba(255,255,255,0.1); }
+        .btn-icon-text.danger:hover { background: rgba(255,59,48,0.2); color: #FF3B30; border-color: rgba(255,59,48,0.4); }
         
         .btn-action { 
             background: var(--gradient-accent); 
@@ -255,8 +257,8 @@
         
         .form-card { padding: 40px; border-radius: var(--radius-card); max-width: 1000px; margin: 0 auto; }
         .editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .tag-chip { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; margin-bottom: 5px; }
-        .tag-chip.bold-btn { border-color: #0A84FF; font-weight: 800; color: #0A84FF; }
+        .tag-chip { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; margin-bottom: 5px; font-weight: 600; letter-spacing: 0.5px; transition: 0.2s; }
+        .tag-chip:hover { background: rgba(255,255,255,0.2); }
         
         #emailPreview { background: #f4f4f4; border-radius: 12px; height: 500px; width: 100%; border: 1px solid #ccc; display: block; }
 
@@ -281,21 +283,6 @@
         
         .review-field-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 700; }
         .review-field-value { font-size: 1.1rem; color: #fff; margin-bottom: 20px; word-break: break-word; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
-
-        /* Quick Filters */
-        .filter-chip {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-muted);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .filter-chip:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
-        .filter-chip.active-filter { background: var(--gradient-accent); color: #fff; border: none; box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3); }
 
         /* Trello-like Comment Feed Styles */
         .comment-card {
@@ -335,6 +322,7 @@
             opacity: 0.6;
             transition: 0.2s;
             padding: 0 4px;
+            font-size: 0.8rem;
         }
         .comment-delete:hover { opacity: 1; }
 
@@ -348,6 +336,11 @@
             justify-content: space-between; 
             align-items: center; 
             border: 1px solid var(--glass-border); 
+        }
+
+        /* Filter Row Specifics */
+        .filter-row {
+            display: flex; gap: 12px; margin-bottom: 20px; align-items: center; width: 100%; flex-wrap: nowrap;
         }
 
         @media (max-width: 900px) {
@@ -365,8 +358,10 @@
             td { border: none; padding: 6px 0; background: transparent; }
             td:first-child { border-radius: 0; padding-bottom: 8px; font-size: 1.2rem; font-weight: bold; border-left: none; }
             td:last-child { border-radius: 0; margin-top: 10px; display: block; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); border-right: none; }
-            .action-wrapper { width: 100%; justify-content: space-between; }
+            .action-wrapper { width: 100%; justify-content: flex-start; margin-top: 10px; }
             .editor-grid { grid-template-columns: 1fr; }
+            .filter-row { flex-direction: column; align-items: stretch; }
+            .filter-row > * { width: 100%; min-width: 0 !important; }
         }
 
         /* Bulk Email Modal Styles */
@@ -408,7 +403,7 @@
 <!-- DYNAMIC CHECK IN ALERT MODAL -->
 <div id="checkInAlert" class="modal-overlay" style="z-index:20002; background:rgba(0,0,0,0.95);" onclick="closeCheckInAlert()">
     <div id="alertContentBox" class="modal-content" style="text-align:center; border: 2px solid #34C759; max-width:400px;" onclick="event.stopPropagation()">
-        <div id="alertIcon" style="font-size:4rem; margin-bottom:10px;">✅</div>
+        <div id="alertIcon" style="font-size:4rem; margin-bottom:10px;">✓</div>
         <h2 id="alertTitle" style="color:#34C759; margin:0; font-size:2rem; font-weight:800;">CHECKED IN</h2>
         <div id="alertMessage" style="color:#FF9500; font-size: 1.1rem; font-weight:bold; margin-top: 15px; display:none;"></div>
         
@@ -417,8 +412,8 @@
         
         <div id="vendorDetailsSection">
             <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:15px 0;">
-            <div style="font-size:1.2rem; color:#FFD60A; font-weight:bold; letter-spacing:1px; margin-bottom:10px; display:none;" id="alertPower">⚡ NEEDS POWER</div>
-            <div style="font-size:1.2rem; color:#FF9500; font-weight:bold; letter-spacing:1px; display:none;" id="alertFood">🍔 FOOD VENDOR</div>
+            <div style="font-size:1.2rem; color:#FFD60A; font-weight:bold; letter-spacing:1px; margin-bottom:10px; display:none;" id="alertPower">POWER REQUESTED</div>
+            <div style="font-size:1.2rem; color:#FF9500; font-weight:bold; letter-spacing:1px; display:none;" id="alertFood">FOOD VENDOR</div>
         </div>
         
         <div style="margin-top:20px; font-size:0.8rem; color:#666; font-style:italic;">Tap anywhere or press ESC to close</div>
@@ -430,7 +425,7 @@
     <div class="modal-content" onclick="event.stopPropagation()">
         <button class="close-modal" onclick="closeReviewModal()">&times;</button>
         <h2 style="margin-top:0; margin-bottom:5px; font-weight: 800; font-size: 1.8rem;" id="reviewName">Vendor Name</h2>
-        <div style="display:flex; gap:10px; margin-bottom: 20px;" id="reviewTags">
+        <div style="display:flex; gap:10px; margin-bottom: 20px; flex-wrap: wrap;" id="reviewTags">
             <!-- Tags injected here -->
         </div>
 
@@ -497,26 +492,23 @@
         <div class="review-field-label">Agreements Checked</div>
         <div class="review-field-value" id="reviewAgreements" style="min-height: 40px; white-space: pre-wrap; font-family: monospace; font-size: 0.85rem; color: #a1a1aa;">-</div>
 
-        <!-- NEW TRELLO-STYLE COMMENT SYSTEM -->
         <div class="review-field-label">Activity & Internal Notes</div>
         <div style="margin-bottom: 20px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 16px; overflow: hidden;">
-            <!-- Input Area -->
             <div style="padding: 15px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--glass-border);">
                 <textarea id="newCommentText" class="modern-input" style="height: 60px; resize: vertical; margin-bottom: 10px; font-size: 0.95rem; background: rgba(0,0,0,0.4);" placeholder="Write a comment..."></textarea>
                 <div style="display:flex; justify-content: flex-end;">
-                    <button type="button" class="btn-action" style="padding: 8px 16px; font-size: 0.85rem; background: rgba(255, 255, 255, 0.1);" onclick="saveInternalNotes()">💬 Add Comment</button>
+                    <button type="button" class="btn-action" style="padding: 8px 16px; font-size: 0.85rem; background: rgba(255, 255, 255, 0.1);" onclick="saveInternalNotes()">Add Comment</button>
                 </div>
             </div>
-            <!-- Feed Area -->
             <div id="commentFeed" style="max-height: 250px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px;">
                 <!-- Comments dynamically injected here -->
             </div>
         </div>
 
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:30px; border-top:1px solid rgba(255,255,255,0.1); padding-top:30px; gap: 15px;">
-            <button type="button" class="btn-action" style="background:var(--gradient-danger); flex: 1; padding: 16px; font-size: 1.1rem;" onclick="processReview('Denied')">❌ DENY</button>
-            <button type="button" class="btn-action" style="background:rgba(255,255,255,0.1); flex: 1; padding: 16px; font-size: 1.1rem;" onclick="processReview('Needs Review')">⏳ NEEDS REVIEW</button>
-            <button type="button" class="btn-action" style="background:var(--gradient-success); flex: 1; padding: 16px; font-size: 1.1rem;" onclick="processReview('Approved')">✅ APPROVE</button>
+            <button type="button" class="btn-action" style="background:var(--gradient-success); flex: 1; padding: 16px; font-size: 1.1rem;" onclick="processReview('Approved')">APPROVE</button>
+            <button type="button" class="btn-action" style="background:rgba(255,255,255,0.1); flex: 1; padding: 16px; font-size: 1.1rem;" onclick="processReview('Needs Review')">NEEDS REVIEW</button>
+            <button type="button" class="btn-action" style="background:var(--gradient-danger); flex: 1; padding: 16px; font-size: 1.1rem;" onclick="processReview('Denied')">DENY</button>
         </div>
         
         <div id="reviewModalCheckInContainer">
@@ -629,7 +621,7 @@
             </div>
         </div>
 
-        <button onclick="saveVendorEdit()" class="btn-action" style="width: 100%; padding: 15px; font-size: 1.1rem; margin-top: 10px;">💾 Save Changes</button>
+        <button onclick="saveVendorEdit()" class="btn-action" style="width: 100%; padding: 15px; font-size: 1.1rem; margin-top: 10px;">Save Changes</button>
     </div>
 </div>
 
@@ -642,10 +634,10 @@
         
         <label class="stat-label">1. Select Template to Send</label>
         <select id="bulkEmailTemplate" class="modern-input" style="margin-bottom: 20px; font-weight: bold; background: rgba(0,0,0,0.5);">
-            <option value="approved">✅ Approved Template (Standard)</option>
-            <option value="power">⚡ Approved (Power Granted) Template</option>
-            <option value="power_denied">⚠️ Approved (Power Denied) Template</option>
-            <option value="denied">❌ Denied Template</option>
+            <option value="approved">Approved Template (Standard)</option>
+            <option value="power">Approved (Power Granted) Template</option>
+            <option value="power_denied">Approved (Power Denied) Template</option>
+            <option value="denied">Denied Template</option>
         </select>
 
         <label class="stat-label">2. Select Recipients</label>
@@ -658,7 +650,7 @@
             <!-- Vendor Checkboxes Injected Here -->
         </div>
 
-        <button onclick="executeBulkEmail()" class="btn-action" style="width: 100%; padding: 15px; font-size: 1.1rem;">🚀 Send Selected Emails</button>
+        <button onclick="executeBulkEmail()" class="btn-action" style="width: 100%; padding: 15px; font-size: 1.1rem;">Send Selected Emails</button>
     </div>
 </div>
 
@@ -672,16 +664,16 @@
             </div>
         </div>
         <div class="controls">
-            <button onclick="setFilter('inbox')" id="nav-inbox" class="control-item">📋 APPLICATIONS</button>
-            <button onclick="setFilter('approved')" id="nav-approved" class="control-item">✅ APPROVED</button>
-            <button onclick="setFilter('review')" id="nav-review" class="control-item">⏳ NEEDS REVIEW</button>
-            <button onclick="setFilter('power')" id="nav-power" class="control-item">⚡ NEEDS POWER</button>
-            <button onclick="setFilter('denied')" id="nav-denied" class="control-item">❌ DENIED</button>
+            <button onclick="setFilter('inbox')" id="nav-inbox" class="control-item">APPLICATIONS</button>
+            <button onclick="setFilter('approved')" id="nav-approved" class="control-item">APPROVED</button>
+            <button onclick="setFilter('review')" id="nav-review" class="control-item">NEEDS REVIEW</button>
+            <button onclick="setFilter('power')" id="nav-power" class="control-item">NEEDS POWER</button>
+            <button onclick="setFilter('denied')" id="nav-denied" class="control-item">DENIED</button>
             <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.2); margin: 0 2px;"></div>
-            <button onclick="setFilter('profiles')" id="nav-profiles" class="control-item">👤 PROFILES</button>
+            <button onclick="setFilter('profiles')" id="nav-profiles" class="control-item">PROFILES</button>
             <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.2); margin: 0 2px;"></div>
-            <button onclick="toggleView('scan')" id="nav-scan" class="control-item" style="background: rgba(52, 199, 89, 0.2); border-color: rgba(52, 199, 89, 0.4); color: #34C759;">📸 CHECK IN</button>
-            <button onclick="toggleView('settings')" id="nav-settings" class="control-item">⚙️ SETTINGS</button>
+            <button onclick="toggleView('scan')" id="nav-scan" class="control-item" style="background: rgba(52, 199, 89, 0.2); border-color: rgba(52, 199, 89, 0.4); color: #34C759;">CHECK IN</button>
+            <button onclick="toggleView('settings')" id="nav-settings" class="control-item">SETTINGS</button>
         </div>
     </div>
 
@@ -694,17 +686,21 @@
             <div class="frosted stat-card"><span class="stat-label">Denied</span><span class="stat-val" style="color:#FF3B30" id="countDenied">0</span></div>
         </div>
 
-        <div style="display:flex; gap:12px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
-            <div style="display:flex; gap:12px; flex: 1; min-width: 300px;">
-                <input type="text" id="search" class="modern-input" placeholder="Search name, email, or student ID..." onkeyup="renderTable()" style="flex:1;">
-            </div>
-            <div>
-                <button onclick="openBulkEmailModal()" id="blastBtn" class="btn-action">📧 Send Emails to Current View...</button>
-            </div>
-        </div>
-
-        <div id="quick-filters" style="display:flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-            <!-- Dynamic filters injected here -->
+        <div class="filter-row">
+            <input type="text" id="search" class="modern-input" placeholder="Search name, email, or student ID..." onkeyup="renderTable()" style="flex: 3; min-width: 250px;">
+            
+            <select id="categoryFilter" class="modern-input" style="flex: 1.5; min-width: 200px;" onchange="renderTable()">
+                <option value="all">All Vendor Themes</option>
+                <!-- Dynamically populated based on current vendors -->
+            </select>
+            
+            <select id="requirementFilter" class="modern-input" style="flex: 1.5; min-width: 220px;" onchange="renderTable()">
+                <option value="all">Any Special Requests</option>
+                <option value="power">Needs Power</option>
+                <option value="food">Food License</option>
+            </select>
+            
+            <button onclick="openBulkEmailModal()" id="blastBtn" class="btn-action" style="white-space: nowrap; flex-shrink: 0;">Send Emails to Current View...</button>
         </div>
         
         <div class="table-container">
@@ -751,13 +747,13 @@
 
             <!-- Form Access Controls -->
             <div style="margin-bottom:30px; background: rgba(10, 132, 255, 0.05); border: 1px solid rgba(10, 132, 255, 0.2); padding: 25px; border-radius: 20px;">
-                <label class="stat-label" style="color: #0A84FF; font-size: 1rem; margin-bottom: 10px;">Public Form Access Control</label>
-                <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom: 20px;">Override the automatic schedule to manually force the public application form open or closed for late vendors.</p>
+                <label class="stat-label" style="color: #0A84FF; font-size: 1rem; margin-bottom: 10px;">Public Form Access Control (This Market Only)</label>
+                <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom: 20px;">Override the automatic schedule to manually force the public application form open or closed for this specific market.</p>
                 
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <button id="form-status-auto" onclick="setFormOverride('auto')" class="btn-action" style="background: rgba(255,255,255,0.1); color: #fff; flex: 1;">🗓️ Auto (Use Dates)</button>
-                    <button id="form-status-open" onclick="setFormOverride('open')" class="btn-action" style="background: rgba(255,255,255,0.1); color: #fff; flex: 1;">🟢 Force OPEN</button>
-                    <button id="form-status-closed" onclick="setFormOverride('closed')" class="btn-action" style="background: rgba(255,255,255,0.1); color: #fff; flex: 1;">🔴 Force CLOSED</button>
+                    <button id="form-status-auto" onclick="setFormOverride('auto')" class="btn-action" style="background: rgba(255,255,255,0.1); color: #fff; flex: 1;">Auto (Use Dates)</button>
+                    <button id="form-status-open" onclick="setFormOverride('open')" class="btn-action" style="background: rgba(255,255,255,0.1); color: #fff; flex: 1;">Force OPEN</button>
+                    <button id="form-status-closed" onclick="setFormOverride('closed')" class="btn-action" style="background: rgba(255,255,255,0.1); color: #fff; flex: 1;">Force CLOSED</button>
                 </div>
             </div>
             
@@ -849,9 +845,15 @@
                 <div class="editor-grid">
                     <div>
                         <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
-                            <button type="button" class="tag-chip bold-btn" onclick="insertTag('**Bold Text**')"><b>B</b> Bold</button>
                             <button type="button" class="tag-chip" onclick="insertTag('{{FIRST}}')">+ First Name</button>
-                            <button type="button" class="tag-chip" onclick="insertTag('{{EVENT}}')">+ Event Name</button>
+                            <button type="button" class="tag-chip" onclick="insertTag('{{MARKET_NAME}}')">+ Market Name</button>
+                            <button type="button" class="tag-chip" onclick="insertTag('{{LOCATION}}')">+ Location</button>
+                            <button type="button" class="tag-chip" onclick="insertTag('{{MARKET_DATE}}')">+ Market Date</button>
+                            <button type="button" class="tag-chip" onclick="insertTag('{{MARKET_TIME}}')">+ Market Time</button>
+                            <button type="button" class="tag-chip" onclick="insertTag('{{APP_OPENS}}')">+ App Opens (Date)</button>
+                            <button type="button" class="tag-chip" onclick="insertTag('{{APP_CLOSES}}')">+ App Closes (Date)</button>
+                            <button type="button" class="tag-chip" onclick="insertTag('{{CONTACT_DATE}}')">+ Contact Date</button>
+                            <button type="button" class="tag-chip" onclick="insertTag('{{CONFIRM_DEADLINE}}')">+ Confirm Deadline</button>
                         </div>
                         <textarea id="emailTemplateInput" class="modern-input" style="height:300px; font-family:sans-serif; font-size:0.95rem; line-height:1.5;" oninput="updatePreview()" placeholder="Type your message here..."></textarea>
                         <div style="display:flex; justify-content:space-between; margin-top:10px;">
@@ -873,62 +875,58 @@
     // URL Processor for Google Drive links
     function processImageUrl(url) {
         if (!url) return "";
-        // Convert Google Drive view links to direct image links
         if (url.includes('drive.google.com')) {
             const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
             if (match && match[1]) {
-                // Use the reliable Google User Content endpoint for direct embedding
                 return `https://lh3.googleusercontent.com/d/${match[1]}`;
             }
         }
         return url;
     }
 
-    const VENDOR_CATEGORIES = [
-        { id: 'apparel', icon: '👕', label: 'Apparel', keywords: ['clothes', 'clothing', 'shirt', 'shirts', 'pants', 'hoodie', 'hoodies', 'vintage', 'thrift', 'apparel', 'hats', 'sweatshirts', 't-shirt', 'tshirt', 'shorts', 'jeans', 'denim'] },
-        { id: 'jewelry', icon: '💎', label: 'Jewelry', keywords: ['jewelry', 'necklace', 'rings', 'bracelet', 'earrings', 'silver', 'gold', 'beaded', 'jewlery', 'pendants'] },
-        { id: 'art', icon: '🎨', label: 'Art / Prints', keywords: ['art', 'prints', 'painting', 'canvas', 'drawing', 'portraits', 'illustrations', 'watercolor', 'poster', 'posters'] },
-        { id: 'crochet', icon: '🧶', label: 'Crochet / Knit', keywords: ['crochet', 'knit', 'yarn', 'amigurumi', 'plushies', 'beanie'] },
-        { id: 'stickers', icon: '✨', label: 'Stickers / Pins', keywords: ['stickers', 'decals', 'stationery', 'keychains', 'pins', 'buttons', 'bookmarks'] },
-        { id: 'beauty', icon: '💄', label: 'Beauty / Care', keywords: ['lip gloss', 'lip balm', 'cosmetics', 'makeup', 'skincare', 'lotion', 'soap', 'body butter', 'perfume', 'fragrance'] },
-        { id: 'decor', icon: '🪴', label: 'Home Decor', keywords: ['decor', 'candles', 'ceramics', 'pottery', 'glassware', 'coaster', 'tufting', 'rug', 'rugs'] },
-        { id: 'food', icon: '🍪', label: 'Snacks', keywords: ['cookies', 'baked goods', 'brownies', 'drinks', 'coffee', 'lemonade', 'candy', 'snack', 'food', 'bread', 'cakes', 'pastries'] }
-    ];
-
     // --- AUTO-CATEGORIZER ENGINE ---
-    // Scans text to intelligently guess the vendor type
-    function inferCategory(text) {
-        if (!text) return null;
-        const str = text.toLowerCase();
+    const CATEGORY_MAP = {
+        'Clothes': ['clothes', 'clothing', 'shirt', 'shirts', 'pants', 'hoodie', 'hoodies', 'vintage', 'thrift', 'apparel', 'hats', 'sweatshirts', 't-shirt', 'tshirt', 'shorts', 'jeans', 'denim'],
+        'Food': ['cookies', 'baked goods', 'brownies', 'drinks', 'coffee', 'lemonade', 'candy', 'snack', 'food', 'bread', 'cakes', 'pastries'],
+        'Jewelry': ['jewelry', 'necklace', 'rings', 'bracelet', 'earrings', 'silver', 'gold', 'beaded', 'jewlery', 'pendants'],
+        'Crafts': ['craft', 'crafts', 'handmade', 'diy', 'resin', 'clay', 'crochet', 'knit', 'yarn', 'amigurumi', 'plushies', 'beanie'],
+        'Art & Prints': ['art', 'prints', 'painting', 'canvas', 'drawing', 'portraits', 'illustrations', 'watercolor', 'poster', 'posters'],
+        'Stickers & Accessories': ['stickers', 'decals', 'stationery', 'keychains', 'pins', 'buttons', 'bookmarks'],
+        'Beauty & Care': ['lip gloss', 'lip balm', 'cosmetics', 'makeup', 'skincare', 'lotion', 'soap', 'body butter', 'perfume', 'fragrance'],
+        'Home Decor': ['decor', 'candles', 'ceramics', 'pottery', 'glassware', 'coaster', 'tufting', 'rug', 'rugs']
+    };
 
-        for (const cat of VENDOR_CATEGORIES) {
-            for (const kw of cat.keywords) {
-                // Use a regex boundary to match whole words (so "part" doesn't trigger "art")
+    function extractVendorCategories(text) {
+        if (!text) return [];
+        const str = text.toLowerCase();
+        let found = new Set();
+        
+        for (const [cat, keywords] of Object.entries(CATEGORY_MAP)) {
+            for (const kw of keywords) {
                 const regex = new RegExp(`\\b${kw}\\b`, 'i');
                 if (regex.test(str)) {
-                    return cat;
+                    found.add(cat);
+                    break;
                 }
             }
         }
-        return null; // Return null if no distinct match is found
+        return Array.from(found);
     }
 
     // SUPABASE SETUP
     const SUPABASE_URL = 'https://xdfbjusrwbxoxbcocxkp.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_ylaFmuuSPD2UcKdF1yKw4g_UPXiRRef';
     
-    // API Key will be loaded securely from Supabase, with this as a fallback
     let BREVO_API_KEY = '';
     const SENDER_EMAIL = 'studentmarkets@cabgcu.com';
     const SENDER_NAME = 'Canyon Activities Board';
 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
-    let currentData = { vendors: [], allEvents: [], activeId: "" };
+    let currentData = { vendors: [], allEvents: [], activeId: "", activeEvent: null };
     let realtimeSubscription = null;
     let currentTemplateType = 'approved';
     let activeFilter = 'inbox'; // inbox, review, approved, denied, power, profiles
-    let quickFilters = {};
     let currentReviewingId = null;
     let currentEditingId = null;
     let isInitialLoad = true;
@@ -936,14 +934,14 @@
     let closeAnimTimeout = null;
 
     const DEFAULTS = {
-        approved: { subj: "CAB Student Market: You're Approved!", body: "Hello {{FIRST}}!\n\nCongratulations, your application for {{EVENT}} has been **APPROVED**! 🎉\n\nWe are so excited to have you showcase your items at the market.\n\nMore details regarding setup time, maps, and rules will follow closer to the event date.\n\n– CAB Student Market Team" },
-        power: { subj: "CAB Student Market: Approved (Power Access)", body: "Hello {{FIRST}}!\n\nCongratulations, your application for {{EVENT}} has been **APPROVED**! 🎉\n\nWe have noted your request for electricity and have secured a spot for you near a power source. Please ensure you bring your own extension cords.\n\nMore details will follow closer to the event date.\n\n– CAB Student Market Team" },
-        power_denied: { subj: "CAB Student Market: Approved (No Power Available)", body: "Hello {{FIRST}}!\n\nCongratulations, your application for {{EVENT}} has been **APPROVED**! 🎉\n\nWhile we would love to accommodate your request for power, unfortunately, all electricity spaces have been filled. You are still approved to participate, but you will not have access to a power source.\n\nMore details will follow closer to the event date.\n\n– CAB Student Market Team" },
-        denied: { subj: "CAB Student Market Application Update", body: "Hello {{FIRST}},\n\nThank you so much for applying to {{EVENT}}.\n\nUnfortunately, due to overwhelming demand and limited space, we are unable to accept your application at this time.\n\nWe highly encourage you to apply for our future markets!\n\n– CAB Student Market Team" }
+        approved: { subj: "CAB Student Market: You're Approved!", body: "Hello {{FIRST}}!\n\nCongratulations, your application for {{MARKET_NAME}} has been APPROVED!\n\nWe are so excited to have you showcase your items at the market.\n\nMore details regarding setup time, maps, and rules will follow closer to the event date.\n\n– CAB Student Market Team" },
+        power: { subj: "CAB Student Market: Approved (Power Access)", body: "Hello {{FIRST}}!\n\nCongratulations, your application for {{MARKET_NAME}} has been APPROVED!\n\nWe have noted your request for electricity and have secured a spot for you near a power source. Please ensure you bring your own extension cords.\n\nMore details will follow closer to the event date.\n\n– CAB Student Market Team" },
+        power_denied: { subj: "CAB Student Market: Approved (No Power Available)", body: "Hello {{FIRST}}!\n\nCongratulations, your application for {{MARKET_NAME}} has been APPROVED!\n\nWhile we would love to accommodate your request for power, unfortunately, all electricity spaces have been filled. You are still approved to participate, but you will not have access to a power source.\n\nMore details will follow closer to the event date.\n\n– CAB Student Market Team" },
+        denied: { subj: "CAB Student Market Application Update", body: "Hello {{FIRST}},\n\nThank you so much for applying to {{MARKET_NAME}}.\n\nUnfortunately, due to overwhelming demand and limited space, we are unable to accept your application at this time.\n\nWe highly encourage you to apply for our future markets!\n\n– CAB Student Market Team" }
     };
 
     // LOGIN LOGIC
-    const SYSTEM_PASSWORD = "Cabgcu49!";
+    const SYSTEM_PASSWORD = "Vendor49!";
 
     function handleLogin() {
         const input = document.getElementById('login-password');
@@ -963,12 +961,11 @@
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-app').style.display = 'flex';
         
-        // Fetch the API Key securely from Supabase
         const { data, error } = await _supabase.from('secrets').select('value').eq('name', 'BREVO_API_KEY').maybeSingle();
         if (data && data.value) {
             BREVO_API_KEY = data.value.trim();
         } else {
-            console.error("⚠️ Could not load API key", error);
+            console.error("Could not load API key", error);
         }
 
         refreshData();
@@ -979,7 +976,6 @@
         if (e.key === 'Enter') handleLogin();
     });
 
-    // GLOBAL KEYDOWN LISTENER FOR CHECK IN MODAL
     window.addEventListener('keydown', (e) => {
         const checkInAlert = document.getElementById('checkInAlert');
         if (checkInAlert && checkInAlert.style.display === 'flex') {
@@ -994,6 +990,39 @@
             .subscribe();
     }
 
+    function buildCategoryDropdown() {
+        const select = document.getElementById('categoryFilter');
+        if (!select) return;
+        
+        // Find all unique categories present in current event
+        let activeCategories = new Set();
+        currentData.vendors.forEach(v => {
+            if (v.autoCategories && v.autoCategories.length > 0) {
+                v.autoCategories.forEach(c => activeCategories.add(c));
+            }
+        });
+        
+        // Save current selection to restore if possible
+        const currentVal = select.value;
+        
+        let html = '<option value="all">All Vendor Themes</option>';
+        const sortedCats = Array.from(activeCategories).sort();
+        
+        if (sortedCats.length === 0) {
+            html += '<option value="none" disabled>No Themes Detected</option>';
+        } else {
+            sortedCats.forEach(c => {
+                html += `<option value="${c}">${c}</option>`;
+            });
+            html += '<option value="other">Other / Uncategorized</option>';
+        }
+        
+        select.innerHTML = html;
+        if (currentVal && Array.from(select.options).some(o => o.value === currentVal)) {
+            select.value = currentVal;
+        }
+    }
+
     async function refreshData(eventId = null, silent = false) {
         if (!silent) document.getElementById('loader').style.display = 'flex';
         let activeId = eventId || localStorage.getItem('marketEventId');
@@ -1004,10 +1033,10 @@
         if (eventErr || !eventsData || eventsData.length === 0) {
             currentData.allEvents = [];
             currentData.activeId = null;
+            currentData.activeEvent = null;
             document.getElementById('eventDropdown').innerHTML = '<option>No Active Markets</option>';
             document.getElementById('vendorTableBody').innerHTML = '<tr><td colspan="7" style="text-align:center;">No events. Create one in Settings.</td></tr>';
             
-            // Clear stats
             document.getElementById('countInbox').innerText = 0;
             document.getElementById('countReview').innerText = 0;
             document.getElementById('countApproved').innerText = 0;
@@ -1023,19 +1052,14 @@
         activeId = activeEvent.id;
         localStorage.setItem('marketEventId', activeId);
 
-        // Load Vendors for this event
-        const { data: vendorsData, error: vendorErr } = await _supabase.from('vendors').select('*').eq('event_id', activeId).order('created_at', { ascending: false });
+        // Load Vendors for this event (Sorted ascending so #1 is at the top)
+        const { data: vendorsData, error: vendorErr } = await _supabase.from('vendors').select('*').eq('event_id', activeId).order('created_at', { ascending: true });
         
-        if (vendorErr) {
-            console.error("Error fetching vendors:", vendorErr);
-        }
-
-        // --- NEW LOGIC: Assign permanent application numbers based on submission order
         if (vendorsData) {
-            const totalVendors = vendorsData.length;
             vendorsData.forEach((v, index) => {
-                // Since we fetch newest first (descending), the item at the very end of the array is the oldest (#1)
-                v.appNumber = totalVendors - index;
+                v.appNumber = index + 1;
+                // Auto tag them for the dropdown based solely on the description
+                v.autoCategories = extractVendorCategories(v.description || '');
             });
         }
 
@@ -1043,6 +1067,7 @@
             vendors: vendorsData || [],
             allEvents: eventsData,
             activeId: activeId,
+            activeEvent: activeEvent,
             activeEventName: activeEvent.name || "Student Market",
             bannerUrl: activeEvent.banner_url || "",
             headingText: activeEvent.heading_text || "Market Status Update",
@@ -1058,15 +1083,16 @@
         };
         
         updateStats();
+        buildCategoryDropdown();
         
         const dropdown = document.getElementById('eventDropdown');
         if (dropdown) dropdown.innerHTML = currentData.allEvents.map(e => `<option value="${e.id}" ${e.id == currentData.activeId ? 'selected' : ''}>${e.name}</option>`).join('');
         
         loadTemplateToEditor();
+        loadFormConfig(); // Guarantee form status UI updates whenever active market changes
 
         if (isInitialLoad && eventsData.length > 0) {
             setFilter('inbox');
-            loadFormConfig();
             isInitialLoad = false;
         } else {
             if(activeFilter === 'profiles') {
@@ -1083,10 +1109,8 @@
     }
 
     function updateStats() {
-        // Count unprocessed applications (i.e. not sorted into one of the main buckets)
         const inbox = currentData.vendors.filter(v => v.status !== 'Approved' && v.status !== 'Checked In' && v.status !== 'Needs Review' && v.status !== 'Denied').length;
         const review = currentData.vendors.filter(v => v.status === 'Needs Review').length;
-        // Checked in vendors count as approved for the stats bar
         const approved = currentData.vendors.filter(v => v.status === 'Approved' || v.status === 'Checked In').length;
         const denied = currentData.vendors.filter(v => v.status === 'Denied').length;
 
@@ -1101,8 +1125,9 @@
         document.querySelectorAll('.control-item').forEach(el => el.classList.remove('active', 'active-review', 'active-approved', 'active-denied', 'active-settings', 'active-profiles', 'active-scan'));
         document.querySelectorAll('.view').forEach(e => e.style.display = 'none');
         
-        // Reset quick filters on tab switch to avoid confusion
-        resetFilters();
+        // Reset dropdowns on tab switch
+        document.getElementById('categoryFilter').value = 'all';
+        document.getElementById('requirementFilter').value = 'all';
 
         const btn = document.getElementById(`nav-${filter}`);
         if(btn) {
@@ -1124,13 +1149,13 @@
     }
 
     function toggleView(v) {
-        // Unset all active classes and hide views
         document.querySelectorAll('.control-item').forEach(e => e.classList.remove('active', 'active-review', 'active-approved', 'active-denied', 'active-settings', 'active-profiles', 'active-scan'));
         document.querySelectorAll('.view').forEach(e => e.style.display = 'none');
         
         if (v === 'settings') {
             document.getElementById('nav-settings').classList.add('active-settings');
             document.getElementById('view-settings').style.display = 'block';
+            // loadFormConfig() is now handled globally during refreshData/switchEvent
         } else if (v === 'scan') {
             document.getElementById('nav-scan').classList.add('active-scan');
             document.getElementById('view-scan').style.display = 'block';
@@ -1139,42 +1164,17 @@
         }
     }
 
-    function resetFilters() {
-        quickFilters = { license_food: false, power: false };
-        VENDOR_CATEGORIES.forEach(c => quickFilters[c.id] = false);
-        renderFilters();
-    }
-
-    function renderFilters() {
-        const container = document.getElementById('quick-filters');
-        if(!container) return;
-        
-        let html = `
-            <button id="filter-chip-license_food" class="filter-chip ${quickFilters.license_food ? 'active-filter' : ''}" onclick="toggleQuickFilter('license_food')">🍔 Req: Food License</button>
-            <button id="filter-chip-power" class="filter-chip ${quickFilters.power ? 'active-filter' : ''}" onclick="toggleQuickFilter('power')">⚡ Req: Power</button>
-            <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.2); margin: 0 4px; align-self: center;"></div>
-        `;
-        
-        VENDOR_CATEGORIES.forEach(c => {
-            html += `<button id="filter-chip-${c.id}" class="filter-chip ${quickFilters[c.id] ? 'active-filter' : ''}" onclick="toggleQuickFilter('${c.id}')">${c.icon} ${c.label}</button>`;
-        });
-
-        container.innerHTML = html;
-    }
-
-    function toggleQuickFilter(type) {
-        quickFilters[type] = !quickFilters[type];
-        renderFilters();
-        renderTable();
-    }
-
-    // FORM STATUS OVERRIDE LOGIC
+    // FORM STATUS OVERRIDE LOGIC (Per Market)
     async function loadFormConfig() {
         const { data } = await _supabase.from('secrets').select('value').eq('name', 'MARKET_FORM_CONFIG_V3').maybeSingle();
         let status = 'auto';
         if (data && data.value) {
-            const config = JSON.parse(data.value);
-            if (config.forceStatus) status = config.forceStatus;
+            try {
+                const config = JSON.parse(data.value);
+                if (config[currentData.activeId] && config[currentData.activeId].forceStatus) {
+                    status = config[currentData.activeId].forceStatus;
+                }
+            } catch(e) {}
         }
         updateFormStatusUI(status);
     }
@@ -1200,30 +1200,30 @@
         
         const { data: secData } = await _supabase.from('secrets').select('value').eq('name', 'MARKET_FORM_CONFIG_V3').maybeSingle();
         let configToSave = {};
-        if (secData && secData.value) configToSave = JSON.parse(secData.value);
+        if (secData && secData.value) {
+            try { configToSave = JSON.parse(secData.value); } catch(e){}
+        }
         
-        configToSave.forceStatus = status;
+        configToSave[currentData.activeId] = configToSave[currentData.activeId] || {};
+        configToSave[currentData.activeId].forceStatus = status;
         const valStr = JSON.stringify(configToSave);
 
-        // Avoid upsert unique constraint requirement by doing a two-step update/insert
         let { data, error } = await _supabase.from('secrets').update({ value: valStr }).eq('name', 'MARKET_FORM_CONFIG_V3').select();
         if (!error && (!data || data.length === 0)) {
             await _supabase.from('secrets').insert([{ name: 'MARKET_FORM_CONFIG_V3', value: valStr }]);
         }
         
-        showToast(`✅ Form status set to: ${status.toUpperCase()}`);
+        showToast(`Form status set to: ${status.toUpperCase()}`);
     }
 
-    // VENDOR PROFILES LOGIC (Last 5 Months)
+    // VENDOR PROFILES LOGIC
     async function fetchAndRenderProfiles() {
         document.getElementById('loader').style.display = 'flex';
         
-        // Calculate date 5 months ago
         const fiveMonthsAgo = new Date();
         fiveMonthsAgo.setMonth(fiveMonthsAgo.getMonth() - 5);
         const isoDate = fiveMonthsAgo.toISOString();
 
-        // Fetch all events to map their names
         let eventMap = {};
         if (currentData.allEvents && currentData.allEvents.length > 0) {
             currentData.allEvents.forEach(e => eventMap[e.id] = e.name);
@@ -1232,7 +1232,6 @@
             if(allEvs) allEvs.forEach(e => eventMap[e.id] = e.name);
         }
 
-        // Fetch vendors from the last 5 months
         const { data, error } = await _supabase.from('vendors')
             .select('*')
             .gte('created_at', isoDate)
@@ -1244,7 +1243,6 @@
             return; 
         }
 
-        // Group by email (case-insensitive) to create unique profiles
         const profilesMap = {};
         data.forEach(v => {
             const email = (v.preferred_email || '').toLowerCase().trim();
@@ -1300,20 +1298,16 @@
         }
     }
 
-    // --- JSON PARSING FOR TRELLO-STYLE COMMENTS ---
     function getParsedNotes(noteStr) {
         if (!noteStr || noteStr.trim() === '') return [];
         try {
             const parsed = JSON.parse(noteStr);
             if (Array.isArray(parsed)) return parsed;
-        } catch (e) {
-            // Support legacy plain-text notes seamlessly without breaking previous data
-        }
+        } catch (e) {}
         
-        // Wrap the old string inside an array so it can render natively
         return [{
             id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substr(2, 9),
-            date: new Date().toISOString(), // Fallback
+            date: new Date().toISOString(),
             text: noteStr,
             author: 'Legacy Data',
             type: 'legacy'
@@ -1323,7 +1317,7 @@
     function formatCommentDate(isoStr) {
         if (!isoStr) return '';
         const d = new Date(isoStr);
-        if (isNaN(d)) return isoStr; // Return as-is if parsing fails
+        if (isNaN(d)) return isoStr;
         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
     }
 
@@ -1337,32 +1331,27 @@
         }
 
         feedEl.innerHTML = comments.map(c => {
-            let icon = '👤';
             let authorName = c.author || 'Admin';
             let badgeHtml = '';
 
-            // Handle System Status Changes dynamically
             if (c.type === 'status_change') {
-                icon = '⚙️';
                 if (c.status === 'Denied') {
-                    badgeHtml = '<span style="background: rgba(255,59,48,0.2); color: #FF3B30; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 6px;">❌ Denied</span>';
+                    badgeHtml = '<span style="background: rgba(255,59,48,0.2); color: #FF3B30; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 6px;">DENIED</span>';
                 }
                 if (c.status === 'Needs Review') {
-                    badgeHtml = '<span style="background: rgba(255,149,0,0.2); color: #FF9500; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 6px;">⏳ Needs Review</span>';
+                    badgeHtml = '<span style="background: rgba(255,149,0,0.2); color: #FF9500; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 6px;">NEEDS REVIEW</span>';
                 }
-            } else if (c.type === 'legacy') {
-                icon = '🗄️';
             }
 
             return `
             <div class="comment-card">
                 <div class="comment-header">
                     <div class="comment-author">
-                        <span>${icon}</span> ${authorName} ${badgeHtml}
+                        ${authorName} ${badgeHtml}
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span>${formatCommentDate(c.date)}</span>
-                        <button class="comment-delete" onclick="deleteComment('${vendor.id}', '${c.id}')" title="Delete Comment">🗑️</button>
+                        <button class="comment-delete" onclick="deleteComment('${vendor.id}', '${c.id}')" title="Delete Comment">Delete</button>
                     </div>
                 </div>
                 <div class="comment-text">${c.text}</div>
@@ -1370,17 +1359,12 @@
             `;
         }).join('');
     }
-    // ----------------------------------------------
 
-    // Handles the inline quick status change
     async function quickStatus(id, newStatus) {
         const vendor = currentData.vendors.find(v => v.id === id);
         if (!vendor) return false;
         
         let targetStatus = newStatus;
-        
-        // UNSELECT: If they click the same status that is already active, revert to Inbox/Pending
-        // (Even if they are currently Checked In, clicking Approved will unselect and send back to Pending)
         if (vendor.status === newStatus || (newStatus === 'Approved' && vendor.status === 'Checked In')) {
             targetStatus = 'Pending';
         }
@@ -1389,7 +1373,6 @@
         const oldStatus = vendor.status;
         const oldNotes = vendor.internal_notes;
 
-        // Enforce required internal comment for specific statuses
         if (targetStatus === 'Needs Review' || targetStatus === 'Denied') {
             const reason = await promptForComment(targetStatus);
             if (reason === null || reason.trim() === '') {
@@ -1397,7 +1380,6 @@
                 return false;
             }
             
-            // Format log entry as structured JSON instead of flat string
             let comments = getParsedNotes(vendor.internal_notes);
             const statusComment = {
                 id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substr(2, 9),
@@ -1412,7 +1394,6 @@
             updates.internal_notes = JSON.stringify(comments);
         }
 
-        // Optimistic UI Update
         vendor.status = targetStatus;
         if (updates.internal_notes) {
             vendor.internal_notes = updates.internal_notes;
@@ -1425,12 +1406,10 @@
         renderTable(); 
         if (document.getElementById('view-scan').style.display !== 'none') filterManualCheckIn();
         
-        // Background DB sync
         const { error } = await _supabase.from('vendors').update(updates).eq('id', id);
         if (error) {
             console.error(error);
-            showToast("⚠️ Error updating status in database");
-            // Revert on failure
+            showToast("Error updating status");
             vendor.status = oldStatus;
             vendor.internal_notes = oldNotes;
             if (currentReviewingId === id) {
@@ -1442,7 +1421,6 @@
         return true;
     }
 
-    // --- CHECK IN LOGIC ---
     function closeCheckInAlert() { 
         const alertEl = document.getElementById('checkInAlert');
         if (alertEl && alertEl.style.display === 'flex') {
@@ -1490,21 +1468,20 @@
             detailsSec.style.display = 'none';
         }
 
-        // Apply styles based on status
         if (type === 'success') {
             box.style.borderColor = '#34C759';
             titleEl.style.color = '#34C759';
-            icon.innerText = '✅';
+            icon.innerText = '✓';
             msgEl.style.color = '#34C759';
         } else if (type === 'warning') {
             box.style.borderColor = '#FF9500';
             titleEl.style.color = '#FF9500';
-            icon.innerText = '⚠️';
+            icon.innerText = '⚠';
             msgEl.style.color = '#FF9500';
         } else if (type === 'error') {
             box.style.borderColor = '#FF3B30';
             titleEl.style.color = '#FF3B30';
-            icon.innerText = '❌';
+            icon.innerText = '✕';
             msgEl.style.color = '#FF3B30';
         }
 
@@ -1520,31 +1497,26 @@
     async function checkIn(id, isScan = false, el = null) {
         const vendor = currentData.vendors.find(v => v.id === id);
         
-        // 1. NOT FOUND / INVALID
         if (!vendor) {
             if (isScan) showScanModal('error', 'INVALID TICKET', 'Vendor not found in system.', null);
             return;
         }
 
-        // 2. ALREADY CHECKED IN
         if (isScan && vendor.status === 'Checked In') {
             showScanModal('warning', 'ALREADY SCANNED', 'This vendor has already been checked in.', vendor);
             return; 
         }
 
-        // Prevent check ins for denied/pending apps via scanner
         if (isScan && vendor.status !== 'Approved') {
             showScanModal('error', 'NOT APPROVED', 'This application is not marked as Approved.', vendor);
             return;
         }
 
-        // 3. TOGGLE OR CHECK IN
         const newStatus = (vendor.status === 'Checked In' && !isScan) ? 'Approved' : 'Checked In';
         
-        // Update UI Button optimistically if it exists (manual check in)
         if (el) { 
             el.style.background = newStatus === 'Checked In' ? 'var(--gradient-success)' : ''; 
-            el.innerText = newStatus === 'Checked In' ? '✓ IN' : 'MARK'; 
+            el.innerText = newStatus === 'Checked In' ? '✓ IN' : 'MARK IN'; 
         }
         
         await _supabase.from('vendors').update({ status: newStatus }).eq('id', id);
@@ -1568,7 +1540,6 @@
             return;
         }
         
-        // Search through all vendors instead of just approved ones so it's not confusing
         const matched = currentData.vendors.filter(v => {
             const searchStr = `${v.first_name || ''} ${v.last_name || ''} ${v.student_id || ''}`.toUpperCase();
             return searchStr.includes(val);
@@ -1582,14 +1553,13 @@
         matched.forEach(v => {
             const d = document.createElement('div');
             d.className = "manual-result-item";
-            const foodBadge = (v.food_license && v.food_license.toLowerCase() === 'yes') ? '🍔 ' : '';
-            const powerBadge = v.needs_power === 'Yes' ? '⚡ ' : '';
+            const foodBadge = (v.food_license && v.food_license.toLowerCase() === 'yes') ? '[FOOD] ' : '';
+            const powerBadge = v.needs_power === 'Yes' ? '[POWER] ' : '';
 
             let btnHtml = '';
             if (v.status === 'Approved' || v.status === 'Checked In') {
                 btnHtml = `<button class="btn-action" style="padding: 6px 16px; font-size: 0.8rem; ${v.status === 'Checked In' ? 'background:var(--gradient-success)' : ''}" onclick="checkIn('${v.id}', false, this)">${v.status === 'Checked In' ? '✓ IN' : 'MARK IN'}</button>`;
             } else {
-                // If they show up but aren't approved, show their status clearly instead of a button
                 btnHtml = `<span style="color: #FF3B30; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; padding-right: 10px;">${v.status}</span>`;
             }
 
@@ -1607,30 +1577,63 @@
         }
     });
 
-    // Shared data cleaner to extract junk out of the Comments field
     function extractCleanData(vendor) {
         let rawComments = vendor.additional_comments || '';
         let cleanedComments = [];
         let parsedAgreements = [];
 
-        rawComments.split('\n').forEach(line => {
-            const trimmed = line.trim();
-            if (!trimmed) return;
+        if (typeof rawComments === 'string') {
+            rawComments.split('\n').forEach(line => {
+                const trimmed = line.trim();
+                if (!trimmed) return;
 
-            if (trimmed.includes('Acknowledgment:')) {
-                parsedAgreements.push(trimmed);
-            } else if (trimmed.startsWith('First and Last Name:')) {
-                // Ignore completely
-            } else {
-                cleanedComments.push(trimmed);
-            }
-        });
+                // Expand keywords for catching agreements in the comments field
+                if (trimmed.includes('Acknowledgment:') || trimmed.toLowerCase().includes('agree') || trimmed.toLowerCase().includes('understand')) {
+                    parsedAgreements.push(trimmed);
+                } else if (trimmed.startsWith('First and Last Name:')) {
+                } else {
+                    cleanedComments.push(trimmed);
+                }
+            });
+        }
 
         let finalComments = cleanedComments.join('\n');
         
-        let dbAgreements = vendor.agreements_checked || '';
-        if (!dbAgreements && parsedAgreements.length > 0) {
-            dbAgreements = parsedAgreements.join('\n');
+        // Check multiple possible locations just in case of schema variations
+        let dbAgreements = vendor.agreements_checked || vendor.agreements || '';
+        
+        // Handle if agreements were saved as a JSON string (e.g. "[\"Rule 1\", \"Rule 2\"]")
+        // Or if they were saved as a PostgreSQL array string (e.g. "{\"Rule 1\", \"Rule 2\"}")
+        if (typeof dbAgreements === 'string') {
+            try {
+                const parsed = JSON.parse(dbAgreements);
+                if (Array.isArray(parsed)) dbAgreements = parsed;
+            } catch (e) {
+                // Not standard JSON. Check if it's a Postgres array format
+                if (dbAgreements.startsWith('{') && dbAgreements.endsWith('}')) {
+                    dbAgreements = dbAgreements.slice(1, -1).split('","').map(s => s.replace(/^"|"$/g, ''));
+                }
+            }
+        }
+        
+        // Format nicely if it's an array
+        if (Array.isArray(dbAgreements)) {
+            dbAgreements = dbAgreements.map(a => a.trim()).filter(a => a).join('\n');
+        }
+        
+        // Clear out artifacts from empty JSON arrays or objects
+        if (typeof dbAgreements === 'string' && (dbAgreements === '[]' || dbAgreements === '{}' || dbAgreements === '""')) {
+            dbAgreements = '';
+        }
+        
+        // Fallback to parsed agreements from comments if database field is empty
+        if (!dbAgreements || dbAgreements.trim() === '') {
+            dbAgreements = parsedAgreements.length > 0 ? parsedAgreements.join('\n') : '';
+        }
+
+        // Failsafe: if we accidentally stripped everything from comments, just show raw
+        if (!finalComments && rawComments && parsedAgreements.length === 0) {
+            finalComments = rawComments;
         }
 
         return { finalComments, dbAgreements };
@@ -1638,26 +1641,26 @@
 
     function getFilteredVendorsForCurrentView() {
         const search = document.getElementById('search').value.toLowerCase();
+        const categoryFilter = document.getElementById('categoryFilter')?.value || 'all';
+        const requirementFilter = document.getElementById('requirementFilter')?.value || 'all';
         
         return currentData.vendors.filter(v => {
             // Apply Tab Filter
             if (activeFilter === 'inbox' && (v.status === 'Approved' || v.status === 'Checked In' || v.status === 'Needs Review' || v.status === 'Denied')) return false;
             if (activeFilter === 'review' && v.status !== 'Needs Review') return false;
-            // Treat Checked In as part of the Approved views
             if (activeFilter === 'approved' && v.status !== 'Approved' && v.status !== 'Checked In') return false;
             if (activeFilter === 'denied' && v.status !== 'Denied') return false;
             if (activeFilter === 'power' && ((v.status !== 'Approved' && v.status !== 'Checked In') || v.needs_power !== 'Yes')) return false;
 
-            // Apply Quick Filters (Hardcoded Requirements)
-            if (quickFilters.license_food && (!v.food_license || v.food_license.toLowerCase() !== 'yes')) return false;
-            if (quickFilters.power && v.needs_power !== 'Yes') return false;
-
-            // Apply Dynamic Category Filters (OR logic: if any category filter is on, vendor must match AT LEAST ONE)
-            const activeCategoryFilters = VENDOR_CATEGORIES.filter(c => quickFilters[c.id]).map(c => c.id);
-            if (activeCategoryFilters.length > 0) {
-                const categoryMatch = inferCategory((v.description || '') + ' ' + (v.additional_comments || ''));
-                if (!categoryMatch || !activeCategoryFilters.includes(categoryMatch.id)) {
-                    return false;
+            // Apply Dropdown Filters
+            if (requirementFilter === 'power' && v.needs_power !== 'Yes') return false;
+            if (requirementFilter === 'food' && (!v.food_license || v.food_license.toLowerCase() !== 'yes')) return false;
+            
+            if (categoryFilter !== 'all') {
+                if (categoryFilter === 'other') {
+                    if (v.autoCategories && v.autoCategories.length > 0) return false;
+                } else {
+                    if (!v.autoCategories || !v.autoCategories.includes(categoryFilter)) return false;
                 }
             }
 
@@ -1673,17 +1676,16 @@
     function renderTable() {
         const filtered = getFilteredVendorsForCurrentView();
         
-        // Dynamically update the bulk email button visibility and text
         const blastBtn = document.getElementById('blastBtn');
         if (activeFilter === 'approved') {
             blastBtn.style.display = 'inline-block';
-            blastBtn.innerText = '📧 Send Approved Emails...';
+            blastBtn.innerText = 'Send Approved Emails...';
         } else if (activeFilter === 'denied') {
             blastBtn.style.display = 'inline-block';
-            blastBtn.innerText = '📧 Send Denied Emails...';
+            blastBtn.innerText = 'Send Denied Emails...';
         } else if (activeFilter === 'power') {
             blastBtn.style.display = 'inline-block';
-            blastBtn.innerText = '📧 Send Power Emails...';
+            blastBtn.innerText = 'Send Power Emails...';
         } else {
             blastBtn.style.display = 'none';
         }
@@ -1696,47 +1698,44 @@
         }
 
         const generateRowHtml = (v) => {
-            // Interactive status toggle UI
             const isAppr = v.status === 'Approved' || v.status === 'Checked In';
             const statusToggle = `
                 <div class="status-toggle-group" onclick="event.stopPropagation()">
-                    <button onclick="quickStatus('${v.id}', 'Approved')" class="btn-quick-status ${isAppr ? 'active-approve' : ''}" title="${isAppr ? 'Unselect Approved' : 'Mark as Approved'}">✅</button>
-                    <button onclick="quickStatus('${v.id}', 'Needs Review')" class="btn-quick-status ${v.status === 'Needs Review' ? 'active-review' : ''}" title="${v.status === 'Needs Review' ? 'Unselect Needs Review' : 'Mark as Needs Review'}">⏳</button>
-                    <button onclick="quickStatus('${v.id}', 'Denied')" class="btn-quick-status ${v.status === 'Denied' ? 'active-deny' : ''}" title="${v.status === 'Denied' ? 'Unselect Denied' : 'Mark as Denied'}">❌</button>
+                    <button onclick="quickStatus('${v.id}', 'Approved')" class="btn-quick-status ${isAppr ? 'active-approve' : ''}" title="Mark as Approved">✓</button>
+                    <button onclick="quickStatus('${v.id}', 'Needs Review')" class="btn-quick-status ${v.status === 'Needs Review' ? 'active-review' : ''}" title="Mark as Needs Review">...</button>
+                    <button onclick="quickStatus('${v.id}', 'Denied')" class="btn-quick-status ${v.status === 'Denied' ? 'active-deny' : ''}" title="Mark as Denied">✕</button>
                 </div>
             `;
 
-            const powerTag = v.needs_power === 'Yes' ? `<br><span class="power-tag">⚡ Needs Power</span>` : '';
-            const emailSentBadge = v.email_sent === 'Yes' ? `<span class="status-badge sent">✉️ SENT</span>` : `<span class="status-badge draft">⚠️ UNSENT</span>`;
+            const powerTag = v.needs_power === 'Yes' ? `<br><span class="power-tag">POWER REQUESTED</span>` : '';
+            const emailSentBadge = v.email_sent === 'Yes' ? `<span class="status-badge sent">SENT</span>` : `<span class="status-badge draft">UNSENT</span>`;
             
-            // Adaptive Food Label
-            const foodBadge = (v.food_license && v.food_license.toLowerCase() === 'yes') ? `<span style="font-size: 0.75rem; background: rgba(255, 149, 0, 0.2); color: #FF9500; padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: 700;">🍔 Food</span>` : '';
+            const foodBadge = (v.food_license && v.food_license.toLowerCase() === 'yes') ? `<span style="font-size: 0.75rem; background: rgba(255, 149, 0, 0.2); color: #FF9500; border: 1px solid rgba(255, 149, 0, 0.3); padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: 700;">FOOD</span>` : '';
 
-            // Smart Category Inference
-            const categoryMatch = inferCategory((v.description || '') + ' ' + (v.additional_comments || ''));
-            const categoryBadge = categoryMatch ? `<span style="font-size: 0.75rem; background: rgba(10, 132, 255, 0.2); color: #0A84FF; border: 1px solid rgba(10, 132, 255, 0.3); padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: 700;">${categoryMatch.icon} ${categoryMatch.label}</span>` : '';
+            let categoriesHtml = '';
+            if (v.autoCategories && v.autoCategories.length > 0) {
+                categoriesHtml = `<span style="font-size: 0.75rem; background: rgba(10, 132, 255, 0.2); color: #0A84FF; border: 1px solid rgba(10, 132, 255, 0.3); padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: 700;">${v.autoCategories[0]}</span>`;
+            }
 
-            // Check In UI for table
             const checkInCell = isAppr
-                ? `<button onclick="checkIn('${v.id}', false, this); event.stopPropagation();" class="btn-action" style="padding: 6px 12px; font-size: 0.8rem; ${v.status === 'Checked In' ? 'background:var(--gradient-success)' : ''}">${v.status === 'Checked In' ? '✓ IN' : 'MARK'}</button>`
+                ? `<button onclick="checkIn('${v.id}', false, this); event.stopPropagation();" class="btn-action" style="padding: 6px 12px; font-size: 0.8rem; ${v.status === 'Checked In' ? 'background:var(--gradient-success)' : ''}">${v.status === 'Checked In' ? '✓ IN' : 'MARK IN'}</button>`
                 : `<span style="color:var(--text-muted); font-size:0.75rem; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">${v.status}</span>`;
 
-            // Only show the individual email icon on valid tabs
             const canEmail = (activeFilter === 'approved' || activeFilter === 'denied' || activeFilter === 'power');
 
             return `
             <tr class="clickable-row" onclick="openReviewModal('${v.id}')">
                 <td><span style="color: #BF5AF2; font-weight: 800; margin-right: 8px; font-size: 1.1rem;">#${v.appNumber}</span><br><span style="font-family: monospace; letter-spacing: 1px; font-size: 0.85rem; color: var(--text-muted);">${v.student_id || 'N/A'}</span></td>
-                <td><strong>${v.first_name} ${v.last_name}</strong>${categoryBadge}${foodBadge}${powerTag}</td>
+                <td><strong>${v.first_name} ${v.last_name}</strong>${categoriesHtml}${foodBadge}${powerTag}</td>
                 <td><a href="mailto:${v.preferred_email}" onclick="event.stopPropagation()" style="color:var(--text-muted);">${v.preferred_email}</a><br><small style="color:var(--text-muted); opacity: 0.5;">${v.gcu_email || ''}</small></td>
                 <td>${statusToggle}</td>
                 <td>${checkInCell}</td>
                 <td>${emailSentBadge}</td>
                 <td>
                     <div class="action-wrapper" onclick="event.stopPropagation()">
-                        <button onclick="openEditModal('${v.id}')" class="btn-icon" title="Edit Application">✏️</button>
-                        <button onclick="resendEmail('${v.id}')" class="btn-icon" title="Send Status Email" style="${canEmail ? '' : 'display:none;'}">📩</button>
-                        <button onclick="deleteVendor('${v.id}')" class="btn-icon" style="color:#FF3B30;" title="Delete">🗑️</button>
+                        <button onclick="openEditModal('${v.id}')" class="btn-icon-text" title="Edit Application">Edit</button>
+                        <button onclick="resendEmail('${v.id}')" class="btn-icon-text" title="Send Status Email" style="${canEmail ? '' : 'display:none;'}">Email</button>
+                        <button onclick="deleteVendor('${v.id}')" class="btn-icon-text danger" title="Delete">Del</button>
                     </div>
                 </td>
             </tr>
@@ -1746,7 +1745,6 @@
         tbody.innerHTML = filtered.map(v => generateRowHtml(v)).join('');
     }
 
-    // REVIEW MODAL LOGIC (FULL RESPONSE)
     function openReviewModal(id) {
         const vendor = currentData.vendors.find(v => v.id === id);
         if (!vendor) return;
@@ -1755,22 +1753,21 @@
         document.getElementById('reviewName').innerText = `#${vendor.appNumber} - ${vendor.first_name} ${vendor.last_name}`;
         
         let tagsHtml = '';
-        if (vendor.status === 'Needs Review') tagsHtml += `<span class="status-pill review" style="font-size: 0.85rem;">⏳ Needs Review</span>`;
-        else if (vendor.status === 'Approved' || vendor.status === 'Checked In') tagsHtml += `<span class="status-pill approved" style="font-size: 0.85rem;">✅ Approved</span>`;
-        else if (vendor.status === 'Denied') tagsHtml += `<span class="status-pill denied" style="font-size: 0.85rem;">❌ Denied</span>`;
+        if (vendor.status === 'Needs Review') tagsHtml += `<span class="status-pill review" style="font-size: 0.85rem;">Needs Review</span>`;
+        else if (vendor.status === 'Approved' || vendor.status === 'Checked In') tagsHtml += `<span class="status-pill approved" style="font-size: 0.85rem;">Approved</span>`;
+        else if (vendor.status === 'Denied') tagsHtml += `<span class="status-pill denied" style="font-size: 0.85rem;">Denied</span>`;
         
-        if (vendor.needs_power === 'Yes') tagsHtml += `<span class="power-tag" style="margin-top:0; font-size: 0.85rem;">⚡ Power Requested</span>`;
-        if (vendor.status === 'Checked In') tagsHtml += `<span class="status-pill approved" style="font-size: 0.85rem; margin-left: 8px;">📍 Checked In</span>`;
+        if (vendor.needs_power === 'Yes') tagsHtml += `<span class="power-tag" style="margin-top:0; font-size: 0.85rem;">Power Requested</span>`;
+        if (vendor.status === 'Checked In') tagsHtml += `<span class="status-pill approved" style="font-size: 0.85rem; margin-left: 8px;">Checked In</span>`;
 
-        // Smart Category Inference for Modal
-        const categoryMatch = inferCategory((vendor.description || '') + ' ' + (vendor.additional_comments || ''));
-        if (categoryMatch) {
-            tagsHtml += `<span class="group-tag" style="background: rgba(10, 132, 255, 0.1); color: #0A84FF; border: 1px solid rgba(10, 132, 255, 0.3); margin-left: 8px; margin-top:0; font-size: 0.85rem; text-transform: none; font-weight: 700;">${categoryMatch.icon} ${categoryMatch.label}</span>`;
+        if (vendor.autoCategories && vendor.autoCategories.length > 0) {
+            vendor.autoCategories.forEach(cat => {
+                tagsHtml += `<span class="group-tag" style="background: rgba(10, 132, 255, 0.1); color: #0A84FF; border: 1px solid rgba(10, 132, 255, 0.3); margin-left: 8px; margin-top:0; font-size: 0.85rem; text-transform: none; font-weight: 700;">${cat}</span>`;
+            });
         }
 
         document.getElementById('reviewTags').innerHTML = tagsHtml;
 
-        // Core fields
         document.getElementById('reviewStudentId').innerText = vendor.student_id || 'N/A';
         document.getElementById('reviewPhone').innerText = vendor.phone || 'N/A';
         document.getElementById('reviewPrefEmail').innerText = vendor.preferred_email || 'N/A';
@@ -1778,19 +1775,15 @@
         
         document.getElementById('reviewDesc').innerText = vendor.description || 'No description provided.';
         
-        // Full Application Additional Fields
         document.getElementById('reviewCommMethod').innerText = vendor.communication_method || 'N/A';
         document.getElementById('reviewYear').innerText = vendor.year || 'N/A';
         document.getElementById('reviewPastVendor').innerText = vendor.past_vendor || 'N/A';
         document.getElementById('reviewAvailability').innerText = vendor.availability || 'N/A';
         
-        // --- DATA CLEANER ---
         const cleanData = extractCleanData(vendor);
         document.getElementById('reviewComments').innerText = cleanData.finalComments || 'None';
         document.getElementById('reviewAgreements').innerText = cleanData.dbAgreements || 'None recorded';
-        // --------------------
 
-        // Food License Handling (Highlight Red if "No")
         const foodLicEl = document.getElementById('reviewFoodLicense');
         const foodVal = vendor.food_license || 'N/A';
         foodLicEl.innerText = foodVal;
@@ -1803,18 +1796,16 @@
             foodLicEl.style.textShadow = 'none';
         }
 
-        // Render File Link / Image Preview
         const fLinkEl = document.getElementById('reviewFoodLink');
         if (vendor.food_license_link) {
             fLinkEl.innerHTML = `
                 <a href="${vendor.food_license_link}" target="_blank" style="color:#0A84FF; font-weight:bold; display:block; margin-bottom:8px;">Open File ↗</a>
-                <img src="${vendor.food_license_link}" style="max-width:100%; max-height:200px; border-radius:8px; border:1px solid rgba(255,255,255,0.2);" onerror="this.style.display='none'">
+                <img src="${processImageUrl(vendor.food_license_link)}" style="max-width:100%; max-height:200px; border-radius:8px; border:1px solid rgba(255,255,255,0.2);" onerror="this.style.display='none'">
             `;
         } else {
             fLinkEl.innerHTML = `<span style="color:var(--text-muted);">N/A</span>`;
         }
         
-        // Setup Trello Style Comments View
         document.getElementById('newCommentText').value = '';
         renderCommentsFeed(vendor);
 
@@ -1826,14 +1817,13 @@
             linkEl.innerHTML = `<span style="color:var(--text-muted);">No link provided</span>`;
         }
 
-        // Add Giant Check In Button to Review Modal if Approved
         const checkInContainer = document.getElementById('reviewModalCheckInContainer');
         if (vendor.status === 'Approved' || vendor.status === 'Checked In') {
             const isCheckedIn = vendor.status === 'Checked In';
             checkInContainer.innerHTML = `
                 <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px;">
                     <button type="button" class="btn-action" style="width: 100%; padding: 20px; font-size: 1.2rem; font-weight: 800; ${isCheckedIn ? 'background: var(--gradient-success); color: white;' : 'background: rgba(52, 199, 89, 0.1); border: 2px solid #34C759; color: #34C759;'}" onclick="checkIn('${vendor.id}'); closeReviewModal();">
-                        ${isCheckedIn ? '✅ VENDOR CHECKED IN (Click to Undo)' : '📸 CHECK IN VENDOR NOW'}
+                        ${isCheckedIn ? 'VENDOR CHECKED IN (Click to Undo)' : 'CHECK IN VENDOR NOW'}
                     </button>
                 </div>
             `;
@@ -1850,7 +1840,7 @@
         const inputEl = document.getElementById('newCommentText');
         const text = inputEl.value.trim();
         
-        if (!text) return; // Prevent empty comments
+        if (!text) return;
 
         const vendor = currentData.vendors.find(v => v.id === id);
         let comments = getParsedNotes(vendor.internal_notes);
@@ -1866,7 +1856,6 @@
         comments.unshift(newComment);
         const newNotesStr = JSON.stringify(comments);
         
-        // Optimistic UX 
         vendor.internal_notes = newNotesStr;
         inputEl.value = '';
         renderCommentsFeed(vendor);
@@ -1875,10 +1864,10 @@
         const { error } = await _supabase.from('vendors').update({ internal_notes: newNotesStr }).eq('id', id);
         if (error) {
             console.error(error);
-            showToast("⚠️ Error saving comment");
-            refreshData(null, true); // Revert UI gracefully on error
+            showToast("Error saving comment");
+            refreshData(null, true);
         } else {
-            showToast("✅ Comment added!");
+            showToast("Comment added!");
         }
     }
 
@@ -1893,16 +1882,15 @@
 
         const newNotesStr = JSON.stringify(comments);
         
-        // Optimistic delete
         vendor.internal_notes = newNotesStr;
         renderCommentsFeed(vendor);
         
         const { error } = await _supabase.from('vendors').update({ internal_notes: newNotesStr }).eq('id', vendorId);
         if (error) {
-            showToast("⚠️ Error deleting comment");
+            showToast("Error deleting comment");
             refreshData(null, true);
         } else {
-            showToast("🗑️ Comment deleted");
+            showToast("Comment deleted");
         }
     }
 
@@ -1911,7 +1899,6 @@
         currentReviewingId = null;
     }
 
-    // EDIT MODAL LOGIC
     function openEditModal(id) {
         const vendor = currentData.vendors.find(v => v.id === id);
         if (!vendor) return;
@@ -1932,7 +1919,6 @@
         document.getElementById('editNeedsPower').value = vendor.needs_power === 'Yes' ? 'Yes' : 'No';
         document.getElementById('editLink').value = vendor.link || '';
         
-        // Load Cleaned Comments & Food License
         const cleanData = extractCleanData(vendor);
         document.getElementById('editComments').value = cleanData.finalComments;
         document.getElementById('editAgreements').value = cleanData.dbAgreements;
@@ -1943,7 +1929,6 @@
         
         foodLinkInput.value = vendor.food_license_link || '';
         
-        // Show Image Preview in Edit Modal if it exists
         if (vendor.food_license_link) {
             foodImagePreview.style.display = 'block';
             foodImagePreview.querySelector('img').src = processImageUrl(vendor.food_license_link);
@@ -1952,7 +1937,6 @@
             foodImagePreview.querySelector('img').src = '';
         }
 
-        // Live update the image preview if admin pastes a new URL
         foodLinkInput.oninput = (e) => {
             const val = e.target.value;
             if (val.startsWith('http')) {
@@ -1999,9 +1983,9 @@
         
         if (error) {
             console.error(error);
-            showToast("⚠️ Error saving edits");
+            showToast("Error saving edits");
         } else {
-            showToast("✅ Edits saved!");
+            showToast("Edits saved!");
             closeEditModal();
             refreshData(null, true);
         }
@@ -2012,10 +1996,7 @@
         const id = currentReviewingId;
         const vendor = currentData.vendors.find(v => v.id === id);
         
-        // Check if unselecting
         const isUnselecting = vendor && vendor.status === newStatus;
-        
-        // Wait for quickStatus to finish properly before closing
         const success = await quickStatus(id, newStatus);
         
         if (success !== false) {
@@ -2037,7 +2018,6 @@
         let subj = '', body = '';
         let targetTemplate = forceTemplateId;
 
-        // Auto-infer template if not forced by the bulk modal
         if (!targetTemplate) {
             if (vendor.status === 'Approved' || vendor.status === 'Checked In') {
                 targetTemplate = (vendor.needs_power === 'Yes') ? 'power' : 'approved';
@@ -2061,35 +2041,46 @@
         return { subj, body };
     }
 
+    function parseEmailVariables(str, vendor) {
+        const ev = currentData.activeEvent || {};
+        
+        // Date formatters
+        const formatDate = (dStr) => dStr ? new Date(dStr + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
+        const formatDateTime = (dtStr) => dtStr ? new Date(dtStr).toLocaleDateString('en-US', { month: 'long', day: 'numeric' }) + ' at ' + new Date(dtStr).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '';
+
+        return str.replace(/\{\{FIRST\}\}/g, vendor?.first_name || 'Alex')
+                  .replace(/\{\{MARKET_NAME\}\}/g, ev.name || 'Student Market')
+                  .replace(/\{\{LOCATION\}\}/g, ev.location || 'Campus')
+                  .replace(/\{\{MARKET_DATE\}\}/g, formatDate(ev.market_date))
+                  .replace(/\{\{MARKET_TIME\}\}/g, ev.market_time || 'TBD')
+                  .replace(/\{\{APP_OPENS\}\}/g, formatDateTime(ev.app_open))
+                  .replace(/\{\{APP_CLOSES\}\}/g, formatDateTime(ev.app_close))
+                  .replace(/\{\{CONTACT_DATE\}\}/g, formatDate(ev.contact_date))
+                  .replace(/\{\{CONFIRM_DEADLINE\}\}/g, formatDate(ev.confirm_date));
+    }
+
     async function sendSingleEmail(vendor, forceTemplateId = null) {
         if (!vendor || !vendor.preferred_email || vendor.status === 'Needs Review' || vendor.status === 'Pending') return false;
 
         const templates = getTemplateDetails(vendor, forceTemplateId);
         if (!templates) return false;
 
-        // Parse placeholders
-        let rawBody = templates.body.replace(/\{\{FIRST\}\}/g, vendor.first_name || '')
-                                  .replace(/\{\{EVENT\}\}/g, currentData.activeEventName || '');
-
+        let rawBody = parseEmailVariables(templates.body, vendor);
         let htmlBodyStr = rawBody.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
         let plainTextStr = rawBody.replace(/\*\*(.*?)\*\*/g, '$1');
 
-        let parsedSubj = templates.subj.replace(/\{\{FIRST\}\}/g, vendor.first_name || '')
-                                       .replace(/\{\{EVENT\}\}/g, currentData.activeEventName || '');
+        let parsedSubj = parseEmailVariables(templates.subj, vendor);
 
-        // Use the processImageUrl helper to ensure Google Drive links render correctly
         let finalBannerUrl = currentData.bannerUrl || "";
         finalBannerUrl = processImageUrl(finalBannerUrl);
         
-        // HTML Builder
         const bannerHtml = finalBannerUrl ? `<tr><td align="center" style="padding: 0;"><img src="${finalBannerUrl}" alt="Banner" width="600" style="display: block; width: 100%; max-width: 100%; height: auto; border: 0;"></td></tr>` : "";
         
         let statusColor = (vendor.status === 'Approved' || vendor.status === 'Checked In') ? '#34C759' : '#FF3B30';
         let statusBadge = (vendor.status === 'Approved' || vendor.status === 'Checked In') ? 'APPROVED' : 'STATUS UPDATE';
 
-        // Only include QR code if the vendor is approved
         const isApproved = vendor.status === 'Approved' || vendor.status === 'Checked In';
-        const barcodeData = vendor.id; // Consistent QR Ticket Code
+        const barcodeData = vendor.student_id || vendor.id.substring(0,8);
         const barcodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + barcodeData + "&format=png&bgcolor=FFFFFF&color=000000&margin=10";
         
         const qrHtml = isApproved ? `
@@ -2108,7 +2099,7 @@
                         </tr>
                     </table>
                     <p style="margin: 25px 0 0 0; font-size: 14px; color: #1a1a1a; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-family: sans-serif;">SCAN AT CHECK-IN</p>
-                    <p style="margin: 8px 0 0 0; font-size: 12px; color: #888888; font-family: monospace;">ID: #${String(barcodeData).substring(0,8).toUpperCase()}</p>
+                    <p style="margin: 8px 0 0 0; font-size: 12px; color: #888888; font-family: monospace;">ID: #${String(barcodeData).toUpperCase()}</p>
                 </td>
             </tr>
         ` : '';
@@ -2173,7 +2164,6 @@
                 return errData.code === 'unauthorized' ? 'unauthorized' : false;
             }
             
-            // Mark Sent
             await _supabase.from('vendors').update({ email_sent: 'Yes' }).eq('id', vendor.id);
             return true;
         } catch (error) {
@@ -2198,14 +2188,13 @@
         showToast(`Sending to ${vendor.first_name}...`);
         const success = await sendSingleEmail(vendor);
         
-        if (success === 'unauthorized') showToast("⚠️ API Error: Invalid Key.");
+        if (success === 'unauthorized') showToast("API Error: Invalid Key.");
         else if (success) showToast("Sent!");
-        else showToast("⚠️ Failed to send.");
+        else showToast("Failed to send.");
         
         refreshData(null, true);
     }
 
-    // --- BULK EMAIL MODAL LOGIC ---
     function openBulkEmailModal() {
         if (activeFilter === 'inbox' || activeFilter === 'review') {
             showToast("Cannot send emails from this tab.");
@@ -2215,7 +2204,7 @@
         if (activeFilter === 'approved') {
             const needsReviewCount = currentData.vendors.filter(v => v.status === 'Needs Review').length;
             if (needsReviewCount > 0) {
-                const bypass = confirm(`⚠️ WARNING: There are still ${needsReviewCount} vendor(s) in "Needs Review".\n\nAre you sure you want to proceed with sending Approved emails before reviewing everyone?`);
+                const bypass = confirm(`WARNING: There are still ${needsReviewCount} vendor(s) in "Needs Review".\n\nAre you sure you want to proceed with sending Approved emails before reviewing everyone?`);
                 if (!bypass) return;
             }
         }
@@ -2232,8 +2221,8 @@
         listEl.innerHTML = eligibleVendors.map(v => {
             const isSent = v.email_sent === 'Yes';
             const sentBadge = isSent ? `<span style="color:#34C759; font-size:0.8rem; margin-left:8px;">[Already Sent]</span>` : `<span style="color:#FF9F0A; font-size:0.8rem; margin-left:8px;">[Unsent]</span>`;
-            const powerBadge = v.needs_power === 'Yes' ? ' ⚡' : '';
-            const foodBadge = (v.food_license && v.food_license.toLowerCase() === 'yes') ? ' 🍔' : '';
+            const powerBadge = v.needs_power === 'Yes' ? ' [Power Requested]' : '';
+            const foodBadge = (v.food_license && v.food_license.toLowerCase() === 'yes') ? ' [FOOD]' : '';
             
             return `
             <div class="vendor-checkbox-item">
@@ -2243,7 +2232,6 @@
             `;
         }).join('');
 
-        // Auto-select template based on active tab
         if (activeFilter === 'power') document.getElementById('bulkEmailTemplate').value = 'power';
         else if (activeFilter === 'denied') document.getElementById('bulkEmailTemplate').value = 'denied';
         else document.getElementById('bulkEmailTemplate').value = 'approved';
@@ -2299,9 +2287,9 @@
         document.getElementById('loader').style.display = 'none';
         loaderText.innerText = 'LOADING'; 
         
-        if (isUnauthorized) alert(`⚠️ STOPPING: Email API Key is invalid.\n\n✅ Sent: ${successCount}\n⚠️ Failed: ${failCount}`);
-        else if (failCount > 0) alert(`Batch complete.\n\n✅ Sent: ${successCount}\n⚠️ Failed: ${failCount}`);
-        else showToast(`🚀 All ${successCount} emails sent successfully!`); 
+        if (isUnauthorized) alert(`STOPPING: Email API Key is invalid.\n\nSent: ${successCount}\nFailed: ${failCount}`);
+        else if (failCount > 0) alert(`Batch complete.\n\nSent: ${successCount}\nFailed: ${failCount}`);
+        else showToast(`All ${successCount} emails sent successfully!`); 
         
         refreshData(null, true); 
     }
@@ -2355,12 +2343,9 @@
         const previewIframe = document.getElementById('emailPreview');
         if (!input || !previewIframe) return;
         
-        let text = input.value.replace(/\{\{FIRST\}\}/g, 'Alex')
-                              .replace(/\{\{EVENT\}\}/g, currentData.activeEventName || 'Spring Market')
-                              .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
-                              .replace(/\n/g, '<br>');
+        let text = parseEmailVariables(input.value, { first_name: 'Alex' });
+        text = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
             
-        // Process the URL using the helper so the preview reflects the real image accurately
         const rawBannerUrl = document.getElementById('bannerUrlInput')?.value || "";
         const bannerUrl = processImageUrl(rawBannerUrl);
         
@@ -2429,10 +2414,10 @@
             if (error.message.includes("column")) {
                 alert("Database Note: You need to run a quick SQL command to save the 'Power Denied' template.\n\nRun this in the Supabase SQL Editor:\nALTER TABLE events ADD COLUMN template_power_denied_subject TEXT, ADD COLUMN template_power_denied_body TEXT;");
             } else {
-                showToast("⚠️ Error saving template");
+                showToast("Error saving template");
             }
         } else {
-            showToast(`✅ Template Saved!`);
+            showToast(`Template Saved!`);
             refreshData(null, true);
         }
     }
@@ -2451,10 +2436,9 @@
             return alert("Please fill in all event details to create a new market.");
         }
 
-        // Format dates nicely for text parsing
         const formatDate = (dStr) => {
             if(!dStr) return '';
-            const d = new Date(dStr + 'T12:00:00'); // Force midday to avoid timezone shift
+            const d = new Date(dStr + 'T12:00:00'); 
             return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
         };
         const formatDateTime = (dtStr) => {
@@ -2468,11 +2452,11 @@
         const fConfirm = formatDate(confirm);
         const fClose = formatDateTime(close);
 
-        const apprBody = `Hello {{FIRST}}!\n\nCongratulations, your application for {{EVENT}} on ${fDate} has been **APPROVED**! 🎉\n\nWe are so excited to have you showcase your items at the market.\n\n**Please reply to this email to confirm your spot by ${fConfirm}.**\n\nMore details regarding setup time, maps, and rules will follow closer to the event date.\n\n– CAB Student Market Team`;
+        const apprBody = `Hello {{FIRST}}!\n\nCongratulations, your application for {{MARKET_NAME}} on ${fDate} has been **APPROVED**!\n\nWe are so excited to have you showcase your items at the market.\n\n**Please reply to this email to confirm your spot by ${fConfirm}.**\n\nMore details regarding setup time, maps, and rules will follow closer to the event date.\n\n– CAB Student Market Team`;
         
-        const powBody = `Hello {{FIRST}}!\n\nCongratulations, your application for {{EVENT}} on ${fDate} has been **APPROVED**! 🎉\n\nWe have noted your request for electricity and have secured a spot for you near a power source. Please ensure you bring your own extension cords.\n\n**Please reply to this email to confirm your spot by ${fConfirm}.**\n\nMore details will follow closer to the event date.\n\n– CAB Student Market Team`;
+        const powBody = `Hello {{FIRST}}!\n\nCongratulations, your application for {{MARKET_NAME}} on ${fDate} has been **APPROVED**!\n\nWe have noted your request for electricity and have secured a spot for you near a power source. Please ensure you bring your own extension cords.\n\n**Please reply to this email to confirm your spot by ${fConfirm}.**\n\nMore details will follow closer to the event date.\n\n– CAB Student Market Team`;
 
-        const powDenBody = `Hello {{FIRST}}!\n\nCongratulations, your application for {{EVENT}} on ${fDate} has been **APPROVED**! 🎉\n\nWhile we would love to accommodate your request for power, unfortunately, all electricity spaces have been filled. You are still approved to participate, but you will not have access to a power source.\n\n**Please reply to this email to confirm your spot by ${fConfirm}.**\n\nMore details will follow closer to the event date.\n\n– CAB Student Market Team`;
+        const powDenBody = `Hello {{FIRST}}!\n\nCongratulations, your application for {{MARKET_NAME}} on ${fDate} has been **APPROVED**!\n\nWhile we would love to accommodate your request for power, unfortunately, all electricity spaces have been filled. You are still approved to participate, but you will not have access to a power source.\n\n**Please reply to this email to confirm your spot by ${fConfirm}.**\n\nMore details will follow closer to the event date.\n\n– CAB Student Market Team`;
 
         const { data, error } = await _supabase.from('events').insert([{ 
             name: name, 
@@ -2505,30 +2489,30 @@
         }
 
         if(data && data[0]) {
-            // AUTOMATICALLY GENERATE PUBLIC APPLICATION FORM DESCRIPTION
             const newTitle = `${name} Vendor Application`;
             const newDesc = `Hello! Thank you for your interest in applying to a CAB student Market for the 2025-2026 school year! CAB Applications for the ${name}.<br><br><strong>Date of Market:</strong> ${fDate}<br><strong>Time:</strong> ${time}<br><strong>Location:</strong> ${location}<br><br>This application will close on ${fClose}.<br>Select vendors will be contacted via email on ${fContact}.<br>Respond to confirm your spot by ${fConfirm}.`;
 
             const { data: secData } = await _supabase.from('secrets').select('value').eq('name', 'MARKET_FORM_CONFIG_V3').maybeSingle();
             let configToSave = {};
             if (secData && secData.value) {
-                configToSave = JSON.parse(secData.value);
+                try { configToSave = JSON.parse(secData.value); } catch(e){}
             }
             
-            configToSave.title = newTitle;
-            configToSave.description = newDesc;
+            configToSave[data[0].id] = {
+                title: newTitle,
+                description: newDesc,
+                forceStatus: 'auto'
+            };
             const valStr = JSON.stringify(configToSave);
 
-            // Avoid upsert unique constraint requirement
             let { data: updData, error: updErr } = await _supabase.from('secrets').update({ value: valStr }).eq('name', 'MARKET_FORM_CONFIG_V3').select();
             if (!updErr && (!updData || updData.length === 0)) {
                 await _supabase.from('secrets').insert([{ name: 'MARKET_FORM_CONFIG_V3', value: valStr }]);
             }
 
-            // Reset UI Form
             document.querySelectorAll('#evName, #evDate, #evTime, #evLocation, #evOpen, #evClose, #evContact, #evConfirm').forEach(el => el.value = '');
             
-            isInitialLoad = true; // force tab reset
+            isInitialLoad = true; 
             refreshData(data[0].id); 
             showToast("Market Created & App Updated!"); 
         }
@@ -2536,7 +2520,7 @@
 
     async function deleteCurrentEvent() {
         const eventName = currentData.activeEventName || "Current Market";
-        if (confirm(`⚠️ WARNING ⚠️\n\nAre you sure you want to completely delete "${eventName}"?\n\nThis will permanently erase all vendor applications associated with this event. THIS CANNOT BE UNDONE.`)) {
+        if (confirm(`WARNING\n\nAre you sure you want to completely delete "${eventName}"?\n\nThis will permanently erase all vendor applications associated with this event. THIS CANNOT BE UNDONE.`)) {
             showToast("Deleting market...");
             await _supabase.from('events').delete().eq('id', currentData.activeId);
             localStorage.removeItem('marketEventId');
