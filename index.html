@@ -715,6 +715,18 @@
     <div id="view-scan" class="view" style="display:none;">
         <div class="frosted form-card">
             <h2 style="text-align:center; margin-bottom:20px; font-weight: 800;">CHECK IN VENDORS</h2>
+            
+            <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; text-align: center; flex-wrap: wrap;">
+                <div style="background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3); padding: 15px 25px; border-radius: 20px; flex: 1; min-width: 140px;">
+                    <span style="font-size: 2.2rem; font-weight: 800; color: #34C759; display: block; line-height: 1;" id="scanStatIn">0</span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: block; margin-top: 8px;">Checked In</span>
+                </div>
+                <div style="background: rgba(255, 149, 0, 0.1); border: 1px solid rgba(255, 149, 0, 0.3); padding: 15px 25px; border-radius: 20px; flex: 1; min-width: 140px;">
+                    <span style="font-size: 2.2rem; font-weight: 800; color: #FF9500; display: block; line-height: 1;" id="scanStatWaiting">0</span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: block; margin-top: 8px;">Waiting</span>
+                </div>
+            </div>
+
             <div style="margin-bottom: 30px;">
                 <label class="stat-label">Manual Check-In</label>
                 <input type="text" id="manualCheckInSearch" class="modern-input" placeholder="Search by name or student ID..." onkeyup="filterManualCheckIn()">
@@ -941,7 +953,7 @@
     };
 
     // LOGIN LOGIC
-    const SYSTEM_PASSWORD = "Vendor49!";
+    const SYSTEM_PASSWORD = "Cabgcu49!";
 
     function handleLogin() {
         const input = document.getElementById('login-password');
@@ -1118,6 +1130,16 @@
         document.getElementById('countReview').innerText = review;
         document.getElementById('countApproved').innerText = approved;
         document.getElementById('countDenied').innerText = denied;
+
+        // Update Check-In Screen Stats
+        const checkedInCount = currentData.vendors.filter(v => v.status === 'Checked In').length;
+        const waitingCount = currentData.vendors.filter(v => v.status === 'Approved').length; // Approved but not yet checked in
+
+        const scanStatIn = document.getElementById('scanStatIn');
+        const scanStatWaiting = document.getElementById('scanStatWaiting');
+        
+        if (scanStatIn) scanStatIn.innerText = checkedInCount;
+        if (scanStatWaiting) scanStatWaiting.innerText = waitingCount;
     }
 
     function setFilter(filter) {
